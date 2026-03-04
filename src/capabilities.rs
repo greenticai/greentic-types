@@ -9,6 +9,17 @@ use schemars::JsonSchema;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
+/// OAuth capability id: consent flows and token exchange operations.
+pub const CAP_OAUTH_BROKER_V1: &str = "greentic.cap.oauth.broker.v1";
+/// OAuth capability id: OAuth card orchestration (start URL resolution, Teams presets).
+pub const CAP_OAUTH_CARD_V1: &str = "greentic.cap.oauth.card.v1";
+/// OAuth capability id: bearer token validation operations.
+pub const CAP_OAUTH_TOKEN_VALIDATION_V1: &str = "greentic.cap.oauth.token_validation.v1";
+/// OAuth capability id: desired-state OAuth app provisioning operations.
+pub const CAP_OAUTH_PROVISIONING_V1: &str = "greentic.cap.oauth.provisioning.v1";
+/// OAuth capability id: provider discovery endpoints and metadata lookup.
+pub const CAP_OAUTH_DISCOVERY_V1: &str = "greentic.cap.oauth.discovery.v1";
+
 /// Declarative capability toggles that packs may request from the runtime.
 #[non_exhaustive]
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -289,5 +300,39 @@ impl TelemetrySpec {
 impl Default for TelemetrySpec {
     fn default() -> Self {
         Self::new("greentic")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{
+        CAP_OAUTH_BROKER_V1, CAP_OAUTH_CARD_V1, CAP_OAUTH_DISCOVERY_V1, CAP_OAUTH_PROVISIONING_V1,
+        CAP_OAUTH_TOKEN_VALIDATION_V1,
+    };
+    use alloc::collections::BTreeSet;
+
+    #[test]
+    fn oauth_capability_constants_are_stable() {
+        assert_eq!(CAP_OAUTH_BROKER_V1, "greentic.cap.oauth.broker.v1");
+        assert_eq!(CAP_OAUTH_CARD_V1, "greentic.cap.oauth.card.v1");
+        assert_eq!(
+            CAP_OAUTH_TOKEN_VALIDATION_V1,
+            "greentic.cap.oauth.token_validation.v1"
+        );
+        assert_eq!(CAP_OAUTH_PROVISIONING_V1, "greentic.cap.oauth.provisioning.v1");
+        assert_eq!(CAP_OAUTH_DISCOVERY_V1, "greentic.cap.oauth.discovery.v1");
+    }
+
+    #[test]
+    fn oauth_capability_constants_are_unique() {
+        let values = [
+            CAP_OAUTH_BROKER_V1,
+            CAP_OAUTH_CARD_V1,
+            CAP_OAUTH_TOKEN_VALIDATION_V1,
+            CAP_OAUTH_PROVISIONING_V1,
+            CAP_OAUTH_DISCOVERY_V1,
+        ];
+        let unique: BTreeSet<_> = values.into_iter().collect();
+        assert_eq!(unique.len(), values.len());
     }
 }
