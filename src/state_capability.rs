@@ -96,11 +96,7 @@ impl StateOpPayload {
     }
 
     /// Creates a `Put` payload.
-    pub fn put(
-        namespace: impl Into<String>,
-        key: impl Into<String>,
-        value: Vec<u8>,
-    ) -> Self {
+    pub fn put(namespace: impl Into<String>, key: impl Into<String>, value: Vec<u8>) -> Self {
         Self {
             namespace: namespace.into(),
             key: key.into(),

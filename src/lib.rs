@@ -223,9 +223,6 @@ pub use run::RunResult;
 pub use run::{NodeFailure, NodeStatus, NodeSummary, RunStatus, TranscriptOffset};
 pub use schema_id::{IoSchemaSource, QaSchemaSource, SchemaId, SchemaSource, schema_id_for_cbor};
 pub use schema_registry::{SCHEMAS, SchemaDef};
-pub use state_capability::{
-    CAP_STATE_KV_V1, StateBackendKind, StateOp, StateOpPayload, StateOpResult,
-};
 #[deprecated(
     since = "0.4.52",
     note = "use schemas::component::v0_6_0::ComponentQaSpec"
@@ -246,6 +243,9 @@ pub use session::canonical_session_key;
 #[allow(deprecated)]
 pub use session::{ReplyScope, SessionCursor, SessionData, SessionKey, WaitScope};
 pub use state::{StateKey, StatePath};
+pub use state_capability::{
+    CAP_STATE_KV_V1, StateBackendKind, StateOp, StateOpPayload, StateOpResult,
+};
 pub use store::{
     ArtifactSelector, BundleSpec, CapabilityMap, Collection, ConnectionKind, DesiredState,
     DesiredStateExportSpec, DesiredSubscriptionEntry, Environment, LayoutSection,
