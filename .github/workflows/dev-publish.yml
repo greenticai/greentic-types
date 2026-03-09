@@ -59,13 +59,10 @@ jobs:
           override: true
       - uses: Swatinem/rust-cache@v2
 
-      - name: Configure Cloudsmith Registry
+      - name: Configure Cloudsmith Registry (via template)
         run: |
           mkdir -p .cargo
-          cat > .cargo/config.toml <<EOF
-          [registries.cloudsmith]
-          index = "sparse+https://cargo.cloudsmith.io/dmytrogreen/dev/"
-          EOF
+          cp ci/cargo-config-dev.toml .cargo/config.toml
 
       - name: Setup GitVersion
         uses: gittools/actions/gitversion/setup@v1
@@ -83,10 +80,22 @@ jobs:
           set -euo pipefail
           dev_version="${{ steps.gitversion.outputs.MajorMinorPatch }}-${{ steps.gitversion.outputs.PreReleaseTag }}"
           echo "Using dev version: ${dev_version}"
+          
+          # Update workspace version
           sed -i -E "0,/^version = \"[^\"]+\"/s//version = \"${dev_version}\"/" Cargo.toml
-          # Update internal workspace dependencies version
-          sed -i -E "s/(\s*version\s*=\s*\")([^\"]+)(\")/\1${dev_version}\3/g" Cargo.toml
+          
+          # Update path dependencies to use the new version and registry
+          # This is necessary because greentic-types depends on greentic-types-macros via path
+          sed -i -E "s/(greentic-types-macros\s*=\s*\{[^}]*path\s*=\s*\"[^\"]+\")[^}]*\}/\1, version = \"${dev_version}\" \}/" Cargo.toml
+          
       - name: Publish to Cloudsmith
         run: |
-          # Use --allow-dirty because we edited Cargo.toml for versioning
-          cargo publish --registry cloudsmith --allow-dirty
+          # Publish order matters: dependencies first
+          # 1. greentic-types-macros
+          cargo publish -p greentic-types-macros --registry cloudsmith --allow-dirty
+          
+          # Wait a bit for the index to update (optional but safer)
+          sleep 5
+          
+          # 2. greentic-types
+          cargo publish -p greentic-types --registry cloudsmith --allow-dirty
