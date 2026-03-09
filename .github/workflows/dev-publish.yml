@@ -84,9 +84,9 @@ jobs:
           # 1. Update workspace version in root Cargo.toml
           sed -i -E "0,/^version = \"[^\"]+\"/s//version = \"${dev_version}\"/" Cargo.toml
           
-          # 2. Update version of greentic-types-macros dependency in root Cargo.toml safely
-          # We search for the line and only replace the version string, preserving path/optional
-          sed -i -E "/greentic-types-macros/s/version = \"[^\"]+\"/version = \"${dev_version}\"/" Cargo.toml
+          # 2. Update version and registry of greentic-types-macros dependency in root Cargo.toml safely
+          # We search for the line and only replace the version string, adding registry="cloudsmith"
+          sed -i -E "/greentic-types-macros/s/version = \"[^\"]+\"/version = \"${dev_version}\", registry = \"cloudsmith\"/" Cargo.toml
           
       - name: Publish to Cloudsmith
         run: |
