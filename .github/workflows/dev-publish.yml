@@ -42,18 +42,31 @@ jobs:
         run: cargo check --workspace ${{ matrix.profile.args }}
 
   publish:
+    name: Publish dev crate to Cloudsmith
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     needs: [build-test, msrv]
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
+    env:
+      CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY || secrets.GH_PAT }}
+      CARGO_REGISTRIES_CLOUDSMITH_TOKEN: ${{ secrets.CLOUDSMITH_API_KEY || secrets.GH_PAT }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          override: true
       - uses: Swatinem/rust-cache@v2
+
+      - name: Configure Cloudsmith Registry
+        run: |
+          mkdir -p .cargo
+          cat > .cargo/config.toml <<EOF
+          [registries.cloudsmith]
+          index = "sparse+https://cargo.cloudsmith.io/dmytrogreen/dev/"
+          EOF
+
       - name: Setup GitVersion
         uses: gittools/actions/gitversion/setup@v1
         with:
@@ -71,13 +84,9 @@ jobs:
           dev_version="${{ steps.gitversion.outputs.MajorMinorPatch }}-${{ steps.gitversion.outputs.PreReleaseTag }}"
           echo "Using dev version: ${dev_version}"
           sed -i -E "0,/^version = \"[^\"]+\"/s//version = \"${dev_version}\"/" Cargo.toml
-          sed -i -E "s/(greentic-types-macros = \{[^}]*version = \")([^\"]+)(\"[^}]*\})/\1${dev_version}\3/" Cargo.toml
-      - name: Publish changed crates
-        uses: katyo/publish-crates@v2
-        with:
-          path: .
-          args: --allow-dirty
-          registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-          ignore-unpublished-changes: true
-          check-repo: false
-          dry-run: false
+          # Update internal workspace dependencies version
+          sed -i -E "s/(\s*version\s*=\s*\")([^\"]+)(\")/\1${dev_version}\3/g" Cargo.toml
+      - name: Publish to Cloudsmith
+        run: |
+          # Use --allow-dirty because we edited Cargo.toml for versioning
+          cargo publish --registry cloudsmith --allow-dirty
