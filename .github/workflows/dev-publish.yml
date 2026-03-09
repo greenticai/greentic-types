@@ -81,12 +81,12 @@ jobs:
           dev_version="${{ steps.gitversion.outputs.MajorMinorPatch }}-${{ steps.gitversion.outputs.PreReleaseTag }}"
           echo "Using dev version: ${dev_version}"
           
-          # Update workspace version
+          # 1. Update workspace version in root Cargo.toml
           sed -i -E "0,/^version = \"[^\"]+\"/s//version = \"${dev_version}\"/" Cargo.toml
           
-          # Update path dependencies to use the new version and registry
-          # This is necessary because greentic-types depends on greentic-types-macros via path
-          sed -i -E "s/(greentic-types-macros\s*=\s*\{[^}]*path\s*=\s*\"[^\"]+\")[^}]*\}/\1, version = \"${dev_version}\" \}/" Cargo.toml
+          # 2. Update version of greentic-types-macros dependency in root Cargo.toml safely
+          # We search for the line and only replace the version string, preserving path/optional
+          sed -i -E "/greentic-types-macros/s/version = \"[^\"]+\"/version = \"${dev_version}\"/" Cargo.toml
           
       - name: Publish to Cloudsmith
         run: |
