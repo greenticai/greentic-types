@@ -5,7 +5,7 @@ members = ["greentic-types-macros"]
 version = "0.4.55"
 edition = "2024"
 license = "MIT"
-repository = "https://github.com/greentic-ai/greentic-types"
+repository = "https://github.com/greenticai/greentic-types"
 readme = "README.md"
 description = "Shared primitives for Greentic: TenantCtx, InvocationEnvelope, NodeError, ids."
 keywords = ["greentic","tenant","ctx","envelope","wasm"]
@@ -77,3 +77,4 @@ proptest = "1"
 name = "export-schemas"
 path = "bin/export-schemas.rs"
 required-features = ["schema"]
+

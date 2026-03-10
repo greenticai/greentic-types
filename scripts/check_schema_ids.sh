@@ -3,8 +3,8 @@ set -euo pipefail
 
 # Candidate schema base URLs. During org migration, one of these may 404 temporarily.
 SCHEMA_BASES_DEFAULT=(
-  "https://greentic-ai.github.io/greentic-types/schemas/v1"
-  "https://greentic-ai-org.github.io/greentic-types/schemas/v1"
+  "https://greenticai.github.io/greentic-types/schemas/v1"
+  "https://greenticai-org.github.io/greentic-types/schemas/v1"
 )
 
 SCHEMA_BASES=()
@@ -91,3 +91,4 @@ PY
   fi
   echo "✔ $downloaded_url"
 done
+

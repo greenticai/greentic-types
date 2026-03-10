@@ -49,14 +49,14 @@
 //! ```
 //!
 //! Published JSON Schemas are listed in [`SCHEMAS.md`](SCHEMAS.md) and hosted under
-//! <https://greentic-ai.github.io/greentic-types/schemas/v1/>.
+//! <https://greenticai.github.io/greentic-types/schemas/v1/>.
 
 extern crate alloc;
 
 /// Crate version string exposed for telemetry and capability negotiation.
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 /// Base URL for all published JSON Schemas.
-pub const SCHEMA_BASE_URL: &str = "https://greentic-ai.github.io/greentic-types/schemas/v1";
+pub const SCHEMA_BASE_URL: &str = "https://greenticai.github.io/greentic-types/schemas/v1";
 
 pub mod adapters;
 pub mod bindings;
@@ -340,43 +340,43 @@ pub(crate) fn validate_api_key_ref(value: &str) -> GResult<()> {
 pub mod ids {
     /// Pack identifier schema.
     pub const PACK_ID: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/pack-id.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/pack-id.schema.json";
     /// Component identifier schema.
     pub const COMPONENT_ID: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/component-id.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/component-id.schema.json";
     /// Flow identifier schema.
     pub const FLOW_ID: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/flow-id.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/flow-id.schema.json";
     /// Node identifier schema.
     pub const NODE_ID: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/node-id.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/node-id.schema.json";
     /// Tenant context schema.
     pub const TENANT_CONTEXT: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/tenant-context.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/tenant-context.schema.json";
     /// Hash digest schema.
     pub const HASH_DIGEST: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/hash-digest.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/hash-digest.schema.json";
     /// Semantic version requirement schema.
     pub const SEMVER_REQ: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/semver-req.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/semver-req.schema.json";
     /// Redaction path schema.
     pub const REDACTION_PATH: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/redaction-path.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/redaction-path.schema.json";
     /// Capabilities schema.
     pub const CAPABILITIES: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/capabilities.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/capabilities.schema.json";
     /// RepoSkin (skin.json) schema.
     pub const REPO_SKIN: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/repo-skin.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/repo-skin.schema.json";
     /// RepoAuth (auth.json) schema.
     pub const REPO_AUTH: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/repo-auth.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/repo-auth.schema.json";
     /// RepoTenantConfig (config.json) schema.
     pub const REPO_TENANT_CONFIG: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/repo-tenant-config.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/repo-tenant-config.schema.json";
     /// Tenant DID document (did.json) schema.
     pub const TENANT_DID_DOCUMENT: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/tenant-did-document.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/tenant-did-document.schema.json";
     /// Flow schema.
     pub const FLOW: &str = "greentic.flow.v1";
     /// Flow resolve sidecar schema.
@@ -385,289 +385,289 @@ pub mod ids {
     pub const FLOW_RESOLVE_SUMMARY: &str = "greentic.flow.resolve-summary.v1";
     /// Node schema.
     pub const NODE: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/node.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/node.schema.json";
     /// Component manifest schema.
     pub const COMPONENT_MANIFEST: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/component-manifest.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/component-manifest.schema.json";
     /// Pack manifest schema.
     pub const PACK_MANIFEST: &str = "greentic.pack-manifest.v1";
     /// Validation severity schema.
     pub const VALIDATION_SEVERITY: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/validation-severity.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/validation-severity.schema.json";
     /// Validation diagnostic schema.
     pub const VALIDATION_DIAGNOSTIC: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/validation-diagnostic.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/validation-diagnostic.schema.json";
     /// Validation report schema.
     pub const VALIDATION_REPORT: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/validation-report.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/validation-report.schema.json";
     /// Provider manifest schema.
     pub const PROVIDER_MANIFEST: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/provider-manifest.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/provider-manifest.schema.json";
     /// Provider runtime reference schema.
     pub const PROVIDER_RUNTIME_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/provider-runtime-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/provider-runtime-ref.schema.json";
     /// Provider declaration schema.
     pub const PROVIDER_DECL: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/provider-decl.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/provider-decl.schema.json";
     /// Inline provider extension payload schema.
-    pub const PROVIDER_EXTENSION_INLINE: &str = "https://greentic-ai.github.io/greentic-types/schemas/v1/provider-extension-inline.schema.json";
+    pub const PROVIDER_EXTENSION_INLINE: &str = "https://greenticai.github.io/greentic-types/schemas/v1/provider-extension-inline.schema.json";
     /// Provider installation record schema.
-    pub const PROVIDER_INSTALL_RECORD: &str = "https://greentic-ai.github.io/greentic-types/schemas/v1/provider-install-record.schema.json";
+    pub const PROVIDER_INSTALL_RECORD: &str = "https://greenticai.github.io/greentic-types/schemas/v1/provider-install-record.schema.json";
     /// Limits schema.
     pub const LIMITS: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/limits.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/limits.schema.json";
     /// Telemetry spec schema.
     pub const TELEMETRY_SPEC: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/telemetry-spec.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/telemetry-spec.schema.json";
     /// Node summary schema.
     pub const NODE_SUMMARY: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/node-summary.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/node-summary.schema.json";
     /// Node failure schema.
     pub const NODE_FAILURE: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/node-failure.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/node-failure.schema.json";
     /// Node status schema.
     pub const NODE_STATUS: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/node-status.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/node-status.schema.json";
     /// Run status schema.
     pub const RUN_STATUS: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/run-status.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/run-status.schema.json";
     /// Transcript offset schema.
     pub const TRANSCRIPT_OFFSET: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/transcript-offset.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/transcript-offset.schema.json";
     /// Tools capability schema.
     pub const TOOLS_CAPS: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/tools-caps.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/tools-caps.schema.json";
     /// Secrets capability schema.
     pub const SECRETS_CAPS: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/secrets-caps.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/secrets-caps.schema.json";
     /// Branch reference schema.
     pub const BRANCH_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/branch-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/branch-ref.schema.json";
     /// Commit reference schema.
     pub const COMMIT_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/commit-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/commit-ref.schema.json";
     /// Git provider reference schema.
     pub const GIT_PROVIDER_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/git-provider-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/git-provider-ref.schema.json";
     /// Scanner provider reference schema.
     pub const SCANNER_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/scanner-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/scanner-ref.schema.json";
     /// Webhook identifier schema.
     pub const WEBHOOK_ID: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/webhook-id.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/webhook-id.schema.json";
     /// Provider installation identifier schema.
     pub const PROVIDER_INSTALL_ID: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/provider-install-id.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/provider-install-id.schema.json";
     /// Repository reference schema.
     pub const REPO_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/repo-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/repo-ref.schema.json";
     /// Component reference schema.
     pub const COMPONENT_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/component-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/component-ref.schema.json";
     /// Version reference schema.
     pub const VERSION_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/version-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/version-ref.schema.json";
     /// Build reference schema.
     pub const BUILD_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/build-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/build-ref.schema.json";
     /// Scan reference schema.
     pub const SCAN_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/scan-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/scan-ref.schema.json";
     /// Attestation reference schema.
     pub const ATTESTATION_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/attestation-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/attestation-ref.schema.json";
     /// Attestation id schema.
     pub const ATTESTATION_ID: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/attestation-id.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/attestation-id.schema.json";
     /// Policy reference schema.
     pub const POLICY_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/policy-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/policy-ref.schema.json";
     /// Policy input reference schema.
     pub const POLICY_INPUT_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/policy-input-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/policy-input-ref.schema.json";
     /// Store reference schema.
     pub const STORE_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/store-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/store-ref.schema.json";
     /// Registry reference schema.
     pub const REGISTRY_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/registry-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/registry-ref.schema.json";
     /// OCI image reference schema.
     pub const OCI_IMAGE_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/oci-image-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/oci-image-ref.schema.json";
     /// Artifact reference schema.
     pub const ARTIFACT_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/artifact-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/artifact-ref.schema.json";
     /// SBOM reference schema.
     pub const SBOM_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/sbom-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/sbom-ref.schema.json";
     /// Signing key reference schema.
     pub const SIGNING_KEY_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/signing-key-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/signing-key-ref.schema.json";
     /// Signature reference schema.
     pub const SIGNATURE_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/signature-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/signature-ref.schema.json";
     /// Statement reference schema.
     pub const STATEMENT_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/statement-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/statement-ref.schema.json";
     /// Build log reference schema.
     pub const BUILD_LOG_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/build-log-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/build-log-ref.schema.json";
     /// Metadata record reference schema.
     pub const METADATA_RECORD_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/metadata-record-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/metadata-record-ref.schema.json";
     /// API key reference schema.
     pub const API_KEY_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/api-key-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/api-key-ref.schema.json";
     /// Environment reference schema.
     pub const ENVIRONMENT_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/environment-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/environment-ref.schema.json";
     /// Distributor reference schema.
     pub const DISTRIBUTOR_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/distributor-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/distributor-ref.schema.json";
     /// Storefront identifier schema.
     pub const STOREFRONT_ID: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/storefront-id.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/storefront-id.schema.json";
     /// Store product identifier schema.
     pub const STORE_PRODUCT_ID: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/store-product-id.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/store-product-id.schema.json";
     /// Store plan identifier schema.
     pub const STORE_PLAN_ID: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/store-plan-id.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/store-plan-id.schema.json";
     /// Subscription identifier schema.
     pub const SUBSCRIPTION_ID: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/subscription-id.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/subscription-id.schema.json";
     /// Bundle identifier schema.
     pub const BUNDLE_ID: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/bundle-id.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/bundle-id.schema.json";
     /// Collection identifier schema.
     pub const COLLECTION_ID: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/collection-id.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/collection-id.schema.json";
     /// Artifact selector schema.
     pub const ARTIFACT_SELECTOR: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/artifact-selector.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/artifact-selector.schema.json";
     /// Capability map schema.
     pub const CAPABILITY_MAP: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/capability-map.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/capability-map.schema.json";
     /// Store product kind schema.
     pub const STORE_PRODUCT_KIND: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/store-product-kind.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/store-product-kind.schema.json";
     /// Version strategy schema.
     pub const VERSION_STRATEGY: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/version-strategy.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/version-strategy.schema.json";
     /// Rollout status schema.
     pub const ROLLOUT_STATUS: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/rollout-status.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/rollout-status.schema.json";
     /// Connection kind schema.
     pub const CONNECTION_KIND: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/connection-kind.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/connection-kind.schema.json";
     /// Pack or component reference schema.
     pub const PACK_OR_COMPONENT_REF: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/pack-or-component-ref.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/pack-or-component-ref.schema.json";
     /// Plan limits schema.
     pub const PLAN_LIMITS: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/plan-limits.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/plan-limits.schema.json";
     /// Price model schema.
     pub const PRICE_MODEL: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/price-model.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/price-model.schema.json";
     /// Subscription status schema.
     pub const SUBSCRIPTION_STATUS: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/subscription-status.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/subscription-status.schema.json";
     /// Build plan schema.
     pub const BUILD_PLAN: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/build-plan.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/build-plan.schema.json";
     /// Build status schema.
     pub const BUILD_STATUS: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/build-status.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/build-status.schema.json";
     /// Scan request schema.
     pub const SCAN_REQUEST: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/scan-request.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/scan-request.schema.json";
     /// Scan result schema.
     pub const SCAN_RESULT: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/scan-result.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/scan-result.schema.json";
     /// Sign request schema.
     pub const SIGN_REQUEST: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/sign-request.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/sign-request.schema.json";
     /// Verify request schema.
     pub const VERIFY_REQUEST: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/verify-request.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/verify-request.schema.json";
     /// Verify result schema.
     pub const VERIFY_RESULT: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/verify-result.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/verify-result.schema.json";
     /// Attestation statement schema.
     pub const ATTESTATION_STATEMENT: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/attestation-statement.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/attestation-statement.schema.json";
     /// Metadata record schema.
     pub const METADATA_RECORD: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/metadata-record.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/metadata-record.schema.json";
     /// Repository context schema.
     pub const REPO_CONTEXT: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/repo-context.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/repo-context.schema.json";
     /// Store context schema.
     pub const STORE_CONTEXT: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/store-context.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/store-context.schema.json";
     /// Bundle schema.
     pub const BUNDLE: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/bundle.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/bundle.schema.json";
     /// Bundle export specification schema.
     pub const DESIRED_STATE_EXPORT: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/desired-state-export.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/desired-state-export.schema.json";
     /// Desired state schema.
     pub const DESIRED_STATE: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/desired-state.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/desired-state.schema.json";
     /// Desired subscription entry schema.
-    pub const DESIRED_SUBSCRIPTION_ENTRY: &str = "https://greentic-ai.github.io/greentic-types/schemas/v1/desired-subscription-entry.schema.json";
+    pub const DESIRED_SUBSCRIPTION_ENTRY: &str = "https://greenticai.github.io/greentic-types/schemas/v1/desired-subscription-entry.schema.json";
     /// Storefront schema.
     pub const STOREFRONT: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/storefront.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/storefront.schema.json";
     /// Store product schema.
     pub const STORE_PRODUCT: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/store-product.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/store-product.schema.json";
     /// Store plan schema.
     pub const STORE_PLAN: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/store-plan.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/store-plan.schema.json";
     /// Subscription schema.
     pub const SUBSCRIPTION: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/subscription.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/subscription.schema.json";
     /// Environment schema.
     pub const ENVIRONMENT: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/environment.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/environment.schema.json";
     /// Store theme schema.
     pub const THEME: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/theme.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/theme.schema.json";
     /// Layout section schema.
     pub const LAYOUT_SECTION: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/layout-section.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/layout-section.schema.json";
     /// Collection schema.
     pub const COLLECTION: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/collection.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/collection.schema.json";
     /// Product override schema.
     pub const PRODUCT_OVERRIDE: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/product-override.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/product-override.schema.json";
     /// Event envelope schema.
     pub const EVENT_ENVELOPE: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/event-envelope.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/event-envelope.schema.json";
     /// Event provider descriptor schema.
-    pub const EVENT_PROVIDER_DESCRIPTOR: &str = "https://greentic-ai.github.io/greentic-types/schemas/v1/event-provider-descriptor.schema.json";
+    pub const EVENT_PROVIDER_DESCRIPTOR: &str = "https://greenticai.github.io/greentic-types/schemas/v1/event-provider-descriptor.schema.json";
     /// Channel message envelope schema.
-    pub const CHANNEL_MESSAGE_ENVELOPE: &str = "https://greentic-ai.github.io/greentic-types/schemas/v1/channel-message-envelope.schema.json";
+    pub const CHANNEL_MESSAGE_ENVELOPE: &str = "https://greenticai.github.io/greentic-types/schemas/v1/channel-message-envelope.schema.json";
     /// Attachment schema.
     pub const ATTACHMENT: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/attachment.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/attachment.schema.json";
     /// Worker request envelope schema.
     pub const WORKER_REQUEST: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/worker-request.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/worker-request.schema.json";
     /// Worker message schema.
     pub const WORKER_MESSAGE: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/worker-message.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/worker-message.schema.json";
     /// Worker response envelope schema.
     pub const WORKER_RESPONSE: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/worker-response.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/worker-response.schema.json";
     /// OTLP attribute key schema.
     pub const OTLP_KEYS: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/otlp-keys.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/otlp-keys.schema.json";
     /// Run result schema.
     pub const RUN_RESULT: &str =
-        "https://greentic-ai.github.io/greentic-types/schemas/v1/run-result.schema.json";
+        "https://greenticai.github.io/greentic-types/schemas/v1/run-result.schema.json";
 }
 
 #[cfg(all(feature = "schema", feature = "std"))]
@@ -1708,3 +1708,4 @@ mod tests {
         assert!(err.source().is_some());
     }
 }
+
