@@ -88,23 +88,13 @@ jobs:
           dev_version="${{ steps.gitversion.outputs.MajorMinorPatch }}-${{ steps.gitversion.outputs.PreReleaseTag }}"
           echo "Using dev version: ${dev_version}"
           
-          # 1. Update workspace version in root Cargo.toml
           sed -i -E "0,/^version = \"[^\"]+\"/s//version = \"${dev_version}\"/" Cargo.toml
-          
-          # 2. Update version and registry of greentic-types-macros dependency in root Cargo.toml safely
-          # We search for the line and only replace the version string, adding registry="cloudsmith"
           sed -i -E "/greentic-types-macros/s/version = \"[^\"]+\"/version = \"${dev_version}\", registry = \"cloudsmith\"/" Cargo.toml
           
       - name: Publish to Cloudsmith
         run: |
-          # Publish order matters: dependencies first
-          # 1. greentic-types-macros
           cargo publish -p greentic-types-macros --registry cloudsmith --allow-dirty
-          
-          # Wait a bit for the index to update (optional but safer)
           sleep 5
-          
-          # 2. greentic-types
           cargo publish -p greentic-types --registry cloudsmith --allow-dirty
 
       - name: Create Tag
