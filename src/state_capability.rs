@@ -337,8 +337,14 @@ mod tests {
     #[test]
     fn state_op_payload_json_roundtrip() {
         let original = StateOpPayload::put("ns", "key", b"hello".to_vec()).with_ttl(300);
-        let json = serde_json::to_string(&original).expect("serialize");
-        let decoded: StateOpPayload = serde_json::from_str(&json).expect("deserialize");
+        let json = match serde_json::to_string(&original) {
+            Ok(value) => value,
+            Err(err) => panic!("serialize failed: {err}"),
+        };
+        let decoded: StateOpPayload = match serde_json::from_str(&json) {
+            Ok(value) => value,
+            Err(err) => panic!("deserialize failed: {err}"),
+        };
         assert_eq!(decoded.namespace, "ns");
         assert_eq!(decoded.key, "key");
         assert_eq!(decoded.value, Some(b"hello".to_vec()));
@@ -348,8 +354,14 @@ mod tests {
     #[test]
     fn state_op_result_json_roundtrip() {
         let original = StateOpResult::found(b"world".to_vec()).with_version(42);
-        let json = serde_json::to_string(&original).expect("serialize");
-        let decoded: StateOpResult = serde_json::from_str(&json).expect("deserialize");
+        let json = match serde_json::to_string(&original) {
+            Ok(value) => value,
+            Err(err) => panic!("serialize failed: {err}"),
+        };
+        let decoded: StateOpResult = match serde_json::from_str(&json) {
+            Ok(value) => value,
+            Err(err) => panic!("deserialize failed: {err}"),
+        };
         assert!(decoded.found);
         assert_eq!(decoded.value, Some(b"world".to_vec()));
         assert_eq!(decoded.version, Some(42));
@@ -361,9 +373,15 @@ mod tests {
             max_entries: 10000,
             default_ttl_seconds: 0,
         };
-        let json = serde_json::to_string(&memory).expect("serialize");
+        let json = match serde_json::to_string(&memory) {
+            Ok(value) => value,
+            Err(err) => panic!("serialize failed: {err}"),
+        };
         assert!(json.contains("\"backend\":\"memory\""));
-        let decoded: StateBackendKind = serde_json::from_str(&json).expect("deserialize");
+        let decoded: StateBackendKind = match serde_json::from_str(&json) {
+            Ok(value) => value,
+            Err(err) => panic!("deserialize failed: {err}"),
+        };
         assert_eq!(decoded, memory);
 
         let redis = StateBackendKind::Redis {
@@ -373,9 +391,15 @@ mod tests {
             pool_size: 10,
             tls_enabled: false,
         };
-        let json = serde_json::to_string(&redis).expect("serialize");
+        let json = match serde_json::to_string(&redis) {
+            Ok(value) => value,
+            Err(err) => panic!("serialize failed: {err}"),
+        };
         assert!(json.contains("\"backend\":\"redis\""));
-        let decoded: StateBackendKind = serde_json::from_str(&json).expect("deserialize");
+        let decoded: StateBackendKind = match serde_json::from_str(&json) {
+            Ok(value) => value,
+            Err(err) => panic!("deserialize failed: {err}"),
+        };
         assert_eq!(decoded, redis);
     }
 }
