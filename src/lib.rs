@@ -102,6 +102,7 @@ pub mod schemas;
 pub mod secrets;
 pub mod session;
 pub mod state;
+pub mod state_capability;
 pub mod telemetry;
 pub mod tenant;
 pub mod tenant_config;
@@ -232,6 +233,7 @@ pub use schemas::component::v0_6_0::{
     ComponentQaSpec, ComponentRunInput, ComponentRunOutput, QaMode as ComponentQaMode,
     Question as ComponentQuestion, QuestionKind as ComponentQuestionKind,
     RedactionKind as ComponentRedactionKind, RedactionRule as ComponentRedactionRule,
+    SkipCondition as ComponentSkipCondition, SkipExpression as ComponentSkipExpression,
 };
 pub use schemas::pack::v0_6_0::{
     CapabilityDescriptor, CapabilityMetadata, PackDescribe, PackInfo, PackQaSpec,
@@ -242,6 +244,9 @@ pub use session::canonical_session_key;
 #[allow(deprecated)]
 pub use session::{ReplyScope, SessionCursor, SessionData, SessionKey, WaitScope};
 pub use state::{StateKey, StatePath};
+pub use state_capability::{
+    CAP_STATE_KV_V1, StateBackendKind, StateOp, StateOpPayload, StateOpResult,
+};
 pub use store::{
     ArtifactSelector, BundleSpec, CapabilityMap, Collection, ConnectionKind, DesiredState,
     DesiredStateExportSpec, DesiredSubscriptionEntry, Environment, LayoutSection,
