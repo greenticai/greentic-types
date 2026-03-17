@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file.
 - Extended shared models with tenant attributes, supply-chain and policy/distribution refs (branch/commit/webhook/version/attestation/policy-input/oci/build-log), Environment name + helper, RolloutStatus, CapabilityMap as open map, VersionStrategy tagged+legacy serde, PolicyDecision status/reasons, optional attestation IDs, and updated schema exports + round-trip tests.
 - Added `PackKind` to `PackManifest`, optional `host.iac` capabilities for components, and the generic `DeploymentPlan` family shared across runner/deployer repositories.
 - Added the schema exporter binary, GitHub Pages workflow, and [`SCHEMAS.md`](SCHEMAS.md) so IDEs/CLIs can validate documents against canonical `$id`s.
-- Documented feature flags + MSRV (Rust 1.90), introduced the `schema`/`otel-keys` flags, and exposed the crate `VERSION` constant.
+- Documented feature flags + MSRV (Rust 1.91), introduced the `schema`/`otel-keys` flags, and exposed the crate `VERSION` constant.
 - Hardened ID newtypes and `SemverReq` with `FromStr`/`TryFrom` implementations, serde guards, and property tests ensuring invalid identifiers cannot deserialize.
 - Added CI checks for duplicate struct definitions and public schema `$id` sanity.
 - Added `pack_spec` module with canonical `PackSpec` and `ToolSpec` structures for `pack.yaml` parsing.

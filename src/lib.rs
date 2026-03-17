@@ -87,6 +87,7 @@ pub mod schema_id;
 pub mod schema_registry;
 pub mod store;
 pub mod supply_chain;
+pub mod wizard;
 pub mod worker;
 
 pub mod context;
@@ -101,6 +102,7 @@ pub mod schemas;
 pub mod secrets;
 pub mod session;
 pub mod state;
+pub mod state_capability;
 pub mod telemetry;
 pub mod tenant;
 pub mod tenant_config;
@@ -175,6 +177,16 @@ pub use messaging::{
 };
 pub use op_descriptor::{IoSchema, OpDescriptor, OpExample};
 pub use outcome::Outcome;
+pub use pack::extensions::capabilities::{
+    CapabilitiesExtensionError, CapabilitiesExtensionV1, CapabilityHookAppliesToV1,
+    CapabilityOfferV1, CapabilityProviderRefV1, CapabilityScopeV1, CapabilitySetupV1,
+    EXT_CAPABILITIES_V1,
+};
+#[cfg(feature = "serde")]
+pub use pack::extensions::capabilities::{
+    decode_capabilities_extension_v1_from_cbor_bytes,
+    encode_capabilities_extension_v1_to_cbor_bytes,
+};
 pub use pack::extensions::component_manifests::{
     ComponentManifestIndexEntryV1, ComponentManifestIndexError, ComponentManifestIndexV1,
     EXT_COMPONENT_MANIFEST_INDEX_V1, ManifestEncoding,
@@ -211,12 +223,17 @@ pub use run::RunResult;
 pub use run::{NodeFailure, NodeStatus, NodeSummary, RunStatus, TranscriptOffset};
 pub use schema_id::{IoSchemaSource, QaSchemaSource, SchemaId, SchemaSource, schema_id_for_cbor};
 pub use schema_registry::{SCHEMAS, SchemaDef};
+#[deprecated(
+    since = "0.4.52",
+    note = "use schemas::component::v0_6_0::ComponentQaSpec"
+)]
 pub use schemas::component::v0_5_0::LegacyComponentQaSpec;
 pub use schemas::component::v0_6_0::{
     ComponentDescribe, ComponentInfo, ComponentOperation as ComponentDescribeOperation,
     ComponentQaSpec, ComponentRunInput, ComponentRunOutput, QaMode as ComponentQaMode,
     Question as ComponentQuestion, QuestionKind as ComponentQuestionKind,
     RedactionKind as ComponentRedactionKind, RedactionRule as ComponentRedactionRule,
+    SkipCondition as ComponentSkipCondition, SkipExpression as ComponentSkipExpression,
 };
 pub use schemas::pack::v0_6_0::{
     CapabilityDescriptor, CapabilityMetadata, PackDescribe, PackInfo, PackQaSpec,
@@ -224,8 +241,12 @@ pub use schemas::pack::v0_6_0::{
 };
 pub use secrets::{SecretFormat, SecretKey, SecretRequirement, SecretScope};
 pub use session::canonical_session_key;
+#[allow(deprecated)]
 pub use session::{ReplyScope, SessionCursor, SessionData, SessionKey, WaitScope};
 pub use state::{StateKey, StatePath};
+pub use state_capability::{
+    CAP_STATE_KV_V1, StateBackendKind, StateOp, StateOpPayload, StateOpResult,
+};
 pub use store::{
     ArtifactSelector, BundleSpec, CapabilityMap, Collection, ConnectionKind, DesiredState,
     DesiredStateExportSpec, DesiredSubscriptionEntry, Environment, LayoutSection,
@@ -254,6 +275,7 @@ pub use validate::{
     Diagnostic, PackValidator, Severity, ValidationCounts, ValidationReport,
     validate_pack_manifest_core,
 };
+pub use wizard::{WizardId, WizardMode, WizardPlan, WizardPlanMeta, WizardStep, WizardTarget};
 pub use worker::{WorkerMessage, WorkerRequest, WorkerResponse};
 
 #[cfg(feature = "schemars")]

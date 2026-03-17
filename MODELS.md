@@ -1,5 +1,9 @@
 # Greentic Model Guidelines
 
+> [!IMPORTANT]
+> Canonical v0.6 model guidance is documented in [`docs/vision/canonical-v0.6.md`](docs/vision/canonical-v0.6.md).
+> Legacy/compatibility notes are tracked in [`docs/vision/legacy.md`](docs/vision/legacy.md).
+
 Greentic packs, flows, and components deliberately keep semantics opaque so the same types apply to
 every domain. The models exported by `greentic-types` follow three simple rules:
 

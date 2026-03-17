@@ -1,6 +1,6 @@
 #![cfg(feature = "schemars")]
 
-use greentic_types::{Outcome, PackRef, SpanContext, TenantCtx};
+use greentic_types::{Outcome, PackRef, SpanContext, TenantCtx, WizardPlan};
 use schemars::{JsonSchema, schema_for};
 use serde_json::Value;
 
@@ -57,4 +57,14 @@ fn outcome_schema_enumerates_variants() {
         .map(|list| list.len())
         .unwrap_or_default();
     assert!(variants >= 3, "Outcome schema should declare variants");
+}
+
+#[test]
+fn wizard_plan_schema_has_delegate_variant() {
+    let value = schema_value::<WizardPlan>();
+    let serialized = serde_json::to_string(&value).expect("schema string");
+    assert!(
+        serialized.contains("\"delegate\""),
+        "WizardPlan schema should include delegate step variant"
+    );
 }

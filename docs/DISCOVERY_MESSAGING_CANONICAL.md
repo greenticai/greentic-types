@@ -2,6 +2,9 @@
 
 This discovery note records the canonical channel messaging contract that every adapter and pack in Greentic shares.
 
+> [!NOTE]
+> This page documents shared messaging envelope types. JSON-over-HTTP usage described below is compatibility-oriented wire behavior. New core runtime contracts should follow canonical v0.6 CBOR-first guidance in [`vision/canonical-v0.6.md`](vision/canonical-v0.6.md).
+
 ## ChannelMessageEnvelope (universal message)
 Every inbound or outbound adapter exchanges a `ChannelMessageEnvelope` so the core runtime can treat all channels the same. The envelope packs the following cross-cutting context:
 

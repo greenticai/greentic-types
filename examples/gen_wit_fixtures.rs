@@ -123,6 +123,7 @@ fn write_component_qa(path: impl AsRef<Path>) {
         kind: ComponentQuestionKind::Text,
         required: true,
         default: None,
+        skip_if: None,
     };
 
     let spec = ComponentQaSpec {

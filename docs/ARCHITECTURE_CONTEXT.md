@@ -1,5 +1,9 @@
 # Architecture context
 
+> [!WARNING]
+> This document primarily describes compatibility adapters for legacy schemas.
+> For canonical v0.6 design targets, see [`vision/canonical-v0.6.md`](vision/canonical-v0.6.md).
+
 ## Legacy adapters
 Legacy migration adapters live under `src/adapters/` and map a supported legacy schema module
 (e.g., `src/schemas/component/v0_5_0/`) into the canonical v0.6.0 CBOR schemas.

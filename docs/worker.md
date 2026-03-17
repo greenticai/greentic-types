@@ -2,6 +2,10 @@
 
 `WorkerRequest`, `WorkerResponse`, and `WorkerMessage` define the shared, domain-agnostic worker envelope used across Greentic services. They mirror the `greentic:worker@1.0.0` WIT package and are intentionally generic: no repo/store/channel concepts leak into these shapes.
 
+> [!WARNING]
+> These worker envelopes use `payload_json` and are retained as compatibility transport models.
+> For new core runtime contract work, prefer canonical v0.6 CBOR-first envelopes and schemas.
+
 ## WorkerRequest
 - `version: String` – envelope version (set to `"1.0"` for now).
 - `tenant: TenantCtx` – tenant context propagated to the worker.

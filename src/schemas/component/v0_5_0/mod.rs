@@ -5,4 +5,8 @@
 
 pub mod qa;
 
+#[deprecated(
+    since = "0.4.52",
+    note = "use schemas::component::v0_6_0::ComponentQaSpec"
+)]
 pub use qa::LegacyComponentQaSpec;

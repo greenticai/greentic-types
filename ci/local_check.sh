@@ -106,16 +106,16 @@ else
   echo "[skip] schema ID verification (set LOCAL_CHECK_ONLINE=1 to enable)"
 fi
 
-# MSRV checks via rustup toolchain 1.90.0
+# MSRV checks via rustup toolchain 1.91.0
 if need rustup; then
-  if has_toolchain "1.90.0"; then
-    run_required "cargo +1.90.0 check" rustup run 1.90.0 cargo check --workspace
-    run_required "cargo +1.90.0 check --features schema" \
-      rustup run 1.90.0 cargo check --workspace --features schema
+  if has_toolchain "1.91.0"; then
+    run_required "cargo +1.91.0 check" rustup run 1.91.0 cargo check --workspace
+    run_required "cargo +1.91.0 check --features schema" \
+      rustup run 1.91.0 cargo check --workspace --features schema
   else
-    echo "[skip] MSRV cargo check (install rustup toolchain 1.90.0)"
+    echo "[skip] MSRV cargo check (install rustup toolchain 1.91.0)"
     if [[ "$STRICT" == "1" ]]; then
-      echo "Missing rustup toolchain 1.90.0" >&2
+      echo "Missing rustup toolchain 1.91.0" >&2
       exit 1
     fi
   fi

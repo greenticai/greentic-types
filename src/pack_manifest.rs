@@ -6,6 +6,9 @@ use alloc::vec::Vec;
 
 use semver::Version;
 
+use crate::pack::extensions::capabilities::{
+    CapabilitiesExtensionError, CapabilitiesExtensionV1, EXT_CAPABILITIES_V1,
+};
 use crate::pack::extensions::component_sources::{
     ComponentSourcesError, ComponentSourcesV1, EXT_COMPONENT_SOURCES_V1,
 };
@@ -348,6 +351,46 @@ impl PackManifest {
             EXT_COMPONENT_SOURCES_V1.to_string(),
             ExtensionRef {
                 kind: EXT_COMPONENT_SOURCES_V1.to_string(),
+                version: "1.0.0".to_string(),
+                digest: None,
+                location: None,
+                inline: Some(ExtensionInline::Other(inline)),
+            },
+        );
+        Ok(())
+    }
+
+    /// Returns the capabilities extension payload if present.
+    #[cfg(feature = "serde")]
+    pub fn get_capabilities_extension_v1(
+        &self,
+    ) -> Result<Option<CapabilitiesExtensionV1>, CapabilitiesExtensionError> {
+        let extension = self
+            .extensions
+            .as_ref()
+            .and_then(|extensions| extensions.get(EXT_CAPABILITIES_V1));
+        let inline = match extension.and_then(|entry| entry.inline.as_ref()) {
+            Some(ExtensionInline::Other(value)) => value,
+            Some(_) => return Err(CapabilitiesExtensionError::UnexpectedInline),
+            None => return Ok(None),
+        };
+        let payload = CapabilitiesExtensionV1::from_extension_value(inline)?;
+        Ok(Some(payload))
+    }
+
+    /// Sets the capabilities extension payload.
+    #[cfg(feature = "serde")]
+    pub fn set_capabilities_extension_v1(
+        &mut self,
+        capabilities: CapabilitiesExtensionV1,
+    ) -> Result<(), CapabilitiesExtensionError> {
+        capabilities.validate()?;
+        let inline = capabilities.to_extension_value()?;
+        let extensions = self.extensions.get_or_insert_with(BTreeMap::new);
+        extensions.insert(
+            EXT_CAPABILITIES_V1.to_string(),
+            ExtensionRef {
+                kind: EXT_CAPABILITIES_V1.to_string(),
                 version: "1.0.0".to_string(),
                 digest: None,
                 location: None,

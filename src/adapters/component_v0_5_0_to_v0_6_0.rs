@@ -79,6 +79,7 @@ fn map_question(question: &crate::schemas::component::v0_5_0::qa::LegacyQuestion
         kind: map_kind(question),
         required: question.required,
         default: question.default.clone(),
+        skip_if: None,
     }
 }
 

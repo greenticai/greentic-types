@@ -7,7 +7,7 @@ use greentic_types::{
     PolicyDecision, PolicyDecisionStatus, RedactionPath, RunStatus, ScannerRef, SecretRequirement,
     SecretsCaps, SemverReq, SessionCursor, SessionKey, Signature, SignatureAlgorithm, SpanContext,
     StateKey, StatePath, TelemetrySpec, TenantContext, TenantCtx, TenantIdentity, ToolsCaps,
-    TranscriptOffset,
+    TranscriptOffset, WizardMode, WizardPlan, WizardPlanMeta, WizardStep, WizardTarget,
 };
 #[cfg(feature = "time")]
 use greentic_types::{FlowId, RunResult};
@@ -253,6 +253,45 @@ fn provider_ref_schemas_use_canonical_ids() {
 fn pack_id_deserialize_rejects_invalid() {
     let err = serde_json::from_str::<PackId>("\"bad id\"").expect_err("should fail");
     assert!(err.is_data());
+}
+
+#[test]
+fn wizard_plan_roundtrip() {
+    let mut files = BTreeMap::new();
+    files.insert(
+        "packs/demo/pack.yaml".into(),
+        "name: demo\nversion: 0.1.0\n".into(),
+    );
+
+    let mut prefilled_answers = BTreeMap::new();
+    prefilled_answers.insert("tenant".into(), serde_json::json!("acme"));
+    prefilled_answers.insert("replicas".into(), serde_json::json!(2));
+
+    let mut output_map = BTreeMap::new();
+    output_map.insert("component_id".into(), "wizard.component_id".into());
+
+    let plan = WizardPlan {
+        meta: WizardPlanMeta {
+            id: "pack-init".into(),
+            target: WizardTarget::Pack,
+            mode: WizardMode::Setup,
+        },
+        steps: vec![
+            WizardStep::EnsureDir {
+                paths: vec!["packs/demo".into()],
+            },
+            WizardStep::WriteFiles { files },
+            WizardStep::Delegate {
+                target: WizardTarget::Component,
+                id: "component-setup".into(),
+                mode: WizardMode::Scaffold,
+                prefilled_answers,
+                output_map,
+            },
+        ],
+    };
+
+    assert_roundtrip(&plan);
 }
 
 #[test]

@@ -1,5 +1,9 @@
 # Migration Guide
 
+> [!WARNING]
+> This file is compatibility guidance.
+> Canonical v0.6 contract docs are in [`docs/vision/canonical-v0.6.md`](docs/vision/canonical-v0.6.md).
+
 ## QA Mode Rename: `upgrade` -> `update` (v0.6 schemas)
 
 `greentic-types` now uses `update` as the canonical QA lifecycle mode name in v0.6 pack/component QA schemas.

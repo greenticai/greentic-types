@@ -3,6 +3,18 @@
 Shared primitives for Greentic’s next-generation runner, deployer, connectors, packs, and state/session backends.  
 Every repository in the `greentic-ng` stack depends on these types to exchange tenant identity, session cursors, state pointers, policy decisions, pack references, and canonical error/outcome envelopes.
 
+> [!IMPORTANT]
+> This README now teaches the canonical v0.6 path first.
+> Legacy and compatibility guidance lives in:
+> - [`docs/vision/legacy.md`](docs/vision/legacy.md)
+> - [`docs/vision/deprecations.md`](docs/vision/deprecations.md)
+
+## Canonical v0.6 docs
+
+- Vision index: [`docs/vision/README.md`](docs/vision/README.md)
+- Canonical contract: [`docs/vision/canonical-v0.6.md`](docs/vision/canonical-v0.6.md)
+- Full docs index: [`docs/README.md`](docs/README.md)
+
 ## Feature flags & MSRV
 
 - **Default (`std`, `serde`, `time`, `otel-keys`)** – the recommended configuration for runners, CLIs, and tooling.
@@ -11,7 +23,7 @@ Every repository in the `greentic-ng` stack depends on these types to exchange t
 - **`telemetry-autoinit`** – bundles the OTLP stack and task-local span helpers.
 - **`uuid`** – adds UUID-based constructors for `SessionKey`.
 
-MSRV: **Rust 1.90** (required by the 2024 edition). The MSRV is enforced in CI; when bumping it, update both `Cargo.toml` and the workflow matrix.
+MSRV: **Rust 1.91** (required by the 2024 edition). The MSRV is enforced in CI; when bumping it, update both `Cargo.toml` and the workflow matrix.
 
 Disable defaults for fully `no_std` builds:
 ```toml
@@ -104,9 +116,11 @@ and canonical CBOR fixtures enforce lockstep so encode/decode stays deterministi
 Component tooling should treat `describe()` as authoritative; if `component-schema.*` endpoints are
 present, they must return SchemaIR that matches the embedded schemas after canonicalization.
 
-### Worker envelope
+### Worker envelope (compat transport model)
 - `WorkerRequest`, `WorkerResponse`, and `WorkerMessage` are the shared worker envelope models, mirroring the `greentic:worker@1.0.0` WIT package.
-- They are domain-agnostic (no repo/store/channel concepts) and are shared between runner and messaging. See [docs/worker.md](docs/worker.md) for field breakdowns and usage notes.
+- They are domain-agnostic (no repo/store/channel concepts) and are shared between runner and messaging.
+- `payload_json` fields remain compatibility-oriented transport fields; prefer canonical v0.6 CBOR runtime envelopes for new runtime contracts.
+- See [docs/worker.md](docs/worker.md) for details.
 
 ## Telemetry (auto-init)
 - Enable with `features = ["telemetry-autoinit"]` to bundle the OTLP stack and entry-point macro.
@@ -146,7 +160,7 @@ Read [MODELS.md](MODELS.md) for the guiding principles: IDs are opaque strings, 
 ## Harmonised model
 - **SecretRequirement (from `greentic-types`)** – canonical secret metadata (key/scope/format/description/schema/examples) reused across capabilities, bindings, and deployment plans. Downstream crates must depend on this crate and must not redefine secrets requirement structs. All repos must use these helpers; local re-implementation is forbidden.
 - **Environment & deployment identifiers** *(do not duplicate)* – `EnvId` is the single environment identifier on every invocation via `TenantCtx.env`; `EnvironmentRef` appears on rollout/registry records and should correspond to an `EnvId`-named environment; `DeploymentCtx` (with `Cloud` + `Platform`) is the canonical “where am I running” descriptor; `ConnectionKind` is the online vs. offline/air-gapped flag. Downstream crates such as `greentic-config` must reference these instead of redefining environment/location/connectivity enums.
-- **TenantCtx & TenantIdentity** – shared across runner, connectors, and state/session stores; keeps legacy (`tenant`, `team`, `user`) and next-gen (`tenant_id`, `team_id`, `user_id`, `impersonation`) fields aligned.
+- **TenantCtx & TenantIdentity** – shared across runner, connectors, and state/session stores; legacy (`tenant`, `team`, `user`) fields remain for migration compatibility while canonical v0.6 guidance lives in [`docs/vision/canonical-v0.6.md`](docs/vision/canonical-v0.6.md).
 - **SessionKey/SessionCursor** – referenced by session routers and state stores.
 - **StateKey/StatePath** – JSON pointer compatible navigation for persisted state.
 - **Outcome<T> & GreenticError** – canonical execution envelope for nodes, adapters, and tools.

@@ -1,5 +1,9 @@
 # JSON Schema Publishing
 
+> [!IMPORTANT]
+> This page lists published schema artifacts.
+> Canonical vs legacy contract policy lives in [`docs/vision/README.md`](docs/vision/README.md).
+
 Schemas for the shared Greentic types are published to GitHub Pages so IDEs, CLIs, and CI jobs can validate documents consistently. Every schema lives under the stable base URL:
 
 ```
@@ -118,6 +122,8 @@ The v1 flow/pack model now embeds flows inside `PackManifest` and publishes the 
 > `OtlpKeys` and `RunResult` schemas are emitted when the `otel-keys` and `time` features are enabled respectively; both keep their canonical IDs.
 
 `ComponentManifest` includes optional development-time flows under `dev_flows`, mapping flow identifiers to FlowIR-as-JSON documents. Authoring tools (for example, `greentic-dev` and `greentic-component`) can embed editable graphs here, while runtimes and deployers may ignore the section safely.
+
+`WorkerRequest` / `WorkerMessage` / `WorkerResponse` schemas describe compatibility transport envelopes (`payload_json` fields). They are not the canonical runtime payload envelope for new v0.6 runtime contract design.
 
 ## Generating locally
 

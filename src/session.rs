@@ -178,6 +178,7 @@ pub struct ReplyScope {
 }
 
 /// Legacy alias for reply scope.
+#[deprecated(since = "0.4.52", note = "use ReplyScope")]
 pub type WaitScope = ReplyScope;
 
 impl ReplyScope {
