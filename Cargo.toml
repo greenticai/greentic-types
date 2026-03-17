@@ -2,7 +2,7 @@
 members = ["greentic-types-macros"]
 
 [workspace.package]
-version = "0.4.55"
+version = "0.4.56"
 edition = "2024"
 license = "MIT"
 repository = "https://github.com/greentic-ai/greentic-types"

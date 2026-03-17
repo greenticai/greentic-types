@@ -9,4 +9,6 @@ pub use describe::{
     ComponentDescribe, ComponentInfo, ComponentOperation, ComponentRunInput, ComponentRunOutput,
     RedactionKind, RedactionRule,
 };
-pub use qa::{ChoiceOption, ComponentQaSpec, QaMode, Question, QuestionKind};
+pub use qa::{
+    ChoiceOption, ComponentQaSpec, QaMode, Question, QuestionKind, SkipCondition, SkipExpression,
+};

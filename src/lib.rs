@@ -233,6 +233,7 @@ pub use schemas::component::v0_6_0::{
     ComponentQaSpec, ComponentRunInput, ComponentRunOutput, QaMode as ComponentQaMode,
     Question as ComponentQuestion, QuestionKind as ComponentQuestionKind,
     RedactionKind as ComponentRedactionKind, RedactionRule as ComponentRedactionRule,
+    SkipCondition as ComponentSkipCondition, SkipExpression as ComponentSkipExpression,
 };
 pub use schemas::pack::v0_6_0::{
     CapabilityDescriptor, CapabilityMetadata, PackDescribe, PackInfo, PackQaSpec,

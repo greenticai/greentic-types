@@ -1,5 +1,5 @@
 //! Component QA schema (v0.6.0).
-use alloc::{collections::BTreeMap, string::String, vec::Vec};
+use alloc::{boxed::Box, collections::BTreeMap, string::String, vec::Vec};
 use core::{fmt, str::FromStr};
 
 #[cfg(feature = "serde")]
@@ -8,6 +8,47 @@ use serde::{Deserialize, Serialize};
 use ciborium::value::Value;
 
 use crate::i18n_text::I18nText;
+
+// ---------------------------------------------------------------------------
+// Skip expression types
+// ---------------------------------------------------------------------------
+
+/// Skip condition expression — supports AND/OR with nesting.
+///
+/// Used for conditional questions that should be skipped based on previous answers.
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
+pub enum SkipExpression {
+    /// Single condition: field equals/not_equals/is_empty/is_not_empty.
+    Condition(SkipCondition),
+    /// All conditions must be true (logical AND).
+    And(Vec<SkipExpression>),
+    /// At least one condition must be true (logical OR).
+    Or(Vec<SkipExpression>),
+    /// Negate the inner expression (logical NOT).
+    Not(Box<SkipExpression>),
+}
+
+/// Single skip condition for field comparison.
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Clone, Debug, PartialEq)]
+pub struct SkipCondition {
+    /// The field name to check in the answers.
+    pub field: String,
+    /// Skip if field equals this value.
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
+    pub equals: Option<Value>,
+    /// Skip if field does not equal this value.
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
+    pub not_equals: Option<Value>,
+    /// Skip if field is empty (null, missing, or empty string).
+    #[cfg_attr(feature = "serde", serde(default))]
+    pub is_empty: bool,
+    /// Skip if field is not empty.
+    #[cfg_attr(feature = "serde", serde(default))]
+    pub is_not_empty: bool,
+}
 
 /// QA mode.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -97,15 +138,21 @@ pub struct Question {
     /// Label shown to the user.
     pub label: I18nText,
     /// Optional help text.
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     pub help: Option<I18nText>,
     /// Optional error message (validation feedback).
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     pub error: Option<I18nText>,
     /// Kind of question.
     pub kind: QuestionKind,
     /// Whether the question is required.
     pub required: bool,
     /// Optional default value.
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     pub default: Option<Value>,
+    /// Condition to skip this question based on previous answers.
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
+    pub skip_if: Option<SkipExpression>,
 }
 
 impl Question {
@@ -141,6 +188,28 @@ pub enum QuestionKind {
     Number,
     /// Boolean input.
     Bool,
+    /// Inline JSON input with optional JSON Schema validation.
+    InlineJson {
+        /// Optional JSON Schema for validation (Draft 2020-12).
+        #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
+        schema: Option<Value>,
+    },
+    /// Asset file/directory path reference with optional existence check.
+    AssetRef {
+        /// Allowed file extensions (e.g., `["json", "yaml"]`).
+        #[cfg_attr(feature = "serde", serde(default))]
+        file_types: Vec<String>,
+        /// Base path for resolving relative paths (e.g., `"assets/"`).
+        #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
+        base_path: Option<String>,
+        /// Whether to check file existence (default: `true`).
+        #[cfg_attr(feature = "serde", serde(default = "default_true"))]
+        check_exists: bool,
+    },
+}
+
+fn default_true() -> bool {
+    true
 }
 
 /// Choice option.
