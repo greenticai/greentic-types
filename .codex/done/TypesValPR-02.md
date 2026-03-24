@@ -1,6 +1,6 @@
 # TypesValPR-02 — Add generic validation model + (optional) host-side mapping helpers
 
-**Repo:** `greentic-ai/greentic-types`
+**Repo:** `greenticai/greentic-types`
 
 ## Goal
 Provide a single, reusable validation model used by:
@@ -47,3 +47,4 @@ Add a short doc comment indicating stability expectations (these go into doctor 
 ## Acceptance criteria
 - Downstream crates can depend on `greentic-types::validate::*` to represent validator results.
 - No domain coupling introduced.
+

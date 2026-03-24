@@ -1,6 +1,6 @@
 # GT-PR-01 — Add generic validation model in greentic-types
 
-REPO: greentic-ai/greentic-types
+REPO: greenticai/greentic-types
 
 GOAL
 Provide canonical `Diagnostic` + `ValidationReport` types used by:
@@ -18,3 +18,4 @@ DELIVERABLES
 
 ACCEPTANCE
 - downstream crates can depend on `greentic_types::validate::*` without duplicating schemas.
+
