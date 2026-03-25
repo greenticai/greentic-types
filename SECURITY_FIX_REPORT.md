@@ -1,7 +1,7 @@
 # Security Fix Report
 
-Date (UTC): 2026-03-23
-Branch: chore/add-ci-workflow
+Date (UTC): 2026-03-25
+Branch: ci/add-workflow-permissions
 
 ## Inputs Reviewed
 - Security alerts JSON: `{"dependabot": [], "code_scanning": []}`
@@ -13,17 +13,23 @@ Branch: chore/add-ci-workflow
   - `dependabot-alerts.json`
   - `code-scanning-alerts.json`
   - `pr-vulnerable-changes.json`
-- Enumerated dependency lock/manifests present in repo (`Cargo.lock`, `Cargo.toml`, `greentic-types-macros/Cargo.toml`).
-- Checked current working diff for dependency file changes (`git diff --name-only`): no dependency files changed.
+- Reviewed dependency manifests/lockfiles present in repository:
+  - `Cargo.toml`
+  - `Cargo.lock`
+  - `greentic-types-macros/Cargo.toml`
+- Checked PR diff (`origin/main...HEAD`) for newly introduced dependency file changes via `git diff --name-only`.
+- Attempted an additional Rust dependency audit pass via `cargo audit -q`.
 
 ## Findings
 - Dependabot alerts: none.
 - Code scanning alerts: none.
 - New PR dependency vulnerabilities: none.
-- No newly introduced vulnerable dependencies were identified.
+- PR diff contained no dependency manifest/lockfile changes.
+- No newly introduced dependency vulnerabilities detected in this PR context.
+- `cargo audit` could not be executed in this CI sandbox because `rustup` could not write to `/home/runner/.rustup/tmp` (read-only filesystem).
 
 ## Remediation Actions
-- No code or dependency updates were required because there were no actionable vulnerabilities.
+- No fixes were required because there were no actionable vulnerabilities.
 
 ## Files Modified
-- `SECURITY_FIX_REPORT.md` (updated)
+- `SECURITY_FIX_REPORT.md`
