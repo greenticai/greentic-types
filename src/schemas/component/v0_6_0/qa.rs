@@ -205,11 +205,18 @@ pub enum QuestionKind {
         /// Whether to check file existence (default: `true`).
         #[cfg_attr(feature = "serde", serde(default = "default_true"))]
         check_exists: bool,
+        /// Whether remote references may be resolved by the host/orchestrator before use.
+        #[cfg_attr(feature = "serde", serde(default, skip_serializing_if = "is_false"))]
+        allow_remote: bool,
     },
 }
 
 fn default_true() -> bool {
     true
+}
+
+fn is_false(value: &bool) -> bool {
+    !value
 }
 
 /// Choice option.
@@ -224,7 +231,7 @@ pub struct ChoiceOption {
 
 #[cfg(test)]
 mod tests {
-    use super::QaMode;
+    use super::{QaMode, QuestionKind};
     use alloc::string::ToString;
     use core::str::FromStr;
 
@@ -264,6 +271,58 @@ mod tests {
         let canonical = crate::cbor::canonical::to_canonical_cbor(&QaMode::Update)?;
         let value: ciborium::value::Value = ciborium::de::from_reader(canonical.as_slice())?;
         assert_eq!(value, ciborium::value::Value::Text("update".into()));
+        Ok(())
+    }
+
+    #[cfg(feature = "serde")]
+    #[test]
+    fn asset_ref_allow_remote_defaults_to_false_when_omitted()
+    -> Result<(), Box<dyn std::error::Error>> {
+        let kind: QuestionKind = serde_json::from_str(
+            r#"{
+                "type": "asset_ref",
+                "file_types": ["json"],
+                "base_path": "assets/",
+                "check_exists": true
+            }"#,
+        )?;
+
+        assert_eq!(
+            kind,
+            QuestionKind::AssetRef {
+                file_types: vec!["json".to_string()],
+                base_path: Some("assets/".to_string()),
+                check_exists: true,
+                allow_remote: false,
+            }
+        );
+
+        let value = serde_json::to_value(&kind)?;
+        let object = value
+            .as_object()
+            .ok_or_else(|| std::io::Error::other("asset_ref object"))?;
+        assert!(!object.contains_key("allow_remote"));
+        Ok(())
+    }
+
+    #[cfg(feature = "serde")]
+    #[test]
+    fn asset_ref_allow_remote_serializes_when_true() -> Result<(), Box<dyn std::error::Error>> {
+        let kind = QuestionKind::AssetRef {
+            file_types: vec!["json".to_string()],
+            base_path: None,
+            check_exists: true,
+            allow_remote: true,
+        };
+
+        let value = serde_json::to_value(&kind)?;
+        let object = value
+            .as_object()
+            .ok_or_else(|| std::io::Error::other("asset_ref object"))?;
+        assert_eq!(
+            object.get("allow_remote"),
+            Some(&serde_json::Value::Bool(true))
+        );
         Ok(())
     }
 }
