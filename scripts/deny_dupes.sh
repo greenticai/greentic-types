@@ -4,14 +4,14 @@ set -euo pipefail
 # Patterns to guard against: if another crate/files re-define these shared structs/enums,
 # fail with a helpful diagnostic. Comma-separated allow lists point to the canonical files.
 declare -a PATTERNS=(
-  "struct RunResult::src/run.rs"
-  "struct NodeSummary::src/run.rs"
-  "struct NodeFailure::src/run.rs"
-  "enum RunStatus::src/run.rs"
-  "enum NodeStatus::src/run.rs"
-  "struct Capabilities::src/capabilities.rs"
-  "struct Limits::src/capabilities.rs"
-  "struct TelemetrySpec::src/capabilities.rs"
+  "struct[[:space:]]+RunResult([^[:alnum:]_]|$)::src/run.rs"
+  "struct[[:space:]]+NodeSummary([^[:alnum:]_]|$)::src/run.rs"
+  "struct[[:space:]]+NodeFailure([^[:alnum:]_]|$)::src/run.rs"
+  "enum[[:space:]]+RunStatus([^[:alnum:]_]|$)::src/run.rs"
+  "enum[[:space:]]+NodeStatus([^[:alnum:]_]|$)::src/run.rs"
+  "struct[[:space:]]+Capabilities([^[:alnum:]_]|$)::src/capabilities.rs"
+  "struct[[:space:]]+Limits([^[:alnum:]_]|$)::src/capabilities.rs"
+  "struct[[:space:]]+TelemetrySpec([^[:alnum:]_]|$)::src/capabilities.rs"
 )
 
 STATUS=0
@@ -21,7 +21,7 @@ for entry in "${PATTERNS[@]}"; do
   allow=${entry#*::}
   IFS=',' read -r -a allowed_files <<<"$allow"
 
-  matches=$(rg --files-with-matches -g'*.rs' -F "$pattern" --glob '!target/**' --glob '!dist/**' --glob '!greentic-types-macros/**' || true)
+  matches=$(rg --files-with-matches -g'*.rs' "$pattern" --glob '!target/**' --glob '!dist/**' --glob '!greentic-types-macros/**' || true)
   for file in $matches; do
     skip=false
     for allowed_file in "${allowed_files[@]}"; do
