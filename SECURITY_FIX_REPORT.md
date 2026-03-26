@@ -15,7 +15,7 @@ Dependency manifests detected:
 - `Cargo.lock`
 - `greentic-types-macros/Cargo.toml`
 
-Checked for dependency-file changes in the current diff:
+Checked for dependency-file changes in the current PR diff:
 - `git diff --name-only -- Cargo.toml Cargo.lock greentic-types-macros/Cargo.toml`
 - Result: no changed dependency files in this PR diff.
 
@@ -25,7 +25,7 @@ Checked for dependency-file changes in the current diff:
 - No code or dependency updates were required.
 
 ## Files Modified
-- `SECURITY_FIX_REPORT.md` (added)
+- `SECURITY_FIX_REPORT.md` (updated for this CI run)
 
 ## Final Status
 - Security alerts reviewed: complete
