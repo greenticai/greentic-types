@@ -262,7 +262,6 @@ fn wizard_plan_roundtrip() {
         "packs/demo/pack.yaml".into(),
         "name: demo\nversion: 0.1.0\n".into(),
     );
-
     let mut prefilled_answers = BTreeMap::new();
     prefilled_answers.insert("tenant".into(), serde_json::json!("acme"));
     prefilled_answers.insert("replicas".into(), serde_json::json!(2));
