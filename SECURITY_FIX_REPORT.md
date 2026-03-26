@@ -1,34 +1,28 @@
 # Security Fix Report
 
-Date (UTC): 2026-03-26
-Branch: chore/shared-ci-template
+Date: 2026-03-26 (UTC)
+Repository: /home/runner/work/greentic-types/greentic-types
 
 ## Inputs Reviewed
-- Security alerts JSON: `{"dependabot": [], "code_scanning": []}`
-- New PR dependency vulnerabilities: `[]`
-
-## Validation Performed
-- Reviewed alert artifacts:
-  - `security-alerts.json`
-  - `dependabot-alerts.json`
-  - `code-scanning-alerts.json`
-  - `pr-vulnerable-changes.json`
-  - `all-dependabot-alerts.json`
-  - `all-code-scanning-alerts.json`
-- Checked PR file diff for dependency changes:
-  - `git diff --name-only origin/main...HEAD`
-- Resulting PR diff files:
-  - `.github/workflows/ci.yml`
+- `security-alerts.json`
+- `dependabot-alerts.json`
+- `code-scanning-alerts.json`
+- `pr-vulnerable-changes.json`
+- Dependency manifests/locks detected in repo:
+  - `Cargo.toml`
+  - `Cargo.lock`
+  - `greentic-types-macros/Cargo.toml`
 
 ## Findings
-- Dependabot alerts: none.
-- Code scanning alerts: none.
-- New PR dependency vulnerabilities: none.
-- No dependency manifest or lockfile changes were introduced by this PR.
-- No actionable vulnerabilities were identified.
+1. Dependabot alerts: none (`[]`).
+2. Code scanning alerts: none (`[]`).
+3. New PR dependency vulnerabilities: none (`[]`).
+4. Current git diff does not include dependency-file changes requiring remediation.
 
 ## Remediation Actions
-- No code or dependency fixes were required because no vulnerabilities were present.
+- No security fixes were applied because no vulnerabilities were reported in the provided alert sources.
+- No dependency upgrades or code changes were necessary for this run.
 
-## Files Modified
-- `SECURITY_FIX_REPORT.md`
+## Outcome
+- Security posture from provided CI inputs: **no active vulnerabilities detected**.
+- Report generated as requested.
