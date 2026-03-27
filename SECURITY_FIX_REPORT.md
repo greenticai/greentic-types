@@ -1,32 +1,26 @@
-# SECURITY_FIX_REPORT
+# Security Fix Report
 
 Date: 2026-03-27 (UTC)
-Repository: `/home/runner/work/greentic-types/greentic-types`
-Role: Security Reviewer (CI)
+Branch: `chore/use-reusable-auto-tag`
 
-## 1) Alert Analysis
-- Dependabot alerts reviewed: `0`
-- Code scanning alerts reviewed: `0`
-- Result: no active security alerts requiring remediation.
+## Inputs Reviewed
+- Dependabot alerts: `[]`
+- Code scanning alerts: `[]`
+- New PR dependency vulnerabilities: `[]`
 
-## 2) PR Dependency Vulnerability Check
-- Reported new PR dependency vulnerabilities: `0`
-- Dependency manifests present in repository:
+## Repository Checks Performed
+- Identified dependency manifests/lockfiles in repository:
   - `Cargo.toml`
-  - `Cargo.lock`
   - `greentic-types-macros/Cargo.toml`
-- PR diff check against dependency manifests:
-  - Command used: `git diff --name-only -- Cargo.toml Cargo.lock greentic-types-macros/Cargo.toml`
-  - Result: no dependency file changes detected in current PR working diff.
+  - `Cargo.lock`
+- Compared PR branch against `origin/main` to detect dependency-file changes:
+  - Changed file(s) in PR: `.github/workflows/auto-tag.yml`
+  - Dependency manifests/lockfiles changed in PR: none
 
-## 3) Remediation / Fixes Applied
-- No fixes were applied because no vulnerabilities were identified in alerts or PR dependency changes.
-- Repository source and dependency files were left unchanged.
+## Remediation Actions
+- No actionable vulnerabilities were present in the provided security alert inputs.
+- No new dependency vulnerabilities were introduced by this PR.
+- No dependency or source-code security fix was required.
 
-## 4) Files Updated
-- `SECURITY_FIX_REPORT.md` (updated for this CI run)
-
-## 5) Final Status
-- Security review completed.
-- New vulnerabilities introduced by this PR: none detected.
-- Outstanding remediation actions: none.
+## Files Modified
+- `SECURITY_FIX_REPORT.md` (created)
