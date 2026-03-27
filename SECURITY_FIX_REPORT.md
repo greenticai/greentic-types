@@ -1,33 +1,32 @@
-# Security Fix Report
+# SECURITY_FIX_REPORT
 
-Date: 2026-03-26 (UTC)
+Date: 2026-03-27 (UTC)
 Repository: `/home/runner/work/greentic-types/greentic-types`
 Role: Security Reviewer (CI)
 
-## Input Alert Review
-- Dependabot alerts: `0`
-- Code scanning alerts: `0`
-- New PR dependency vulnerabilities: `0`
+## 1) Alert Analysis
+- Dependabot alerts reviewed: `0`
+- Code scanning alerts reviewed: `0`
+- Result: no active security alerts requiring remediation.
 
-## PR Dependency Change Review
-Dependency manifests detected:
-- `Cargo.toml`
-- `Cargo.lock`
-- `greentic-types-macros/Cargo.toml`
+## 2) PR Dependency Vulnerability Check
+- Reported new PR dependency vulnerabilities: `0`
+- Dependency manifests present in repository:
+  - `Cargo.toml`
+  - `Cargo.lock`
+  - `greentic-types-macros/Cargo.toml`
+- PR diff check against dependency manifests:
+  - Command used: `git diff --name-only -- Cargo.toml Cargo.lock greentic-types-macros/Cargo.toml`
+  - Result: no dependency file changes detected in current PR working diff.
 
-Checked for dependency-file changes in the current diff:
-- `git diff --name-only -- Cargo.toml Cargo.lock greentic-types-macros/Cargo.toml`
-- Result: no changed dependency files in this PR diff.
+## 3) Remediation / Fixes Applied
+- No fixes were applied because no vulnerabilities were identified in alerts or PR dependency changes.
+- Repository source and dependency files were left unchanged.
 
-## Remediation Actions
-- No vulnerable dependencies were reported.
-- No dependency vulnerabilities were introduced by PR changes.
-- No code or dependency updates were required.
+## 4) Files Updated
+- `SECURITY_FIX_REPORT.md` (updated for this CI run)
 
-## Files Modified
-- `SECURITY_FIX_REPORT.md` (added)
-
-## Final Status
-- Security alerts reviewed: complete
-- PR dependency vulnerability review: complete
-- Remediation required: none
+## 5) Final Status
+- Security review completed.
+- New vulnerabilities introduced by this PR: none detected.
+- Outstanding remediation actions: none.
