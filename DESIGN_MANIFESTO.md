@@ -243,5 +243,6 @@ When adding a new domain (e.g., timer, webhook, oauth, storage, ai):
 ---
 
 **Version:** 1.0  
-**Maintainer:** Greentic-AI Architecture Group  
+**Maintainer:** greenticai Architecture Group  
 **Last Updated:** 2025-10-29
+

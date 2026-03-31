@@ -1,6 +1,6 @@
 # GT-PR-02 — Add Provider Installation Record model (shared across domains)
 
-REPO: greentic-ai/greentic-types
+REPO: greenticai/greentic-types
 
 GOAL
 Define a shared provider installation record model so provisioning outputs can be persisted consistently by messaging/events/secrets.
@@ -14,3 +14,4 @@ DELIVERABLES
 
 ACCEPTANCE
 - messaging/events/secrets can store/read installs with same schema.
+
