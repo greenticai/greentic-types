@@ -14,20 +14,15 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-test:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  validate:
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.91.0
-      - uses: Swatinem/rust-cache@v2
-      - name: Lint & Test
-        run: |
-          cargo fmt --all -- --check
-          cargo clippy --workspace --all-targets -- -D warnings
-          cargo build --workspace --all-features
-          cargo test --workspace --all-features -- --nocapture
       - name: Prevent duplicate shared structs
         run: ./scripts/deny_dupes.sh
       - name: Verify published schema IDs
@@ -44,14 +39,14 @@ jobs:
           - { name: schema, args: "--features schema" }
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.91.0
+      - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Cargo check (${{ matrix.profile.name }})
         run: cargo check --workspace ${{ matrix.profile.args }}
 
   publish:
     if: github.event_name == 'push'
-    needs: [build-test, msrv]
+    needs: [ci, validate, msrv]
     runs-on: ubuntu-latest
     permissions:
       contents: read
