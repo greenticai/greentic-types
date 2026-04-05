@@ -36,6 +36,7 @@ pub struct ComponentInfo {
 /// Component description payload.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Debug, PartialEq)]
+#[non_exhaustive]
 pub struct ComponentDescribe {
     /// Core component metadata.
     pub info: ComponentInfo,
