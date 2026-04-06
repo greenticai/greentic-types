@@ -1,0 +1,66 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/tenant-context.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TenantContext",
+  "description": "Compact tenant summary propagated to developers and tooling.",
+  "type": "object",
+  "properties": {
+    "attributes": {
+      "description": "Optional attributes for routing and tracing.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "session_id": {
+      "description": "Optional session identifier for end-to-end correlation.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "team_id": {
+      "description": "Optional team identifier scoped to the tenant.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TeamId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "tenant_id": {
+      "description": "Tenant identifier owning the execution.",
+      "$ref": "#/$defs/TenantId"
+    },
+    "user_id": {
+      "description": "Optional user identifier scoped to the tenant.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/UserId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "tenant_id"
+  ],
+  "$defs": {
+    "TeamId": {
+      "description": "Team identifier belonging to a tenant.",
+      "type": "string"
+    },
+    "TenantId": {
+      "description": "Tenant identifier within an environment.",
+      "type": "string"
+    },
+    "UserId": {
+      "description": "User identifier within a tenant.",
+      "type": "string"
+    }
+  }
+}

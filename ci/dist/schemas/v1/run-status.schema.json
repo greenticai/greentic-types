@@ -1,0 +1,23 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/run-status.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RunStatus",
+  "description": "Overall execution status emitted by the runner.",
+  "oneOf": [
+    {
+      "description": "Flow finished successfully.",
+      "type": "string",
+      "const": "success"
+    },
+    {
+      "description": "Flow finished with partial failures but continued.",
+      "type": "string",
+      "const": "partial_failure"
+    },
+    {
+      "description": "Flow failed.",
+      "type": "string",
+      "const": "failure"
+    }
+  ]
+}

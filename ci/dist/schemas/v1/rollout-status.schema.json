@@ -1,0 +1,99 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/rollout-status.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RolloutStatus",
+  "description": "Status record for an environment rollout.",
+  "type": "object",
+  "properties": {
+    "bundle_id": {
+      "description": "Optional bundle used for offline rollouts.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BundleId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "desired_state_version": {
+      "description": "Desired state version associated with this rollout.",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint64",
+      "minimum": 0
+    },
+    "environment_ref": {
+      "description": "Target environment.",
+      "$ref": "#/$defs/EnvironmentRef"
+    },
+    "message": {
+      "description": "Optional human-readable message.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "description": "Additional metadata.",
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    },
+    "state": {
+      "description": "Current rollout state.",
+      "$ref": "#/$defs/RolloutState"
+    }
+  },
+  "required": [
+    "environment_ref",
+    "state"
+  ],
+  "$defs": {
+    "BundleId": {
+      "description": "Identifier referencing a distributor bundle.",
+      "type": "string"
+    },
+    "EnvironmentRef": {
+      "description": "Identifier referencing a deployment environment.",
+      "type": "string"
+    },
+    "RolloutState": {
+      "description": "Rollout lifecycle state for an environment.",
+      "oneOf": [
+        {
+          "description": "Rollout is pending scheduling or validation.",
+          "type": "string",
+          "const": "pending"
+        },
+        {
+          "description": "Rollout plan generation is in progress.",
+          "type": "string",
+          "const": "planning"
+        },
+        {
+          "description": "Rollout is actively executing.",
+          "type": "string",
+          "const": "in_progress"
+        },
+        {
+          "description": "Rollout completed successfully.",
+          "type": "string",
+          "const": "succeeded"
+        },
+        {
+          "description": "Rollout failed.",
+          "type": "string",
+          "const": "failed"
+        },
+        {
+          "description": "Rollout is blocked (for example policy or compliance).",
+          "type": "string",
+          "const": "blocked"
+        }
+      ]
+    }
+  }
+}

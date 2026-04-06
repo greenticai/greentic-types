@@ -1,0 +1,26 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/provider-runtime-ref.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ProviderRuntimeRef",
+  "description": "Runtime binding for a provider implementation.",
+  "type": "object",
+  "properties": {
+    "component_ref": {
+      "description": "Component identifier for the provider runtime.",
+      "type": "string"
+    },
+    "export": {
+      "description": "Exported function implementing the provider runtime.",
+      "type": "string"
+    },
+    "world": {
+      "description": "WIT world for the provider runtime.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "component_ref",
+    "export",
+    "world"
+  ]
+}

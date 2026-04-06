@@ -1,0 +1,147 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/version-strategy.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VersionStrategy",
+  "description": "Strategy used to resolve versions.",
+  "oneOf": [
+    {
+      "description": "Always track the latest version.",
+      "type": "string",
+      "const": "Latest"
+    },
+    {
+      "description": "Use a pinned semantic version requirement (legacy shape).",
+      "type": "object",
+      "properties": {
+        "Pinned": {
+          "type": "object",
+          "properties": {
+            "requirement": {
+              "description": "Version requirement (e.g. ^1.2).",
+              "$ref": "#/$defs/SemverReq"
+            }
+          },
+          "required": [
+            "requirement"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Pinned"
+      ]
+    },
+    {
+      "description": "Track a long-term support channel (legacy shape).",
+      "type": "string",
+      "const": "Lts"
+    },
+    {
+      "description": "Custom strategy identified by name (legacy shape).",
+      "type": "object",
+      "properties": {
+        "Custom": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Custom"
+      ]
+    },
+    {
+      "description": "Always track the latest published version for this component.",
+      "type": "object",
+      "properties": {
+        "Fixed": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "description": "Exact version string (e.g. \"1.2.3\").",
+              "type": "string"
+            }
+          },
+          "required": [
+            "version"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Fixed"
+      ]
+    },
+    {
+      "description": "A semver-style range (e.g. \">=1.2,<2.0\").",
+      "type": "object",
+      "properties": {
+        "Range": {
+          "type": "object",
+          "properties": {
+            "range": {
+              "description": "Version range expression.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "range"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Range"
+      ]
+    },
+    {
+      "description": "A named channel (e.g. \"stable\", \"beta\", \"canary\").",
+      "type": "object",
+      "properties": {
+        "Channel": {
+          "type": "object",
+          "properties": {
+            "channel": {
+              "description": "Channel name.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "channel"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Channel"
+      ]
+    },
+    {
+      "description": "Forward-compatible escape hatch for unknown strategies.",
+      "type": "object",
+      "properties": {
+        "CustomTagged": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "description": "Free-form value for the strategy.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "value"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "CustomTagged"
+      ]
+    }
+  ],
+  "$defs": {
+    "SemverReq": {
+      "description": "Validated semantic version requirement string",
+      "type": "string"
+    }
+  }
+}

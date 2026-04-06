@@ -1,0 +1,16 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/tools-caps.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ToolsCaps",
+  "description": "Tool invocation descriptor for packs relying on host tools.",
+  "type": "object",
+  "properties": {
+    "allowed": {
+      "description": "Tool identifiers the pack expects the host to resolve.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

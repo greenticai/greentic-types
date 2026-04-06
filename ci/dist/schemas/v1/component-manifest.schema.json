@@ -1,0 +1,690 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/component-manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ComponentManifest",
+  "description": "Component metadata describing capabilities and supported flows.",
+  "type": "object",
+  "properties": {
+    "capabilities": {
+      "description": "Capability contract required by the component.",
+      "$ref": "#/$defs/ComponentCapabilities"
+    },
+    "config_schema": {
+      "description": "Optional configuration schema."
+    },
+    "configurators": {
+      "description": "Optional configurator flows.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ComponentConfigurators"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "dev_flows": {
+      "description": "Development-time flows used for authoring only. This field is optional and ignored by\nruntime systems. Tools may store FlowIR-as-JSON values here to allow editing flows without\nsidecar files.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/ComponentDevFlow"
+      }
+    },
+    "id": {
+      "description": "Logical component identifier (opaque string).",
+      "$ref": "#/$defs/ComponentId"
+    },
+    "operations": {
+      "description": "Operation-level descriptions.",
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ComponentOperation"
+      }
+    },
+    "profiles": {
+      "description": "Profile metadata for the component.",
+      "$ref": "#/$defs/ComponentProfiles"
+    },
+    "resources": {
+      "description": "Resource usage hints for deployers/schedulers.",
+      "$ref": "#/$defs/ResourceHints",
+      "default": {}
+    },
+    "supports": {
+      "description": "Flow kinds this component can participate in.",
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/FlowKind"
+      }
+    },
+    "version": {
+      "description": "SemVer version",
+      "type": "string"
+    },
+    "world": {
+      "description": "Referenced WIT world binding.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "world",
+    "profiles",
+    "capabilities"
+  ],
+  "$defs": {
+    "ComponentCapabilities": {
+      "description": "Host + WASI capabilities required by a component.",
+      "type": "object",
+      "properties": {
+        "host": {
+          "description": "Host capability surfaces.",
+          "$ref": "#/$defs/HostCapabilities"
+        },
+        "wasi": {
+          "description": "WASI Preview 2 surfaces.",
+          "$ref": "#/$defs/WasiCapabilities"
+        }
+      },
+      "required": [
+        "wasi",
+        "host"
+      ]
+    },
+    "ComponentConfigurators": {
+      "description": "Flow configurators linked from a component manifest.",
+      "type": "object",
+      "properties": {
+        "basic": {
+          "description": "Basic configurator flow identifier.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FlowId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "full": {
+          "description": "Full configurator flow identifier.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FlowId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "ComponentDevFlow": {
+      "description": "Development-time flow embedded directly in a component manifest.\n\nThese flows are consumed by tooling such as `greentic-dev` during authoring. They are not\nrequired for deployment or runtime execution and may be safely ignored by hosts and runners.",
+      "type": "object",
+      "properties": {
+        "format": {
+          "description": "Flow representation format. Currently only `flow-ir-json` is supported.",
+          "type": "string",
+          "default": "flow-ir-json"
+        },
+        "graph": {
+          "description": "FlowIR JSON graph for this flow."
+        }
+      },
+      "required": [
+        "graph"
+      ]
+    },
+    "ComponentId": {
+      "description": "Identifier referencing a component binding in a pack.",
+      "type": "string"
+    },
+    "ComponentOperation": {
+      "description": "Operation descriptor for a component.",
+      "type": "object",
+      "properties": {
+        "input_schema": {
+          "description": "Input schema for the operation."
+        },
+        "name": {
+          "description": "Operation name (for example `handle_message`).",
+          "type": "string"
+        },
+        "output_schema": {
+          "description": "Output schema for the operation."
+        }
+      },
+      "required": [
+        "name",
+        "input_schema",
+        "output_schema"
+      ]
+    },
+    "ComponentProfiles": {
+      "description": "Component profile declaration.",
+      "type": "object",
+      "properties": {
+        "default": {
+          "description": "Default profile applied when a node does not specify one.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "supported": {
+          "description": "Supported profile identifiers.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "EnvCapabilities": {
+      "description": "Environment variable allow list.",
+      "type": "object",
+      "properties": {
+        "allow": {
+          "description": "Environment variable names components may read.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "EventsCapabilities": {
+      "description": "Events capability declaration.",
+      "type": "object",
+      "properties": {
+        "inbound": {
+          "description": "Whether inbound events are handled.",
+          "type": "boolean",
+          "default": false
+        },
+        "outbound": {
+          "description": "Whether outbound events are emitted.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "FilesystemCapabilities": {
+      "description": "Filesystem sandbox configuration.",
+      "type": "object",
+      "properties": {
+        "mode": {
+          "description": "Filesystem exposure mode.",
+          "$ref": "#/$defs/FilesystemMode"
+        },
+        "mounts": {
+          "description": "Declared mounts.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/FilesystemMount"
+          }
+        }
+      },
+      "required": [
+        "mode"
+      ]
+    },
+    "FilesystemMode": {
+      "description": "Filesystem exposure mode.",
+      "oneOf": [
+        {
+          "description": "No filesystem access.",
+          "type": "string",
+          "const": "none"
+        },
+        {
+          "description": "Read-only view with predefined mounts.",
+          "type": "string",
+          "const": "read_only"
+        },
+        {
+          "description": "Isolated sandbox with write access.",
+          "type": "string",
+          "const": "sandbox"
+        }
+      ]
+    },
+    "FilesystemMount": {
+      "description": "Single mount definition.",
+      "type": "object",
+      "properties": {
+        "guest_path": {
+          "description": "Guest-visible mount path.",
+          "type": "string"
+        },
+        "host_class": {
+          "description": "Host-provided storage class (scratch/cache/config/etc.).",
+          "type": "string"
+        },
+        "name": {
+          "description": "Logical mount identifier.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "host_class",
+        "guest_path"
+      ]
+    },
+    "FlowId": {
+      "description": "Identifier referencing a flow inside a pack.",
+      "type": "string"
+    },
+    "FlowKind": {
+      "description": "Supported flow kinds across Greentic packs.",
+      "oneOf": [
+        {
+          "description": "Inbound messaging flows (Telegram, Teams, HTTP chat).",
+          "type": "string",
+          "const": "messaging"
+        },
+        {
+          "description": "Event-driven flows (webhooks, NATS, cron, etc.).",
+          "type": "string",
+          "const": "event"
+        },
+        {
+          "description": "Flows that configure components/providers/infrastructure.",
+          "type": "string",
+          "const": "component_config"
+        },
+        {
+          "description": "Batch/background jobs.",
+          "type": "string",
+          "const": "job"
+        },
+        {
+          "description": "HTTP-style request/response flows.",
+          "type": "string",
+          "const": "http"
+        }
+      ]
+    },
+    "HostCapabilities": {
+      "description": "Host capability declaration.",
+      "type": "object",
+      "properties": {
+        "events": {
+          "description": "Event ingress/egress needs.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EventsCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "http": {
+          "description": "HTTP client/server needs.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HttpCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "iac": {
+          "description": "Infrastructure-as-code artifact permissions.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IaCCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "messaging": {
+          "description": "Messaging ingress/egress needs.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MessagingCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "secrets": {
+          "description": "Secret resolution requirements.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SecretsCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "description": "Durable state access requirements.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StateCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "telemetry": {
+          "description": "Telemetry emission settings.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TelemetryCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "HttpCapabilities": {
+      "description": "HTTP capability declaration.",
+      "type": "object",
+      "properties": {
+        "client": {
+          "description": "Outbound HTTP client usage.",
+          "type": "boolean",
+          "default": false
+        },
+        "server": {
+          "description": "Inbound HTTP server usage.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "IaCCapabilities": {
+      "description": "Infrastructure-as-code host permissions.",
+      "type": "object",
+      "properties": {
+        "execute_plans": {
+          "description": "Whether the component may trigger IaC plan execution via the host.",
+          "type": "boolean",
+          "default": false
+        },
+        "write_templates": {
+          "description": "Whether templates/manifests may be written to a preopened path.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "write_templates"
+      ]
+    },
+    "MessagingCapabilities": {
+      "description": "Messaging capability declaration.",
+      "type": "object",
+      "properties": {
+        "inbound": {
+          "description": "Whether the component receives inbound messages.",
+          "type": "boolean",
+          "default": false
+        },
+        "outbound": {
+          "description": "Whether the component emits outbound messages.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "ResourceHints": {
+      "description": "Resource usage hints for a component.",
+      "type": "object",
+      "properties": {
+        "average_latency_ms": {
+          "description": "Expected average latency in milliseconds.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        },
+        "cpu_millis": {
+          "description": "Suggested CPU in millis.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        },
+        "memory_mb": {
+          "description": "Suggested memory in MiB.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        }
+      }
+    },
+    "SecretFormat": {
+      "description": "Supported secret content formats.",
+      "oneOf": [
+        {
+          "description": "Arbitrary bytes.",
+          "type": "string",
+          "const": "bytes"
+        },
+        {
+          "description": "UTF-8 text.",
+          "type": "string",
+          "const": "text"
+        },
+        {
+          "description": "JSON document.",
+          "type": "string",
+          "const": "json"
+        }
+      ]
+    },
+    "SecretKey": {
+      "description": "Canonical secret identifier used across manifests and bindings.",
+      "type": "string"
+    },
+    "SecretRequirement": {
+      "description": "Structured secret requirement used in capabilities, bindings, and deployment plans.",
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Optional description for operator-facing tooling.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "examples": {
+          "description": "Example payloads for documentation.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "format": {
+          "description": "Preferred secret format when known.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SecretFormat"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "key": {
+          "description": "Logical key the runtime should resolve.",
+          "$ref": "#/$defs/SecretKey"
+        },
+        "required": {
+          "description": "Whether the secret is mandatory for execution.",
+          "type": "boolean",
+          "default": true
+        },
+        "schema": {
+          "description": "Optional JSON Schema fragment describing the value shape."
+        },
+        "scope": {
+          "description": "Expected scope for resolution (environment/tenant/team).",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SecretScope"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "key"
+      ]
+    },
+    "SecretScope": {
+      "description": "Canonical secret scope (environment, tenant, team).",
+      "type": "object",
+      "properties": {
+        "env": {
+          "description": "Environment identifier (e.g., `dev`, `prod`).",
+          "type": "string"
+        },
+        "team": {
+          "description": "Optional team for finer-grained isolation.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tenant": {
+          "description": "Tenant identifier within the environment.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "env",
+        "tenant"
+      ]
+    },
+    "SecretsCapabilities": {
+      "description": "Secret requirements.",
+      "type": "object",
+      "properties": {
+        "required": {
+          "description": "Secret identifiers required at runtime.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SecretRequirement"
+          }
+        }
+      }
+    },
+    "StateCapabilities": {
+      "description": "State surface declaration.",
+      "type": "object",
+      "properties": {
+        "read": {
+          "description": "Whether read access is required.",
+          "type": "boolean",
+          "default": false
+        },
+        "write": {
+          "description": "Whether write access is required.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "TelemetryCapabilities": {
+      "description": "Telemetry capability declaration.",
+      "type": "object",
+      "properties": {
+        "scope": {
+          "description": "Maximum telemetry scope granted to the component.",
+          "$ref": "#/$defs/TelemetryScope"
+        }
+      },
+      "required": [
+        "scope"
+      ]
+    },
+    "TelemetryScope": {
+      "description": "Telemetry scoping modes.",
+      "oneOf": [
+        {
+          "description": "Emitted telemetry is scoped to the tenant.",
+          "type": "string",
+          "const": "tenant"
+        },
+        {
+          "description": "Scoped to the pack.",
+          "type": "string",
+          "const": "pack"
+        },
+        {
+          "description": "Scoped per-node invocation.",
+          "type": "string",
+          "const": "node"
+        }
+      ]
+    },
+    "WasiCapabilities": {
+      "description": "WASI capability declarations.",
+      "type": "object",
+      "properties": {
+        "clocks": {
+          "description": "Whether clock access is required.",
+          "type": "boolean",
+          "default": false
+        },
+        "env": {
+          "description": "Environment variable allow list.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EnvCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "filesystem": {
+          "description": "Filesystem configuration.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FilesystemCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "random": {
+          "description": "Whether random number generation is required.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  }
+}

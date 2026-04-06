@@ -1,0 +1,39 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/sign-request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SignRequest",
+  "description": "Signing request for an artifact.",
+  "type": "object",
+  "properties": {
+    "artifact": {
+      "description": "Artifact to sign.",
+      "$ref": "#/$defs/ArtifactRef"
+    },
+    "metadata": {
+      "description": "Provider-specific metadata.",
+      "default": null
+    },
+    "payload": {
+      "description": "Payload provided to the signer (hashes, claims, etc.).",
+      "default": null
+    },
+    "signing_key": {
+      "description": "Signing key reference.",
+      "$ref": "#/$defs/SigningKeyRef"
+    }
+  },
+  "required": [
+    "signing_key",
+    "artifact"
+  ],
+  "$defs": {
+    "ArtifactRef": {
+      "description": "Artifact reference within a build or scan result.",
+      "type": "string"
+    },
+    "SigningKeyRef": {
+      "description": "Reference to a signing key handle.",
+      "type": "string"
+    }
+  }
+}

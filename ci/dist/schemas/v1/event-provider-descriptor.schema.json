@@ -1,0 +1,160 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/event-provider-descriptor.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EventProviderDescriptor",
+  "description": "Descriptor capturing the capabilities of an event provider.",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "description": "Provider role (broker, source, sink, bridge).",
+      "$ref": "#/$defs/EventProviderKind"
+    },
+    "name": {
+      "description": "Human-readable name for the provider instance.",
+      "type": "string"
+    },
+    "notes": {
+      "description": "Optional free-form notes.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ordering": {
+      "description": "Ordering guarantees.",
+      "$ref": "#/$defs/OrderingKind"
+    },
+    "reliability": {
+      "description": "Reliability guarantees.",
+      "$ref": "#/$defs/ReliabilityKind"
+    },
+    "tags": {
+      "description": "Tags for discovery and filtering.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "transport": {
+      "description": "Transport used by the provider.",
+      "$ref": "#/$defs/TransportKind"
+    }
+  },
+  "required": [
+    "name",
+    "kind",
+    "transport",
+    "reliability",
+    "ordering"
+  ],
+  "$defs": {
+    "EventProviderKind": {
+      "description": "High-level role of an event provider.",
+      "oneOf": [
+        {
+          "description": "Message broker capable of publish/subscribe.",
+          "type": "string",
+          "const": "broker"
+        },
+        {
+          "description": "Source emitting events into the fabric.",
+          "type": "string",
+          "const": "source"
+        },
+        {
+          "description": "Sink consuming events from the fabric.",
+          "type": "string",
+          "const": "sink"
+        },
+        {
+          "description": "Bridge translating between fabrics.",
+          "type": "string",
+          "const": "bridge"
+        }
+      ]
+    },
+    "OrderingKind": {
+      "description": "Ordering guarantees for delivered events.",
+      "oneOf": [
+        {
+          "description": "No ordering guarantee.",
+          "type": "string",
+          "const": "none"
+        },
+        {
+          "description": "Ordering preserved per key/partition.",
+          "type": "string",
+          "const": "per_key"
+        },
+        {
+          "description": "Global ordering across all events.",
+          "type": "string",
+          "const": "global"
+        }
+      ]
+    },
+    "ReliabilityKind": {
+      "description": "Delivery guarantees advertised by a provider.",
+      "oneOf": [
+        {
+          "description": "At-most-once delivery (lossy).",
+          "type": "string",
+          "const": "at_most_once"
+        },
+        {
+          "description": "At-least-once delivery (duplicates possible).",
+          "type": "string",
+          "const": "at_least_once"
+        },
+        {
+          "description": "Effectively-once delivery (deduplicated).",
+          "type": "string",
+          "const": "effectively_once"
+        }
+      ]
+    },
+    "TransportKind": {
+      "description": "Transport protocols supported by a provider.",
+      "oneOf": [
+        {
+          "description": "NATS transport.",
+          "type": "string",
+          "const": "nats"
+        },
+        {
+          "description": "Apache Kafka transport.",
+          "type": "string",
+          "const": "kafka"
+        },
+        {
+          "description": "Amazon SQS transport.",
+          "type": "string",
+          "const": "sqs"
+        },
+        {
+          "description": "Webhook delivery.",
+          "type": "string",
+          "const": "webhook"
+        },
+        {
+          "description": "Email transport.",
+          "type": "string",
+          "const": "email"
+        },
+        {
+          "description": "Any other transport not covered above.",
+          "type": "object",
+          "properties": {
+            "other": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "other"
+          ]
+        }
+      ]
+    }
+  }
+}

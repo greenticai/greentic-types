@@ -1,0 +1,66 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/node-failure.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NodeFailure",
+  "description": "Rich failure diagnostics for a node.",
+  "type": "object",
+  "properties": {
+    "code": {
+      "description": "Machine readable error code.",
+      "type": "string"
+    },
+    "details": {
+      "description": "Optional structured metadata.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "log_paths": {
+      "description": "Disk paths or URIs pointing at log bundles.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "message": {
+      "description": "Human readable explanation.",
+      "type": "string"
+    },
+    "transcript_offsets": {
+      "description": "Transcript offsets referencing the failure within captured logs.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/TranscriptOffset"
+      }
+    }
+  },
+  "required": [
+    "code",
+    "message"
+  ],
+  "$defs": {
+    "TranscriptOffset": {
+      "description": "Byte-range offsets referencing captured transcripts/logs.",
+      "type": "object",
+      "properties": {
+        "end": {
+          "description": "End offset (exclusive) counted in bytes.",
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "start": {
+          "description": "Start offset (inclusive) counted in bytes.",
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ]
+    }
+  }
+}

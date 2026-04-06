@@ -1,0 +1,37 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/attachment.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Attachment",
+  "description": "Generic attachment referenced by a channel message.",
+  "type": "object",
+  "properties": {
+    "mime_type": {
+      "description": "MIME type of the attachment (for example `image/png`).",
+      "type": "string"
+    },
+    "name": {
+      "description": "Optional display name for the attachment.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "size_bytes": {
+      "description": "Optional attachment size in bytes.",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint64",
+      "minimum": 0
+    },
+    "url": {
+      "description": "URL pointing at the attachment payload.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "mime_type",
+    "url"
+  ]
+}

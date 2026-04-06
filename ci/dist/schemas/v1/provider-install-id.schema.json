@@ -1,0 +1,7 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/provider-install-id.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ProviderInstallId",
+  "description": "Identifier referencing a provider installation record.",
+  "type": "string"
+}

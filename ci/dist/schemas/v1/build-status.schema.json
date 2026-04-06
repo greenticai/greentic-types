@@ -1,0 +1,104 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/build-status.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BuildStatus",
+  "description": "Summary status for a build execution.",
+  "type": "object",
+  "properties": {
+    "artifacts": {
+      "description": "Produced artifacts.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ArtifactRef"
+      }
+    },
+    "build_id": {
+      "description": "Identifier for the build.",
+      "$ref": "#/$defs/BuildRef"
+    },
+    "finished_at_utc": {
+      "description": "RFC3339 timestamp in UTC",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "log_refs": {
+      "description": "Optional structured build log references.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/BuildLogRef"
+      }
+    },
+    "logs_ref": {
+      "description": "Optional build logs reference.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "description": "Provider-specific metadata.",
+      "default": null
+    },
+    "started_at_utc": {
+      "description": "RFC3339 timestamp in UTC",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "description": "Current status.",
+      "$ref": "#/$defs/BuildStatusKind"
+    }
+  },
+  "required": [
+    "build_id",
+    "status"
+  ],
+  "$defs": {
+    "ArtifactRef": {
+      "description": "Artifact reference within a build or scan result.",
+      "type": "string"
+    },
+    "BuildLogRef": {
+      "description": "Reference to a build log output produced during execution.",
+      "type": "string"
+    },
+    "BuildRef": {
+      "description": "Build reference within a supply chain.",
+      "type": "string"
+    },
+    "BuildStatusKind": {
+      "description": "Lifecycle status for a build.",
+      "oneOf": [
+        {
+          "description": "Build has been accepted but not started.",
+          "type": "string",
+          "const": "pending"
+        },
+        {
+          "description": "Build is currently running.",
+          "type": "string",
+          "const": "running"
+        },
+        {
+          "description": "Build finished successfully.",
+          "type": "string",
+          "const": "succeeded"
+        },
+        {
+          "description": "Build failed.",
+          "type": "string",
+          "const": "failed"
+        },
+        {
+          "description": "Build was cancelled before completion.",
+          "type": "string",
+          "const": "cancelled"
+        }
+      ]
+    }
+  }
+}

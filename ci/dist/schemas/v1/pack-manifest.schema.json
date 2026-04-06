@@ -1,0 +1,1439 @@
+{
+  "$id": "greentic.pack-manifest.v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Greentic PackManifest v1",
+  "description": "Canonical pack manifest embedding flows, components, dependencies and signatures.",
+  "type": "object",
+  "properties": {
+    "bootstrap": {
+      "description": "Optional bootstrap/install hints for platform-controlled packs.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BootstrapSpec"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "capabilities": {
+      "description": "Capability declarations for the pack.",
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ComponentCapability"
+      }
+    },
+    "components": {
+      "description": "Component descriptors bundled within the pack.",
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ComponentManifest"
+      }
+    },
+    "dependencies": {
+      "description": "Pack dependencies.",
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PackDependency"
+      }
+    },
+    "extensions": {
+      "description": "Optional extension descriptors for provider-specific metadata.",
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": {
+        "$ref": "#/$defs/ExtensionRef"
+      }
+    },
+    "flows": {
+      "description": "Flow entries embedded in the pack.",
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PackFlowEntry"
+      }
+    },
+    "kind": {
+      "description": "Pack kind hint.",
+      "$ref": "#/$defs/PackKind"
+    },
+    "name": {
+      "description": "Optional pack name",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pack_id": {
+      "description": "Logical pack identifier.",
+      "$ref": "#/$defs/PackId"
+    },
+    "publisher": {
+      "description": "Pack publisher.",
+      "type": "string"
+    },
+    "schema_version": {
+      "description": "Schema version for the pack manifest.",
+      "type": "string"
+    },
+    "secret_requirements": {
+      "description": "Pack-level secret requirements.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/SecretRequirement"
+      }
+    },
+    "signatures": {
+      "description": "Pack signatures.",
+      "$ref": "#/$defs/PackSignatures",
+      "default": {
+        "signatures": []
+      }
+    },
+    "version": {
+      "description": "SemVer version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "pack_id",
+    "version",
+    "kind",
+    "publisher"
+  ],
+  "$defs": {
+    "BootstrapSpec": {
+      "description": "Optional bootstrap/install hints for platform-managed packs.",
+      "type": "object",
+      "properties": {
+        "install_flow": {
+          "description": "Flow to run during initial install/bootstrap.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "installer_component": {
+          "description": "Component responsible for install/upgrade orchestration.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "upgrade_flow": {
+          "description": "Flow to run when upgrading an existing install.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "ComponentCapabilities": {
+      "description": "Host + WASI capabilities required by a component.",
+      "type": "object",
+      "properties": {
+        "host": {
+          "description": "Host capability surfaces.",
+          "$ref": "#/$defs/HostCapabilities"
+        },
+        "wasi": {
+          "description": "WASI Preview 2 surfaces.",
+          "$ref": "#/$defs/WasiCapabilities"
+        }
+      },
+      "required": [
+        "wasi",
+        "host"
+      ]
+    },
+    "ComponentCapability": {
+      "description": "Named capability advertised by a pack or component collection.",
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Optional description or metadata.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Capability name.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "ComponentConfigurators": {
+      "description": "Flow configurators linked from a component manifest.",
+      "type": "object",
+      "properties": {
+        "basic": {
+          "description": "Basic configurator flow identifier.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FlowId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "full": {
+          "description": "Full configurator flow identifier.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FlowId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "ComponentDevFlow": {
+      "description": "Development-time flow embedded directly in a component manifest.\n\nThese flows are consumed by tooling such as `greentic-dev` during authoring. They are not\nrequired for deployment or runtime execution and may be safely ignored by hosts and runners.",
+      "type": "object",
+      "properties": {
+        "format": {
+          "description": "Flow representation format. Currently only `flow-ir-json` is supported.",
+          "type": "string",
+          "default": "flow-ir-json"
+        },
+        "graph": {
+          "description": "FlowIR JSON graph for this flow."
+        }
+      },
+      "required": [
+        "graph"
+      ]
+    },
+    "ComponentId": {
+      "description": "Identifier referencing a component binding in a pack.",
+      "type": "string"
+    },
+    "ComponentManifest": {
+      "description": "Component metadata describing capabilities and supported flows.",
+      "type": "object",
+      "properties": {
+        "capabilities": {
+          "description": "Capability contract required by the component.",
+          "$ref": "#/$defs/ComponentCapabilities"
+        },
+        "config_schema": {
+          "description": "Optional configuration schema."
+        },
+        "configurators": {
+          "description": "Optional configurator flows.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ComponentConfigurators"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dev_flows": {
+          "description": "Development-time flows used for authoring only. This field is optional and ignored by\nruntime systems. Tools may store FlowIR-as-JSON values here to allow editing flows without\nsidecar files.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/ComponentDevFlow"
+          }
+        },
+        "id": {
+          "description": "Logical component identifier (opaque string).",
+          "$ref": "#/$defs/ComponentId"
+        },
+        "operations": {
+          "description": "Operation-level descriptions.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ComponentOperation"
+          }
+        },
+        "profiles": {
+          "description": "Profile metadata for the component.",
+          "$ref": "#/$defs/ComponentProfiles"
+        },
+        "resources": {
+          "description": "Resource usage hints for deployers/schedulers.",
+          "$ref": "#/$defs/ResourceHints",
+          "default": {}
+        },
+        "supports": {
+          "description": "Flow kinds this component can participate in.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/FlowKind"
+          }
+        },
+        "version": {
+          "description": "SemVer version",
+          "type": "string"
+        },
+        "world": {
+          "description": "Referenced WIT world binding.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "world",
+        "profiles",
+        "capabilities"
+      ]
+    },
+    "ComponentOperation": {
+      "description": "Operation descriptor for a component.",
+      "type": "object",
+      "properties": {
+        "input_schema": {
+          "description": "Input schema for the operation."
+        },
+        "name": {
+          "description": "Operation name (for example `handle_message`).",
+          "type": "string"
+        },
+        "output_schema": {
+          "description": "Output schema for the operation."
+        }
+      },
+      "required": [
+        "name",
+        "input_schema",
+        "output_schema"
+      ]
+    },
+    "ComponentProfiles": {
+      "description": "Component profile declaration.",
+      "type": "object",
+      "properties": {
+        "default": {
+          "description": "Default profile applied when a node does not specify one.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "supported": {
+          "description": "Supported profile identifiers.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ComponentRef": {
+      "description": "Component reference within a flow.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Component identifier.",
+          "$ref": "#/$defs/ComponentId"
+        },
+        "operation": {
+          "description": "Optional operation name within the component.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pack_alias": {
+          "description": "Dependency pack alias when referencing external components.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "EnvCapabilities": {
+      "description": "Environment variable allow list.",
+      "type": "object",
+      "properties": {
+        "allow": {
+          "description": "Environment variable names components may read.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "EventsCapabilities": {
+      "description": "Events capability declaration.",
+      "type": "object",
+      "properties": {
+        "inbound": {
+          "description": "Whether inbound events are handled.",
+          "type": "boolean",
+          "default": false
+        },
+        "outbound": {
+          "description": "Whether outbound events are emitted.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "ExtensionInline": {
+      "description": "Inline payload for a pack extension entry.",
+      "anyOf": [
+        {
+          "description": "Provider extension payload embedding provider declarations.",
+          "$ref": "#/$defs/ProviderExtensionInline"
+        },
+        {
+          "description": "Arbitrary inline payload for unknown extensions."
+        }
+      ]
+    },
+    "ExtensionRef": {
+      "description": "External extension reference embedded in a pack manifest.",
+      "type": "object",
+      "properties": {
+        "digest": {
+          "description": "Optional digest pin for the referenced extension payload.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "inline": {
+          "description": "Optional inline extension payload for small metadata blobs.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExtensionInline"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "kind": {
+          "description": "Extension kind identifier, e.g. `greentic.provider-extension.v1` (only this ID is supported for provider metadata; other keys are treated as unknown extensions).",
+          "type": "string"
+        },
+        "location": {
+          "description": "Optional remote or local location for the extension payload.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "version": {
+          "description": "Extension version as a string to avoid semver crate coupling.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "version"
+      ]
+    },
+    "FilesystemCapabilities": {
+      "description": "Filesystem sandbox configuration.",
+      "type": "object",
+      "properties": {
+        "mode": {
+          "description": "Filesystem exposure mode.",
+          "$ref": "#/$defs/FilesystemMode"
+        },
+        "mounts": {
+          "description": "Declared mounts.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/FilesystemMount"
+          }
+        }
+      },
+      "required": [
+        "mode"
+      ]
+    },
+    "FilesystemMode": {
+      "description": "Filesystem exposure mode.",
+      "oneOf": [
+        {
+          "description": "No filesystem access.",
+          "type": "string",
+          "const": "none"
+        },
+        {
+          "description": "Read-only view with predefined mounts.",
+          "type": "string",
+          "const": "read_only"
+        },
+        {
+          "description": "Isolated sandbox with write access.",
+          "type": "string",
+          "const": "sandbox"
+        }
+      ]
+    },
+    "FilesystemMount": {
+      "description": "Single mount definition.",
+      "type": "object",
+      "properties": {
+        "guest_path": {
+          "description": "Guest-visible mount path.",
+          "type": "string"
+        },
+        "host_class": {
+          "description": "Host-provided storage class (scratch/cache/config/etc.).",
+          "type": "string"
+        },
+        "name": {
+          "description": "Logical mount identifier.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "host_class",
+        "guest_path"
+      ]
+    },
+    "FlowId": {
+      "description": "Identifier referencing a flow inside a pack.",
+      "type": "string"
+    },
+    "FlowKind": {
+      "description": "Supported flow kinds across Greentic packs.",
+      "oneOf": [
+        {
+          "description": "Inbound messaging flows (Telegram, Teams, HTTP chat).",
+          "type": "string",
+          "const": "messaging"
+        },
+        {
+          "description": "Event-driven flows (webhooks, NATS, cron, etc.).",
+          "type": "string",
+          "const": "event"
+        },
+        {
+          "description": "Flows that configure components/providers/infrastructure.",
+          "type": "string",
+          "const": "component_config"
+        },
+        {
+          "description": "Batch/background jobs.",
+          "type": "string",
+          "const": "job"
+        },
+        {
+          "description": "HTTP-style request/response flows.",
+          "type": "string",
+          "const": "http"
+        }
+      ]
+    },
+    "FlowMetadata": {
+      "description": "Optional authoring metadata for flows.",
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Optional human-friendly description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "extra": {
+          "description": "Free-form metadata.",
+          "default": null
+        },
+        "tags": {
+          "description": "Optional tags.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "title": {
+          "description": "Optional human-friendly title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "HostCapabilities": {
+      "description": "Host capability declaration.",
+      "type": "object",
+      "properties": {
+        "events": {
+          "description": "Event ingress/egress needs.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EventsCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "http": {
+          "description": "HTTP client/server needs.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HttpCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "iac": {
+          "description": "Infrastructure-as-code artifact permissions.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IaCCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "messaging": {
+          "description": "Messaging ingress/egress needs.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MessagingCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "secrets": {
+          "description": "Secret resolution requirements.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SecretsCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "description": "Durable state access requirements.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StateCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "telemetry": {
+          "description": "Telemetry emission settings.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TelemetryCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "HttpCapabilities": {
+      "description": "HTTP capability declaration.",
+      "type": "object",
+      "properties": {
+        "client": {
+          "description": "Outbound HTTP client usage.",
+          "type": "boolean",
+          "default": false
+        },
+        "server": {
+          "description": "Inbound HTTP server usage.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "IaCCapabilities": {
+      "description": "Infrastructure-as-code host permissions.",
+      "type": "object",
+      "properties": {
+        "execute_plans": {
+          "description": "Whether the component may trigger IaC plan execution via the host.",
+          "type": "boolean",
+          "default": false
+        },
+        "write_templates": {
+          "description": "Whether templates/manifests may be written to a preopened path.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "write_templates"
+      ]
+    },
+    "InputMapping": {
+      "description": "Opaque component input mapping configuration.",
+      "type": "object",
+      "properties": {
+        "mapping": {
+          "description": "Mapping configuration (templates, expressions, etc.).",
+          "default": null
+        }
+      }
+    },
+    "MessagingCapabilities": {
+      "description": "Messaging capability declaration.",
+      "type": "object",
+      "properties": {
+        "inbound": {
+          "description": "Whether the component receives inbound messages.",
+          "type": "boolean",
+          "default": false
+        },
+        "outbound": {
+          "description": "Whether the component emits outbound messages.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "Node": {
+      "description": "Flow node representation.",
+      "type": "object",
+      "properties": {
+        "component": {
+          "description": "Component binding referenced by the node.",
+          "$ref": "#/$defs/ComponentRef"
+        },
+        "id": {
+          "description": "Node identifier.",
+          "$ref": "#/$defs/NodeId"
+        },
+        "input": {
+          "description": "Component input mapping configuration.",
+          "$ref": "#/$defs/InputMapping"
+        },
+        "output": {
+          "description": "Component output mapping configuration.",
+          "$ref": "#/$defs/OutputMapping"
+        },
+        "routing": {
+          "description": "Routing behaviour after this node.",
+          "$ref": "#/$defs/Routing"
+        },
+        "telemetry": {
+          "description": "Optional telemetry hints for this node.",
+          "$ref": "#/$defs/TelemetryHints",
+          "default": {
+            "attributes": {}
+          }
+        }
+      },
+      "required": [
+        "id",
+        "component",
+        "input",
+        "output",
+        "routing"
+      ]
+    },
+    "NodeId": {
+      "description": "Identifier referencing a node inside a flow graph.",
+      "type": "string"
+    },
+    "OutputMapping": {
+      "description": "Opaque component output mapping configuration.",
+      "type": "object",
+      "properties": {
+        "mapping": {
+          "description": "Mapping configuration (templates, expressions, etc.).",
+          "default": null
+        }
+      }
+    },
+    "PackDependency": {
+      "description": "Dependency entry referencing another pack.",
+      "type": "object",
+      "properties": {
+        "alias": {
+          "description": "Local alias for the dependency.",
+          "type": "string"
+        },
+        "pack_id": {
+          "description": "Referenced pack identifier.",
+          "$ref": "#/$defs/PackId"
+        },
+        "required_capabilities": {
+          "description": "Required capabilities.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        },
+        "version_req": {
+          "description": "Required version.",
+          "$ref": "#/$defs/SemverReq"
+        }
+      },
+      "required": [
+        "alias",
+        "pack_id",
+        "version_req"
+      ]
+    },
+    "PackFlowEntry": {
+      "description": "Flow entry embedded in a pack.",
+      "type": "object",
+      "properties": {
+        "entrypoints": {
+          "description": "Additional entrypoint identifiers for discoverability.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        },
+        "flow": {
+          "description": "Flow definition.",
+          "$ref": "#/$defs/greentic.flow.v1"
+        },
+        "id": {
+          "description": "Flow identifier.",
+          "$ref": "#/$defs/FlowId"
+        },
+        "kind": {
+          "description": "Flow kind.",
+          "$ref": "#/$defs/FlowKind"
+        },
+        "tags": {
+          "description": "Flow tags.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "flow"
+      ]
+    },
+    "PackId": {
+      "description": "Globally unique pack identifier.",
+      "type": "string"
+    },
+    "PackKind": {
+      "description": "Hint describing the primary purpose of a pack.",
+      "oneOf": [
+        {
+          "description": "Application packs.",
+          "type": "string",
+          "const": "application"
+        },
+        {
+          "description": "Provider packs exporting components.",
+          "type": "string",
+          "const": "provider"
+        },
+        {
+          "description": "Infrastructure packs.",
+          "type": "string",
+          "const": "infrastructure"
+        },
+        {
+          "description": "Library packs.",
+          "type": "string",
+          "const": "library"
+        }
+      ]
+    },
+    "PackSignatures": {
+      "description": "Signature bundle accompanying a pack manifest.",
+      "type": "object",
+      "properties": {
+        "signatures": {
+          "description": "Optional detached signatures.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Signature"
+          }
+        }
+      }
+    },
+    "ProviderDecl": {
+      "description": "Provider declaration stored in indexes and extension payloads.",
+      "type": "object",
+      "properties": {
+        "capabilities": {
+          "description": "Capabilities advertised by the provider.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "config_schema_ref": {
+          "description": "JSON Schema reference for configuration.",
+          "type": "string"
+        },
+        "docs_ref": {
+          "description": "Optional documentation reference.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ops": {
+          "description": "Operations exposed by the provider.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provider_type": {
+          "description": "Provider type identifier (string-based to avoid enum coupling).",
+          "type": "string"
+        },
+        "runtime": {
+          "description": "Runtime binding information for the provider.",
+          "$ref": "#/$defs/ProviderRuntimeRef"
+        },
+        "state_schema_ref": {
+          "description": "Optional JSON Schema reference for provider state.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "provider_type",
+        "config_schema_ref",
+        "runtime"
+      ]
+    },
+    "ProviderExtensionInline": {
+      "description": "Inline extension payload embedding provider declarations.",
+      "type": "object",
+      "properties": {
+        "providers": {
+          "description": "Providers included in the extension payload.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ProviderDecl"
+          }
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "providers"
+      ]
+    },
+    "ProviderRuntimeRef": {
+      "description": "Runtime binding for a provider implementation.",
+      "type": "object",
+      "properties": {
+        "component_ref": {
+          "description": "Component identifier for the provider runtime.",
+          "type": "string"
+        },
+        "export": {
+          "description": "Exported function implementing the provider runtime.",
+          "type": "string"
+        },
+        "world": {
+          "description": "WIT world for the provider runtime.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "component_ref",
+        "export",
+        "world"
+      ]
+    },
+    "ResourceHints": {
+      "description": "Resource usage hints for a component.",
+      "type": "object",
+      "properties": {
+        "average_latency_ms": {
+          "description": "Expected average latency in milliseconds.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        },
+        "cpu_millis": {
+          "description": "Suggested CPU in millis.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        },
+        "memory_mb": {
+          "description": "Suggested memory in MiB.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        }
+      }
+    },
+    "Routing": {
+      "description": "Routing behaviour for a node.",
+      "oneOf": [
+        {
+          "description": "Continue to the specified node.",
+          "type": "object",
+          "properties": {
+            "next": {
+              "type": "object",
+              "properties": {
+                "node_id": {
+                  "description": "Destination node identifier.",
+                  "$ref": "#/$defs/NodeId"
+                }
+              },
+              "required": [
+                "node_id"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "next"
+          ]
+        },
+        {
+          "description": "Branch based on status string -> node id.",
+          "type": "object",
+          "properties": {
+            "branch": {
+              "type": "object",
+              "properties": {
+                "default": {
+                  "description": "Default node when no status matches.",
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/NodeId"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "on_status": {
+                  "description": "Mapping of status value to destination node.",
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/$defs/NodeId"
+                  },
+                  "default": {}
+                }
+              }
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "branch"
+          ]
+        },
+        {
+          "description": "Flow terminates successfully.",
+          "type": "string",
+          "const": "end"
+        },
+        {
+          "description": "Reply to origin (Messaging/Http flows).",
+          "type": "string",
+          "const": "reply"
+        },
+        {
+          "description": "Component- or runtime-specific routing.",
+          "type": "object",
+          "properties": {
+            "custom": true
+          },
+          "additionalProperties": false,
+          "required": [
+            "custom"
+          ]
+        }
+      ]
+    },
+    "SecretFormat": {
+      "description": "Supported secret content formats.",
+      "oneOf": [
+        {
+          "description": "Arbitrary bytes.",
+          "type": "string",
+          "const": "bytes"
+        },
+        {
+          "description": "UTF-8 text.",
+          "type": "string",
+          "const": "text"
+        },
+        {
+          "description": "JSON document.",
+          "type": "string",
+          "const": "json"
+        }
+      ]
+    },
+    "SecretKey": {
+      "description": "Canonical secret identifier used across manifests and bindings.",
+      "type": "string"
+    },
+    "SecretRequirement": {
+      "description": "Structured secret requirement used in capabilities, bindings, and deployment plans.",
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Optional description for operator-facing tooling.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "examples": {
+          "description": "Example payloads for documentation.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "format": {
+          "description": "Preferred secret format when known.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SecretFormat"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "key": {
+          "description": "Logical key the runtime should resolve.",
+          "$ref": "#/$defs/SecretKey"
+        },
+        "required": {
+          "description": "Whether the secret is mandatory for execution.",
+          "type": "boolean",
+          "default": true
+        },
+        "schema": {
+          "description": "Optional JSON Schema fragment describing the value shape."
+        },
+        "scope": {
+          "description": "Expected scope for resolution (environment/tenant/team).",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SecretScope"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "key"
+      ]
+    },
+    "SecretScope": {
+      "description": "Canonical secret scope (environment, tenant, team).",
+      "type": "object",
+      "properties": {
+        "env": {
+          "description": "Environment identifier (e.g., `dev`, `prod`).",
+          "type": "string"
+        },
+        "team": {
+          "description": "Optional team for finer-grained isolation.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tenant": {
+          "description": "Tenant identifier within the environment.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "env",
+        "tenant"
+      ]
+    },
+    "SecretsCapabilities": {
+      "description": "Secret requirements.",
+      "type": "object",
+      "properties": {
+        "required": {
+          "description": "Secret identifiers required at runtime.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SecretRequirement"
+          }
+        }
+      }
+    },
+    "SemverReq": {
+      "description": "Validated semantic version requirement string",
+      "type": "string"
+    },
+    "Signature": {
+      "description": "Detached signature accompanying a [`PackRef`].",
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "description": "Signature algorithm (for example `ed25519`).",
+          "$ref": "#/$defs/SignatureAlgorithm"
+        },
+        "key_id": {
+          "description": "Identifier of the public key.",
+          "type": "string"
+        },
+        "signature": {
+          "description": "Raw signature bytes (base64 encoded when serialized).",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint8",
+            "maximum": 255,
+            "minimum": 0
+          }
+        }
+      },
+      "required": [
+        "key_id",
+        "algorithm",
+        "signature"
+      ]
+    },
+    "SignatureAlgorithm": {
+      "description": "Supported signature algorithms for packs.",
+      "oneOf": [
+        {
+          "description": "Ed25519 signatures.",
+          "type": "string",
+          "const": "ed25519"
+        },
+        {
+          "description": "Other algorithms identified by name.",
+          "type": "object",
+          "properties": {
+            "other": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "other"
+          ]
+        }
+      ]
+    },
+    "StateCapabilities": {
+      "description": "State surface declaration.",
+      "type": "object",
+      "properties": {
+        "read": {
+          "description": "Whether read access is required.",
+          "type": "boolean",
+          "default": false
+        },
+        "write": {
+          "description": "Whether write access is required.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "TelemetryCapabilities": {
+      "description": "Telemetry capability declaration.",
+      "type": "object",
+      "properties": {
+        "scope": {
+          "description": "Maximum telemetry scope granted to the component.",
+          "$ref": "#/$defs/TelemetryScope"
+        }
+      },
+      "required": [
+        "scope"
+      ]
+    },
+    "TelemetryHints": {
+      "description": "Optional telemetry hints for a node.",
+      "type": "object",
+      "properties": {
+        "attributes": {
+          "description": "Attributes to attach to spans/logs.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {}
+        },
+        "sampling": {
+          "description": "Sampling hint (`high`, `normal`, `low`).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "span_name": {
+          "description": "Optional span name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "TelemetryScope": {
+      "description": "Telemetry scoping modes.",
+      "oneOf": [
+        {
+          "description": "Emitted telemetry is scoped to the tenant.",
+          "type": "string",
+          "const": "tenant"
+        },
+        {
+          "description": "Scoped to the pack.",
+          "type": "string",
+          "const": "pack"
+        },
+        {
+          "description": "Scoped per-node invocation.",
+          "type": "string",
+          "const": "node"
+        }
+      ]
+    },
+    "WasiCapabilities": {
+      "description": "WASI capability declarations.",
+      "type": "object",
+      "properties": {
+        "clocks": {
+          "description": "Whether clock access is required.",
+          "type": "boolean",
+          "default": false
+        },
+        "env": {
+          "description": "Environment variable allow list.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EnvCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "filesystem": {
+          "description": "Filesystem configuration.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FilesystemCapabilities"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "random": {
+          "description": "Whether random number generation is required.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "greentic.flow.v1": {
+      "title": "Greentic Flow v1",
+      "description": "Canonical flow model with components, routing and telemetry.",
+      "type": "object",
+      "properties": {
+        "entrypoints": {
+          "description": "Entrypoints for this flow keyed by name (for example `default`, `telegram`, `http:/path`).",
+          "type": "object",
+          "additionalProperties": true,
+          "default": {}
+        },
+        "id": {
+          "description": "Flow identifier inside the pack.",
+          "$ref": "#/$defs/FlowId"
+        },
+        "kind": {
+          "description": "Flow execution kind.",
+          "$ref": "#/$defs/FlowKind"
+        },
+        "metadata": {
+          "description": "Optional metadata for authoring/UX.",
+          "$ref": "#/$defs/FlowMetadata",
+          "default": {
+            "extra": null,
+            "tags": []
+          }
+        },
+        "nodes": {
+          "description": "Ordered node map describing the flow graph.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Node"
+          },
+          "default": {}
+        },
+        "schema_version": {
+          "description": "Schema version for the flow document.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "id",
+        "kind"
+      ]
+    }
+  }
+}

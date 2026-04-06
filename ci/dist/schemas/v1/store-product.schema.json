@@ -1,0 +1,299 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/store-product.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StoreProduct",
+  "description": "Catalog product describing a component, flow, or pack.",
+  "type": "object",
+  "properties": {
+    "capabilities": {
+      "description": "Capabilities exposed by the product.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "default": {}
+    },
+    "category": {
+      "description": "Optional category label.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "component_ref": {
+      "description": "Optional component reference.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ComponentRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "default_plan_id": {
+      "description": "Default plan identifier, if any.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StorePlanId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "description": {
+      "description": "Description.",
+      "type": "string"
+    },
+    "id": {
+      "description": "Product identifier.",
+      "$ref": "#/$defs/StoreProductId"
+    },
+    "is_free": {
+      "description": "Convenience flag indicating the default plan is free.",
+      "type": "boolean"
+    },
+    "kind": {
+      "description": "Product kind.",
+      "$ref": "#/$defs/StoreProductKind"
+    },
+    "metadata": {
+      "description": "Additional metadata.",
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    },
+    "name": {
+      "description": "Display name.",
+      "type": "string"
+    },
+    "pack_ref": {
+      "description": "Optional pack reference.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PackId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "slug": {
+      "description": "Slug for routing.",
+      "type": "string"
+    },
+    "source_repo": {
+      "description": "Source repository reference.",
+      "$ref": "#/$defs/RepoRef"
+    },
+    "tags": {
+      "description": "Tags for filtering.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "version_strategy": {
+      "description": "Version resolution strategy.",
+      "$ref": "#/$defs/VersionStrategy"
+    }
+  },
+  "required": [
+    "id",
+    "kind",
+    "name",
+    "slug",
+    "description",
+    "source_repo",
+    "version_strategy",
+    "is_free"
+  ],
+  "$defs": {
+    "ComponentRef": {
+      "description": "Supply-chain component reference (distinct from pack ComponentId).",
+      "type": "string"
+    },
+    "PackId": {
+      "description": "Globally unique pack identifier.",
+      "type": "string"
+    },
+    "RepoRef": {
+      "description": "Repository reference within a supply chain.",
+      "type": "string"
+    },
+    "SemverReq": {
+      "description": "Validated semantic version requirement string",
+      "type": "string"
+    },
+    "StorePlanId": {
+      "description": "Identifier referencing a plan for a store product.",
+      "type": "string"
+    },
+    "StoreProductId": {
+      "description": "Identifier referencing a product in the store catalog.",
+      "type": "string"
+    },
+    "StoreProductKind": {
+      "description": "Kinds of products exposed by the store catalog.",
+      "oneOf": [
+        {
+          "description": "Component offering.",
+          "type": "string",
+          "const": "component"
+        },
+        {
+          "description": "Flow offering.",
+          "type": "string",
+          "const": "flow"
+        },
+        {
+          "description": "Pack offering.",
+          "type": "string",
+          "const": "pack"
+        }
+      ]
+    },
+    "VersionStrategy": {
+      "description": "Strategy used to resolve versions.",
+      "oneOf": [
+        {
+          "description": "Always track the latest version.",
+          "type": "string",
+          "const": "Latest"
+        },
+        {
+          "description": "Use a pinned semantic version requirement (legacy shape).",
+          "type": "object",
+          "properties": {
+            "Pinned": {
+              "type": "object",
+              "properties": {
+                "requirement": {
+                  "description": "Version requirement (e.g. ^1.2).",
+                  "$ref": "#/$defs/SemverReq"
+                }
+              },
+              "required": [
+                "requirement"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "Pinned"
+          ]
+        },
+        {
+          "description": "Track a long-term support channel (legacy shape).",
+          "type": "string",
+          "const": "Lts"
+        },
+        {
+          "description": "Custom strategy identified by name (legacy shape).",
+          "type": "object",
+          "properties": {
+            "Custom": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "Custom"
+          ]
+        },
+        {
+          "description": "Always track the latest published version for this component.",
+          "type": "object",
+          "properties": {
+            "Fixed": {
+              "type": "object",
+              "properties": {
+                "version": {
+                  "description": "Exact version string (e.g. \"1.2.3\").",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "version"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "Fixed"
+          ]
+        },
+        {
+          "description": "A semver-style range (e.g. \">=1.2,<2.0\").",
+          "type": "object",
+          "properties": {
+            "Range": {
+              "type": "object",
+              "properties": {
+                "range": {
+                  "description": "Version range expression.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "range"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "Range"
+          ]
+        },
+        {
+          "description": "A named channel (e.g. \"stable\", \"beta\", \"canary\").",
+          "type": "object",
+          "properties": {
+            "Channel": {
+              "type": "object",
+              "properties": {
+                "channel": {
+                  "description": "Channel name.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "channel"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "Channel"
+          ]
+        },
+        {
+          "description": "Forward-compatible escape hatch for unknown strategies.",
+          "type": "object",
+          "properties": {
+            "CustomTagged": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "description": "Free-form value for the strategy.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "CustomTagged"
+          ]
+        }
+      ]
+    }
+  }
+}

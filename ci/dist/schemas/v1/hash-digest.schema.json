@@ -1,0 +1,44 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/hash-digest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HashDigest",
+  "description": "Content digest describing a pack or artifact.",
+  "type": "object",
+  "properties": {
+    "algo": {
+      "$ref": "#/$defs/HashAlgorithm"
+    },
+    "hex": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "algo",
+    "hex"
+  ],
+  "$defs": {
+    "HashAlgorithm": {
+      "description": "Supported hashing algorithms for pack content digests.",
+      "oneOf": [
+        {
+          "description": "Blake3 hashing algorithm.",
+          "type": "string",
+          "const": "blake3"
+        },
+        {
+          "description": "Catch all for other algorithms.",
+          "type": "object",
+          "properties": {
+            "other": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "other"
+          ]
+        }
+      ]
+    }
+  }
+}

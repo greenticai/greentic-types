@@ -1,0 +1,65 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/validation-diagnostic.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Diagnostic",
+  "description": "Diagnostic entry produced by pack validators.",
+  "type": "object",
+  "properties": {
+    "code": {
+      "description": "Stable machine-readable identifier (for example `PACK_MISSING_SCHEMA`).",
+      "type": "string"
+    },
+    "data": {
+      "description": "Optional structured payload for tooling."
+    },
+    "hint": {
+      "description": "Optional actionable guidance.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "message": {
+      "description": "Human-readable description.",
+      "type": "string"
+    },
+    "path": {
+      "description": "Optional path inside the pack or manifest (for example `extensions.messaging.setup`).",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "severity": {
+      "description": "Severity of the diagnostic.",
+      "$ref": "#/$defs/Severity"
+    }
+  },
+  "required": [
+    "severity",
+    "code",
+    "message"
+  ],
+  "$defs": {
+    "Severity": {
+      "description": "Severity level for validation diagnostics.",
+      "oneOf": [
+        {
+          "description": "Informational validation message.",
+          "type": "string",
+          "const": "info"
+        },
+        {
+          "description": "Warning-level validation message.",
+          "type": "string",
+          "const": "warn"
+        },
+        {
+          "description": "Error-level validation message.",
+          "type": "string",
+          "const": "error"
+        }
+      ]
+    }
+  }
+}

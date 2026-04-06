@@ -1,0 +1,44 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/provider-manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ProviderManifest",
+  "description": "Manifest describing a provider returned by `describe()`.",
+  "type": "object",
+  "properties": {
+    "capabilities": {
+      "description": "Capabilities advertised by the provider.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "config_schema_ref": {
+      "description": "Optional JSON Schema reference for configuration.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ops": {
+      "description": "Operations exposed by the provider.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "provider_type": {
+      "description": "Provider type identifier (string-based to avoid enum coupling).",
+      "type": "string"
+    },
+    "state_schema_ref": {
+      "description": "Optional JSON Schema reference for provider state.",
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "provider_type"
+  ]
+}

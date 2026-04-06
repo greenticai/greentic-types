@@ -1,0 +1,7 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/store-plan-id.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StorePlanId",
+  "description": "Identifier referencing a plan for a store product.",
+  "type": "string"
+}

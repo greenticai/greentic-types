@@ -1,0 +1,21 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/worker-message.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WorkerMessage",
+  "description": "Individual message emitted by a worker.",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "description": "Message kind (for example `text`, `card`, `event`).",
+      "type": "string"
+    },
+    "payload_json": {
+      "description": "JSON-encoded message payload; workers and callers negotiate its shape.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "kind",
+    "payload_json"
+  ]
+}

@@ -1,0 +1,301 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/desired-subscription-entry.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DesiredSubscriptionEntry",
+  "description": "Desired subscription entry supplied to the distributor.",
+  "type": "object",
+  "properties": {
+    "config_overrides": {
+      "description": "Configuration overrides.",
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    },
+    "metadata": {
+      "description": "Additional metadata.",
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    },
+    "policy_tags": {
+      "description": "Policy tags for downstream enforcement.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "selector": {
+      "description": "Target artifact selection.",
+      "$ref": "#/$defs/ArtifactSelector"
+    },
+    "version_strategy": {
+      "description": "Version strategy to apply.",
+      "$ref": "#/$defs/VersionStrategy"
+    }
+  },
+  "required": [
+    "selector",
+    "version_strategy"
+  ],
+  "$defs": {
+    "ArtifactSelector": {
+      "description": "Selector describing whether a component or pack should be deployed.",
+      "oneOf": [
+        {
+          "description": "Component reference.",
+          "type": "object",
+          "properties": {
+            "component": {
+              "$ref": "#/$defs/ComponentRef"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "component"
+          ]
+        },
+        {
+          "description": "Pack reference.",
+          "type": "object",
+          "properties": {
+            "pack": {
+              "$ref": "#/$defs/PackRef"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "pack"
+          ]
+        }
+      ]
+    },
+    "ComponentRef": {
+      "description": "Supply-chain component reference (distinct from pack ComponentId).",
+      "type": "string"
+    },
+    "PackRef": {
+      "description": "Reference to a pack stored in an OCI registry.",
+      "type": "object",
+      "properties": {
+        "digest": {
+          "description": "Content digest of the pack.",
+          "type": "string"
+        },
+        "oci_url": {
+          "description": "OCI reference pointing to the pack.",
+          "type": "string"
+        },
+        "signatures": {
+          "description": "Optional detached signatures.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Signature"
+          }
+        },
+        "version": {
+          "description": "SemVer version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "oci_url",
+        "version",
+        "digest"
+      ]
+    },
+    "SemverReq": {
+      "description": "Validated semantic version requirement string",
+      "type": "string"
+    },
+    "Signature": {
+      "description": "Detached signature accompanying a [`PackRef`].",
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "description": "Signature algorithm (for example `ed25519`).",
+          "$ref": "#/$defs/SignatureAlgorithm"
+        },
+        "key_id": {
+          "description": "Identifier of the public key.",
+          "type": "string"
+        },
+        "signature": {
+          "description": "Raw signature bytes (base64 encoded when serialized).",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint8",
+            "maximum": 255,
+            "minimum": 0
+          }
+        }
+      },
+      "required": [
+        "key_id",
+        "algorithm",
+        "signature"
+      ]
+    },
+    "SignatureAlgorithm": {
+      "description": "Supported signature algorithms for packs.",
+      "oneOf": [
+        {
+          "description": "Ed25519 signatures.",
+          "type": "string",
+          "const": "ed25519"
+        },
+        {
+          "description": "Other algorithms identified by name.",
+          "type": "object",
+          "properties": {
+            "other": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "other"
+          ]
+        }
+      ]
+    },
+    "VersionStrategy": {
+      "description": "Strategy used to resolve versions.",
+      "oneOf": [
+        {
+          "description": "Always track the latest version.",
+          "type": "string",
+          "const": "Latest"
+        },
+        {
+          "description": "Use a pinned semantic version requirement (legacy shape).",
+          "type": "object",
+          "properties": {
+            "Pinned": {
+              "type": "object",
+              "properties": {
+                "requirement": {
+                  "description": "Version requirement (e.g. ^1.2).",
+                  "$ref": "#/$defs/SemverReq"
+                }
+              },
+              "required": [
+                "requirement"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "Pinned"
+          ]
+        },
+        {
+          "description": "Track a long-term support channel (legacy shape).",
+          "type": "string",
+          "const": "Lts"
+        },
+        {
+          "description": "Custom strategy identified by name (legacy shape).",
+          "type": "object",
+          "properties": {
+            "Custom": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "Custom"
+          ]
+        },
+        {
+          "description": "Always track the latest published version for this component.",
+          "type": "object",
+          "properties": {
+            "Fixed": {
+              "type": "object",
+              "properties": {
+                "version": {
+                  "description": "Exact version string (e.g. \"1.2.3\").",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "version"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "Fixed"
+          ]
+        },
+        {
+          "description": "A semver-style range (e.g. \">=1.2,<2.0\").",
+          "type": "object",
+          "properties": {
+            "Range": {
+              "type": "object",
+              "properties": {
+                "range": {
+                  "description": "Version range expression.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "range"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "Range"
+          ]
+        },
+        {
+          "description": "A named channel (e.g. \"stable\", \"beta\", \"canary\").",
+          "type": "object",
+          "properties": {
+            "Channel": {
+              "type": "object",
+              "properties": {
+                "channel": {
+                  "description": "Channel name.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "channel"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "Channel"
+          ]
+        },
+        {
+          "description": "Forward-compatible escape hatch for unknown strategies.",
+          "type": "object",
+          "properties": {
+            "CustomTagged": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "description": "Free-form value for the strategy.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "CustomTagged"
+          ]
+        }
+      ]
+    }
+  }
+}

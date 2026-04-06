@@ -1,0 +1,23 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/node-status.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NodeStatus",
+  "description": "Per-node execution status.",
+  "oneOf": [
+    {
+      "description": "Node executed successfully.",
+      "type": "string",
+      "const": "ok"
+    },
+    {
+      "description": "Node skipped execution (e.g. gated by conditionals).",
+      "type": "string",
+      "const": "skipped"
+    },
+    {
+      "description": "Node errored.",
+      "type": "string",
+      "const": "error"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/capability-map.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Map_of_Array_of_string",
+  "type": "object",
+  "additionalProperties": {
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  }
+}
