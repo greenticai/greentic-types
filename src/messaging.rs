@@ -119,5 +119,6 @@ pub struct ChannelMessageEnvelope {
     pub metadata: MessageMetadata,
 }
 
+pub mod extensions;
 pub mod rendering;
 pub mod universal_dto;
