@@ -4,6 +4,10 @@
 //! structured, provider-agnostic and provider-native data alongside the
 //! envelope. Consumers should prefer these constants over string literals
 //! to avoid typos and to allow grep-based auditing.
+//!
+//! This list is expected to grow over time; downstream consumers must
+//! tolerate unknown keys without error and MUST round-trip them
+//! end-to-end (stripping unrecognized keys is a bug).
 
 /// Well-known extension key names.
 pub mod ext_keys {
