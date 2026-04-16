@@ -117,6 +117,19 @@ pub struct ChannelMessageEnvelope {
     /// Free-form metadata for adapters and flows.
     #[cfg_attr(feature = "serde", serde(default))]
     pub metadata: MessageMetadata,
+    /// Structured provider-agnostic and provider-native extension data.
+    ///
+    /// Use well-known keys from [`extensions::ext_keys`] to avoid typos.
+    /// Values are typed JSON (`serde_json::Value`) — no re-serialization
+    /// needed at provider boundaries.
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            default,
+            skip_serializing_if = "alloc::collections::BTreeMap::is_empty"
+        )
+    )]
+    pub extensions: alloc::collections::BTreeMap<String, serde_json::Value>,
 }
 
 pub mod extensions;
