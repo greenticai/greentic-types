@@ -67,13 +67,12 @@ pub struct Attachment {
 
 /// Envelope for channel messages exchanged with adapters.
 ///
-/// NOTE: Intentionally not `#[non_exhaustive]` — consumers construct this
-/// type directly via struct literals (see greentic-messaging-providers, etc).
-/// Adding a new field is a coordinated breaking change that requires a minor
-/// version bump and synchronized updates across consumer submodules.
+/// NOTE: Marked `#[non_exhaustive]` to preserve semver compatibility when
+/// adding fields in future releases.
 #[derive(Clone, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
+#[non_exhaustive]
 pub struct ChannelMessageEnvelope {
     /// Stable identifier for the message.
     pub id: String,
