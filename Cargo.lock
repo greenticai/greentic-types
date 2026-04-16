@@ -476,7 +476,7 @@ dependencies = [
 
 [[package]]
 name = "greentic-types"
-version = "0.4.59"
+version = "0.4.58"
 dependencies = [
  "anyhow",
  "blake3",
@@ -507,7 +507,7 @@ dependencies = [
 
 [[package]]
 name = "greentic-types-macros"
-version = "0.4.59"
+version = "0.4.58"
 dependencies = [
  "proc-macro2",
  "quote",
