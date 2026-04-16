@@ -53,7 +53,8 @@ fn message_with_attachments_and_metadata_roundtrip() {
     metadata.insert("adapter".into(), "test-adapter".into());
     let attachments = vec![Attachment {
         mime_type: "image/png".into(),
-        url: "https://example.test/image.png".into(),
+        url: Some("https://example.test/image.png".into()),
+        content: None,
         name: Some("diagram.png".into()),
         size_bytes: Some(1_024),
     }];
