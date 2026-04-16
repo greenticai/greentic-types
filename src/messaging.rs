@@ -67,6 +67,7 @@ pub struct Attachment {
 
 /// Envelope for channel messages exchanged with adapters.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[non_exhaustive]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
 pub struct ChannelMessageEnvelope {
