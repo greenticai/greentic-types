@@ -66,6 +66,11 @@ pub struct Attachment {
 }
 
 /// Envelope for channel messages exchanged with adapters.
+///
+/// NOTE: Intentionally not `#[non_exhaustive]` — consumers construct this
+/// type directly via struct literals (see greentic-messaging-providers, etc).
+/// Adding a new field is a coordinated breaking change that requires a minor
+/// version bump and synchronized updates across consumer submodules.
 #[derive(Clone, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
@@ -117,7 +122,18 @@ pub struct ChannelMessageEnvelope {
     /// Free-form metadata for adapters and flows.
     #[cfg_attr(feature = "serde", serde(default))]
     pub metadata: MessageMetadata,
+    /// Structured provider-agnostic and provider-native extension data.
+    ///
+    /// Use well-known keys from [`extensions::ext_keys`] to avoid typos.
+    /// Values are typed JSON (`serde_json::Value`) — no re-serialization
+    /// needed at provider boundaries.
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "BTreeMap::is_empty")
+    )]
+    pub extensions: alloc::collections::BTreeMap<String, serde_json::Value>,
 }
 
+pub mod extensions;
 pub mod rendering;
 pub mod universal_dto;
