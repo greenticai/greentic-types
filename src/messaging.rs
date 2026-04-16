@@ -124,10 +124,7 @@ pub struct ChannelMessageEnvelope {
     /// needed at provider boundaries.
     #[cfg_attr(
         feature = "serde",
-        serde(
-            default,
-            skip_serializing_if = "alloc::collections::BTreeMap::is_empty"
-        )
+        serde(default, skip_serializing_if = "BTreeMap::is_empty")
     )]
     pub extensions: alloc::collections::BTreeMap<String, serde_json::Value>,
 }
