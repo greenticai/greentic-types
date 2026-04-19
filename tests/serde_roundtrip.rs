@@ -2,12 +2,13 @@
 
 use greentic_types::{
     AllowList, Capabilities, ComponentId, ErrorCode, FsCaps, GitProviderRef, GreenticError,
-    HashDigest, HttpCaps, Impersonation, InvocationDeadline, KvCaps, Limits, NetCaps,
-    NetworkPolicy, NodeFailure, NodeId, NodeStatus, NodeSummary, Outcome, PackId, PackRef,
-    PolicyDecision, PolicyDecisionStatus, RedactionPath, RunStatus, ScannerRef, SecretRequirement,
-    SecretsCaps, SemverReq, SessionCursor, SessionKey, Signature, SignatureAlgorithm, SpanContext,
-    StateKey, StatePath, TelemetrySpec, TenantContext, TenantCtx, TenantIdentity, ToolsCaps,
-    TranscriptOffset, WizardMode, WizardPlan, WizardPlanMeta, WizardStep, WizardTarget,
+    HashDigest, HttpCaps, Impersonation, InputMapping, InvocationDeadline, KvCaps, Limits, NetCaps,
+    NetworkPolicy, Node, NodeFailure, NodeId, NodeStatus, NodeSummary, Outcome, OutputMapping,
+    PackId, PackRef, PolicyDecision, PolicyDecisionStatus, RedactionPath, RunStatus, ScannerRef,
+    SecretRequirement, SecretsCaps, SemverReq, SessionCursor, SessionKey, Signature,
+    SignatureAlgorithm, SpanContext, StateKey, StatePath, TelemetryHints, TelemetrySpec,
+    TenantContext, TenantCtx, TenantIdentity, ToolsCaps, TranscriptOffset, WizardMode, WizardPlan,
+    WizardPlanMeta, WizardStep, WizardTarget,
 };
 #[cfg(feature = "time")]
 use greentic_types::{FlowId, RunResult};
@@ -291,6 +292,84 @@ fn wizard_plan_roundtrip() {
     };
 
     assert_roundtrip(&plan);
+}
+
+#[test]
+fn node_accepts_in_out_err_map_aliases() {
+    let json = r#"{
+        "id": "node.alias",
+        "component": { "id": "component.alias" },
+        "in_map": { "mapping": { "source": "$.input" } },
+        "out_map": { "mapping": { "target": "$.output" } },
+        "err_map": { "mapping": { "target": "$.error" } },
+        "routing": "end",
+        "telemetry": {}
+    }"#;
+
+    let node: Node = serde_json::from_str(json).expect("alias decode");
+    assert_eq!(
+        node.in_map().mapping,
+        serde_json::json!({ "source": "$.input" })
+    );
+    assert_eq!(
+        node.out_map().mapping,
+        serde_json::json!({ "target": "$.output" })
+    );
+
+    // Unknown additive keys remain accepted by serde even though they are not yet
+    // represented in the public Rust struct surface.
+    let encoded = serde_json::to_value(&node).expect("serialize");
+    assert!(encoded.get("err_map").is_none());
+}
+
+#[test]
+fn node_legacy_shape_roundtrips_without_err_map() {
+    let node = Node {
+        id: "node.legacy".parse().unwrap(),
+        component: greentic_types::FlowComponentRef {
+            id: "component.legacy".parse().unwrap(),
+            pack_alias: None,
+            operation: None,
+        },
+        input: InputMapping {
+            mapping: serde_json::json!({ "source": "$.input" }),
+        },
+        output: OutputMapping {
+            mapping: serde_json::json!({ "target": "$.output" }),
+        },
+        routing: greentic_types::Routing::End,
+        telemetry: TelemetryHints::default(),
+    };
+
+    let json = serde_json::to_value(&node).expect("serialize");
+    assert!(json.get("input").is_some());
+    assert!(json.get("output").is_some());
+    assert!(json.get("in_map").is_none());
+    assert!(json.get("out_map").is_none());
+
+    let roundtrip: Node = serde_json::from_value(json).expect("roundtrip");
+    assert_eq!(roundtrip, node);
+}
+
+#[test]
+fn node_requires_input_and_output_even_with_alias_support() {
+    let missing_input = r#"{
+        "id": "node.bad.input",
+        "component": { "id": "component.bad" },
+        "output": { "mapping": null },
+        "routing": "end",
+        "telemetry": {}
+    }"#;
+    assert!(serde_json::from_str::<Node>(missing_input).is_err());
+
+    let missing_output = r#"{
+        "id": "node.bad.output",
+        "component": { "id": "component.bad" },
+        "input": { "mapping": null },
+        "routing": "end",
+        "telemetry": {}
+    }"#;
+    assert!(serde_json::from_str::<Node>(missing_output).is_err());
 }
 
 #[test]

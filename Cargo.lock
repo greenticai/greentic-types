@@ -476,12 +476,13 @@ dependencies = [
 
 [[package]]
 name = "greentic-types"
-version = "0.4.58"
+version = "0.4.60"
 dependencies = [
  "anyhow",
  "blake3",
  "chrono",
  "ciborium",
+ "constant_time_eq",
  "fnv",
  "greentic-telemetry",
  "greentic-types-macros",
@@ -507,7 +508,7 @@ dependencies = [
 
 [[package]]
 name = "greentic-types-macros"
-version = "0.4.58"
+version = "0.4.60"
 dependencies = [
  "proc-macro2",
  "quote",
