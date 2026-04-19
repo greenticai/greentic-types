@@ -20,10 +20,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: 1.95.0
+          toolchain: 1.94.0
       - uses: Swatinem/rust-cache@v2
+      - name: Resolve semver baseline tag
+        id: baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASELINE_TAG="$(
+            git tag --list 'v*' --sort=-version:refname \
+              | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' \
+              | head -n1
+          )"
+
+          if [ -z "${BASELINE_TAG}" ]; then
+            echo "No stable release tag found for semver baseline." >&2
+            exit 1
+          fi
+
+          echo "Using semver baseline tag: ${BASELINE_TAG}"
+          echo "baseline_rev=refs/tags/${BASELINE_TAG}" >> "$GITHUB_OUTPUT"
       - uses: obi1kenobi/cargo-semver-checks-action@v2
         with:
           rust-toolchain: manual
+          baseline-rev: ${{ steps.baseline.outputs.baseline_rev }}

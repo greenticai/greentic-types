@@ -21,5 +21,4 @@ jobs:
     uses: greenticai/.github/.github/workflows/codex-semver-fix.yml@main
     with:
       branch: ${{ github.event.inputs.branch || '' }}
-      rust-version: 1.95.0
     secrets: inherit
