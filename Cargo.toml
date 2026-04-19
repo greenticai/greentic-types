@@ -11,6 +11,10 @@ description = "Shared primitives for Greentic: TenantCtx, InvocationEnvelope, No
 keywords = ["greentic","tenant","ctx","envelope","wasm"]
 categories = ["data-structures","config"]
 
+[patch.crates-io]
+# Keep semver baseline docs build compatible with Rust 1.94 in CI.
+constant_time_eq = { version = "=0.4.2" }
+
 [package]
 name = "greentic-types"
 version.workspace = true
