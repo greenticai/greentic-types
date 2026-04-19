@@ -55,6 +55,7 @@ serde_with = { version = "3", default-features = false, features = ["macros", "b
 serde_json = { version = "1", default-features = false, features = ["alloc"] }
 serde_bytes = { version = "0.11", optional = true }
 blake3 = { version = "1.8", default-features = false }
+# Keep MSRV-compatible until CI Rust toolchain is >= 1.95.
 constant_time_eq = { version = "=0.4.2", default-features = false }
 unic-langid = "0.9"
 sha2 = { version = "0.10", default-features = false }
