@@ -24,7 +24,6 @@ fn flow_ingress_respects_insertion_order() {
             output: OutputMapping {
                 mapping: Value::Null,
             },
-            err_map: None,
             routing: Routing::Next {
                 node_id: "second".parse().unwrap(),
             },
@@ -42,7 +41,6 @@ fn flow_ingress_respects_insertion_order() {
             output: OutputMapping {
                 mapping: Value::Null,
             },
-            err_map: None,
             routing: Routing::End,
             telemetry: TelemetryHints::default(),
         },
@@ -75,7 +73,6 @@ fn flow_json_roundtrips_with_routing_variants() {
             output: OutputMapping {
                 mapping: serde_json::json!({"output": "value"}),
             },
-            err_map: None,
             routing: Routing::Branch {
                 on_status: BTreeMap::from([("ok".to_string(), "next".parse().unwrap())]),
                 default: Some("end".parse().unwrap()),
@@ -94,7 +91,6 @@ fn flow_json_roundtrips_with_routing_variants() {
             output: OutputMapping {
                 mapping: Value::Null,
             },
-            err_map: None,
             routing: Routing::Reply,
             telemetry: TelemetryHints::default(),
         },
@@ -110,7 +106,6 @@ fn flow_json_roundtrips_with_routing_variants() {
             output: OutputMapping {
                 mapping: Value::Null,
             },
-            err_map: None,
             routing: Routing::End,
             telemetry: TelemetryHints::default(),
         },

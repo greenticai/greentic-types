@@ -101,17 +101,6 @@ pub struct Node {
     /// Component output mapping configuration.
     #[cfg_attr(feature = "serde", serde(alias = "out_map"))]
     pub output: OutputMapping,
-    /// Optional error mapping configuration.
-    #[cfg_attr(
-        feature = "serde",
-        serde(
-            default,
-            skip_serializing_if = "Option::is_none",
-            rename = "err_map",
-            alias = "error_output"
-        )
-    )]
-    pub err_map: Option<OutputMapping>,
     /// Routing behaviour after this node.
     pub routing: Routing,
     /// Optional telemetry hints for this node.

@@ -30,7 +30,6 @@ fn sample_flow() -> Flow {
             output: OutputMapping {
                 mapping: Value::Null,
             },
-            err_map: None,
             routing: Routing::Branch {
                 on_status: BTreeMap::from([("ok".to_string(), "handler".parse().unwrap())]),
                 default: Some("end".parse().unwrap()),
@@ -53,7 +52,6 @@ fn sample_flow() -> Flow {
             output: OutputMapping {
                 mapping: Value::Null,
             },
-            err_map: None,
             routing: Routing::Reply,
             telemetry: TelemetryHints::default(),
         },
@@ -73,7 +71,6 @@ fn sample_flow() -> Flow {
             output: OutputMapping {
                 mapping: Value::Null,
             },
-            err_map: None,
             routing: Routing::End,
             telemetry: TelemetryHints::default(),
         },

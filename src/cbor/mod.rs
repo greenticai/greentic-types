@@ -206,7 +206,6 @@ struct EncodedNode {
     component: EncodedComponentRef,
     input: InputMapping,
     output: OutputMapping,
-    err_map: Option<OutputMapping>,
     routing: EncodedRouting,
     telemetry: TelemetryHints,
 }
@@ -405,7 +404,6 @@ fn encode_flow(flow: &Flow, indexes: &SymbolIndexes) -> Result<EncodedFlow, Cbor
                 },
                 input: node.input.clone(),
                 output: node.output.clone(),
-                err_map: node.err_map.clone(),
                 routing: encode_routing(&node.routing, indexes)?,
                 telemetry: node.telemetry.clone(),
             })
@@ -681,7 +679,6 @@ fn decode_flow(
             },
             input: encoded.input,
             output: encoded.output,
-            err_map: encoded.err_map,
             routing,
             telemetry: encoded.telemetry,
         };
