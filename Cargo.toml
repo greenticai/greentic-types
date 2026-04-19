@@ -2,7 +2,7 @@
 members = ["greentic-types-macros"]
 
 [workspace.package]
-version = "0.5.1"
+version = "0.5.2"
 edition = "2024"
 license = "MIT"
 repository = "https://github.com/greenticai/greentic-types"
@@ -61,7 +61,7 @@ sha2 = { version = "0.11", default-features = false }
 thiserror = "2"
 time = { version = "0.3", features = ["formatting", "macros", "parsing", "serde"], optional = true }
 uuid = { version = "1", features = ["v4", "serde"], optional = true }
-greentic-telemetry = { version = "0.4", optional = true }
+greentic-telemetry = { version = "0.5", optional = true }
 opentelemetry-otlp = { version = "0.31", optional = true }
 tokio = { version = "1", features = ["macros", "rt", "rt-multi-thread"], optional = true }
 tracing = { version = "0.1", optional = true }
