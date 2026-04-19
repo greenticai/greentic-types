@@ -315,11 +315,10 @@ fn node_accepts_in_out_err_map_aliases() {
         node.out_map().mapping,
         serde_json::json!({ "target": "$.output" })
     );
-
-    // Unknown additive keys remain accepted by serde even though they are not yet
-    // represented in the public Rust struct surface.
-    let encoded = serde_json::to_value(&node).expect("serialize");
-    assert!(encoded.get("err_map").is_none());
+    assert_eq!(
+        node.err_map().expect("err_map").mapping,
+        serde_json::json!({ "target": "$.error" })
+    );
 }
 
 #[test]
@@ -337,6 +336,7 @@ fn node_legacy_shape_roundtrips_without_err_map() {
         output: OutputMapping {
             mapping: serde_json::json!({ "target": "$.output" }),
         },
+        err_map: None,
         routing: greentic_types::Routing::End,
         telemetry: TelemetryHints::default(),
     };
@@ -346,6 +346,7 @@ fn node_legacy_shape_roundtrips_without_err_map() {
     assert!(json.get("output").is_some());
     assert!(json.get("in_map").is_none());
     assert!(json.get("out_map").is_none());
+    assert!(json.get("err_map").is_none());
 
     let roundtrip: Node = serde_json::from_value(json).expect("roundtrip");
     assert_eq!(roundtrip, node);
