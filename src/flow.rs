@@ -96,14 +96,39 @@ pub struct Node {
     /// Component binding referenced by the node.
     pub component: ComponentRef,
     /// Component input mapping configuration.
+    #[cfg_attr(feature = "serde", serde(alias = "in_map"))]
     pub input: InputMapping,
     /// Component output mapping configuration.
+    #[cfg_attr(feature = "serde", serde(alias = "out_map"))]
     pub output: OutputMapping,
+    /// Optional error mapping configuration.
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            rename = "err_map",
+            alias = "error_output"
+        )
+    )]
+    pub err_map: Option<OutputMapping>,
     /// Routing behaviour after this node.
     pub routing: Routing,
     /// Optional telemetry hints for this node.
     #[cfg_attr(feature = "serde", serde(default))]
     pub telemetry: TelemetryHints,
+}
+
+impl Node {
+    /// Returns the canonical input mapping surface.
+    pub fn in_map(&self) -> &InputMapping {
+        &self.input
+    }
+
+    /// Returns the canonical output mapping surface.
+    pub fn out_map(&self) -> &OutputMapping {
+        &self.output
+    }
 }
 
 /// Component reference within a flow.
