@@ -41,7 +41,13 @@ jobs:
 
           echo "Using semver baseline tag: ${BASELINE_TAG}"
           echo "baseline_rev=refs/tags/${BASELINE_TAG}" >> "$GITHUB_OUTPUT"
-      - uses: obi1kenobi/cargo-semver-checks-action@v2
+      - id: semver
+        continue-on-error: true
+        uses: obi1kenobi/cargo-semver-checks-action@v2
         with:
           rust-toolchain: 1.95.0
           baseline-rev: ${{ steps.baseline.outputs.baseline_rev }}
+      - name: Emit advisory
+        if: steps.semver.outcome == 'failure'
+        run: |
+          echo "::warning title=Semver advisory::cargo-semver-checks detected a breaking change vs the current baseline. If intentional, plan to run start-next-minor.sh before the next stable cut. See plans/pre-release-minor-bump-lane.md."
