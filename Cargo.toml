@@ -1,84 +1,36 @@
 [workspace]
-members = [
-    "greentic-types-macros",
-]
+members = ["greentic-types-macros"]
 
 [workspace.package]
-version = "0.4.58"
+version = "0.5.2"
 edition = "2024"
 license = "MIT"
 repository = "https://github.com/greenticai/greentic-types"
 readme = "README.md"
 description = "Shared primitives for Greentic: TenantCtx, InvocationEnvelope, NodeError, ids."
-keywords = [
-    "greentic",
-    "tenant",
-    "ctx",
-    "envelope",
-    "wasm",
-]
-categories = [
-    "data-structures",
-    "config",
-]
+keywords = ["greentic","tenant","ctx","envelope","wasm"]
+categories = ["data-structures","config"]
 
 [package]
 name = "greentic-types"
-rust-version = "1.91"
-
-[package.version]
-workspace = true
-
-[package.edition]
-workspace = true
-
-[package.license]
-workspace = true
-
-[package.repository]
-workspace = true
-
-[package.readme]
-workspace = true
-
-[package.description]
-workspace = true
-
-[package.keywords]
-workspace = true
-
-[package.categories]
-workspace = true
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
+description.workspace = true
+keywords.workspace = true
+categories.workspace = true
+rust-version = "1.95"
 
 [features]
-default = [
-    "std",
-    "serde",
-    "time",
-    "otel-keys",
-]
-std = [
-    "blake3/std",
-]
-serde = [
-    "dep:serde",
-    "dep:serde_with",
-    "dep:serde_bytes",
-]
-time = [
-    "dep:time",
-]
-uuid = [
-    "dep:uuid",
-]
-schemars = [
-    "dep:schemars",
-    "serde",
-]
-schema = [
-    "schemars",
-    "std",
-]
+default = ["std", "serde", "time", "otel-keys"]
+std = ["blake3/std"]
+serde = ["dep:serde", "dep:serde_with", "dep:serde_bytes"]
+time = ["dep:time"]
+uuid = ["dep:uuid"]
+schemars = ["dep:schemars", "serde"]
+schema = ["schemars", "std"]
 otel-keys = []
 json-compat = []
 telemetry-autoinit = [
@@ -92,148 +44,37 @@ telemetry-autoinit = [
 ]
 
 [dependencies]
+chrono = { version = "0.4", default-features = false, features = ["alloc", "serde"] }
+fnv = { version = "1", default-features = false }
+indexmap = { version = "2", default-features = false, features = ["serde"] }
+schemars = { version = "1", features = ["derive", "chrono04"], optional = true }
+semver = { version = "1", features = ["serde"] }
+anyhow = { version = "1" }
+serde = { version = "1", features = ["derive"], optional = true }
+serde_with = { version = "3", default-features = false, features = ["macros", "base64"], optional = true }
+serde_json = { version = "1", default-features = false, features = ["alloc"] }
+serde_bytes = { version = "0.11", optional = true }
+blake3 = { version = "1.8", default-features = false }
+constant_time_eq = { version = "0.4", default-features = false }
 unic-langid = "0.9"
+sha2 = { version = "0.11", default-features = false }
 thiserror = "2"
+time = { version = "0.3", features = ["formatting", "macros", "parsing", "serde"], optional = true }
+uuid = { version = "1", features = ["v4", "serde"], optional = true }
+greentic-telemetry = { version = "0.5", optional = true }
+opentelemetry-otlp = { version = "0.31", optional = true }
+tokio = { version = "1", features = ["macros", "rt", "rt-multi-thread"], optional = true }
+tracing = { version = "0.1", optional = true }
+tracing-subscriber = { version = "0.3", default-features = false, features = ["registry", "std"], optional = true }
 ciborium = "0.2"
-
-[dependencies.chrono]
-version = "0.4"
-default-features = false
-features = [
-    "alloc",
-    "serde",
-]
-
-[dependencies.fnv]
-version = "1"
-default-features = false
-
-[dependencies.indexmap]
-version = "2"
-default-features = false
-features = [
-    "serde",
-]
-
-[dependencies.schemars]
-version = "1"
-features = [
-    "derive",
-    "chrono04",
-]
-optional = true
-
-[dependencies.semver]
-version = "1"
-features = [
-    "serde",
-]
-
-[dependencies.anyhow]
-version = "1"
-
-[dependencies.serde]
-version = "1"
-features = [
-    "derive",
-]
-optional = true
-
-[dependencies.serde_with]
-version = "3"
-default-features = false
-features = [
-    "macros",
-    "base64",
-]
-optional = true
-
-[dependencies.serde_json]
-version = "1"
-default-features = false
-features = [
-    "alloc",
-]
-
-[dependencies.serde_bytes]
-version = "0.11"
-optional = true
-
-[dependencies.blake3]
-version = "1.8"
-default-features = false
-
-[dependencies.sha2]
-version = "0.10"
-default-features = false
-
-[dependencies.time]
-version = "0.3"
-features = [
-    "formatting",
-    "macros",
-    "parsing",
-    "serde",
-]
-optional = true
-
-[dependencies.uuid]
-version = "1"
-features = [
-    "v4",
-    "serde",
-]
-optional = true
-
-[dependencies.greentic-telemetry]
-version = ">=0.4.0-0, <0.5.0-0"
-optional = true
-
-[dependencies.opentelemetry-otlp]
-version = "0.31"
-optional = true
-
-[dependencies.tokio]
-version = "1"
-features = [
-    "macros",
-    "rt",
-    "rt-multi-thread",
-]
-optional = true
-
-[dependencies.tracing]
-version = "0.1"
-optional = true
-
-[dependencies.tracing-subscriber]
-version = "0.3"
-default-features = false
-features = [
-    "registry",
-    "std",
-]
-optional = true
-
-[dependencies.greentic-types-macros]
-path = "greentic-types-macros"
-version = ">=0.4.0-0, <0.5.0-0"
-optional = true
+greentic-types-macros = { path = "greentic-types-macros", version = "0.5", optional = true }
 
 [dev-dependencies]
+schemars = { version = "1", features = ["derive", "chrono04"] }
 serde_yaml_bw = "2"
 proptest = "1"
-
-[dev-dependencies.schemars]
-version = "1"
-features = [
-    "derive",
-    "chrono04",
-]
 
 [[bin]]
 name = "export-schemas"
 path = "bin/export-schemas.rs"
-required-features = [
-    "schema",
-]
+required-features = ["schema"]

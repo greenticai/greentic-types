@@ -34,6 +34,7 @@ fn flow_with_component(component_id: &str) -> PackFlowEntry {
             output: OutputMapping {
                 mapping: Value::Null,
             },
+            err_map: None,
             routing: Routing::End,
             telemetry: TelemetryHints::default(),
         },

@@ -35,6 +35,7 @@ fn sample_envelope() -> ChannelMessageEnvelope {
         text: Some("hello".into()),
         attachments: Vec::new(),
         metadata: BTreeMap::new(),
+        extensions: Default::default(),
     }
 }
 
