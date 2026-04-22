@@ -1,0 +1,63 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/node-summary.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NodeSummary",
+  "description": "Aggregated timing summary per node.",
+  "type": "object",
+  "properties": {
+    "component": {
+      "description": "Component backing the node implementation.",
+      "$ref": "#/$defs/ComponentId"
+    },
+    "duration_ms": {
+      "description": "Execution time reported by the runner.",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "node_id": {
+      "description": "Stable node identifier.",
+      "$ref": "#/$defs/NodeId"
+    },
+    "status": {
+      "description": "Final status of the node execution.",
+      "$ref": "#/$defs/NodeStatus"
+    }
+  },
+  "required": [
+    "node_id",
+    "component",
+    "status",
+    "duration_ms"
+  ],
+  "$defs": {
+    "ComponentId": {
+      "description": "Identifier referencing a component binding in a pack.",
+      "type": "string"
+    },
+    "NodeId": {
+      "description": "Identifier referencing a node inside a flow graph.",
+      "type": "string"
+    },
+    "NodeStatus": {
+      "description": "Per-node execution status.",
+      "oneOf": [
+        {
+          "description": "Node executed successfully.",
+          "type": "string",
+          "const": "ok"
+        },
+        {
+          "description": "Node skipped execution (e.g. gated by conditionals).",
+          "type": "string",
+          "const": "skipped"
+        },
+        {
+          "description": "Node errored.",
+          "type": "string",
+          "const": "error"
+        }
+      ]
+    }
+  }
+}

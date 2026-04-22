@@ -1,0 +1,220 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/run-result.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RunResult",
+  "description": "Aggregated run outcome emitted by the runtime.",
+  "type": "object",
+  "properties": {
+    "artifacts_dir": {
+      "description": "Directory containing emitted artifacts/log bundles.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "failures": {
+      "description": "Rich failure diagnostics, if any.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NodeFailure"
+      }
+    },
+    "finished_at_utc": {
+      "description": "RFC3339 timestamp (UTC)",
+      "type": "string"
+    },
+    "flow_id": {
+      "description": "Flow identifier executed for the session.",
+      "$ref": "#/$defs/FlowId"
+    },
+    "node_summaries": {
+      "description": "Per-node execution summaries.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NodeSummary"
+      }
+    },
+    "pack_id": {
+      "description": "Pack identifier.",
+      "$ref": "#/$defs/PackId"
+    },
+    "pack_version": {
+      "description": "SemVer version",
+      "type": "string"
+    },
+    "session_id": {
+      "description": "Session identifier emitted by the runtime.",
+      "$ref": "#/$defs/SessionKey"
+    },
+    "started_at_utc": {
+      "description": "RFC3339 timestamp (UTC)",
+      "type": "string"
+    },
+    "status": {
+      "description": "Final run status.",
+      "$ref": "#/$defs/RunStatus"
+    }
+  },
+  "required": [
+    "session_id",
+    "pack_id",
+    "pack_version",
+    "flow_id",
+    "started_at_utc",
+    "finished_at_utc",
+    "status"
+  ],
+  "$defs": {
+    "ComponentId": {
+      "description": "Identifier referencing a component binding in a pack.",
+      "type": "string"
+    },
+    "FlowId": {
+      "description": "Identifier referencing a flow inside a pack.",
+      "type": "string"
+    },
+    "NodeFailure": {
+      "description": "Rich failure diagnostics for a node.",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Machine readable error code.",
+          "type": "string"
+        },
+        "details": {
+          "description": "Optional structured metadata.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "log_paths": {
+          "description": "Disk paths or URIs pointing at log bundles.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "message": {
+          "description": "Human readable explanation.",
+          "type": "string"
+        },
+        "transcript_offsets": {
+          "description": "Transcript offsets referencing the failure within captured logs.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TranscriptOffset"
+          }
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ]
+    },
+    "NodeId": {
+      "description": "Identifier referencing a node inside a flow graph.",
+      "type": "string"
+    },
+    "NodeStatus": {
+      "description": "Per-node execution status.",
+      "oneOf": [
+        {
+          "description": "Node executed successfully.",
+          "type": "string",
+          "const": "ok"
+        },
+        {
+          "description": "Node skipped execution (e.g. gated by conditionals).",
+          "type": "string",
+          "const": "skipped"
+        },
+        {
+          "description": "Node errored.",
+          "type": "string",
+          "const": "error"
+        }
+      ]
+    },
+    "NodeSummary": {
+      "description": "Aggregated timing summary per node.",
+      "type": "object",
+      "properties": {
+        "component": {
+          "description": "Component backing the node implementation.",
+          "$ref": "#/$defs/ComponentId"
+        },
+        "duration_ms": {
+          "description": "Execution time reported by the runner.",
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "node_id": {
+          "description": "Stable node identifier.",
+          "$ref": "#/$defs/NodeId"
+        },
+        "status": {
+          "description": "Final status of the node execution.",
+          "$ref": "#/$defs/NodeStatus"
+        }
+      },
+      "required": [
+        "node_id",
+        "component",
+        "status",
+        "duration_ms"
+      ]
+    },
+    "PackId": {
+      "description": "Globally unique pack identifier.",
+      "type": "string"
+    },
+    "RunStatus": {
+      "description": "Overall execution status emitted by the runner.",
+      "oneOf": [
+        {
+          "description": "Flow finished successfully.",
+          "type": "string",
+          "const": "success"
+        },
+        {
+          "description": "Flow finished with partial failures but continued.",
+          "type": "string",
+          "const": "partial_failure"
+        },
+        {
+          "description": "Flow failed.",
+          "type": "string",
+          "const": "failure"
+        }
+      ]
+    },
+    "SessionKey": {
+      "description": "Unique key referencing a persisted session.",
+      "type": "string"
+    },
+    "TranscriptOffset": {
+      "description": "Byte-range offsets referencing captured transcripts/logs.",
+      "type": "object",
+      "properties": {
+        "end": {
+          "description": "End offset (exclusive) counted in bytes.",
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "start": {
+          "description": "Start offset (inclusive) counted in bytes.",
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ]
+    }
+  }
+}

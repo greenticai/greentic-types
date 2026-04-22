@@ -1,0 +1,7 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/sbom-ref.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SbomRef",
+  "description": "Reference to a Software Bill of Materials artifact.",
+  "type": "string"
+}

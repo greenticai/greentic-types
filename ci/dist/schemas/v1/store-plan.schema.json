@@ -1,0 +1,196 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/store-plan.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StorePlan",
+  "description": "Plan associated with a store product.",
+  "type": "object",
+  "properties": {
+    "description": {
+      "description": "Plan description.",
+      "type": "string"
+    },
+    "id": {
+      "description": "Plan identifier.",
+      "$ref": "#/$defs/StorePlanId"
+    },
+    "limits": {
+      "description": "Plan limits.",
+      "$ref": "#/$defs/PlanLimits",
+      "default": {
+        "metadata": {}
+      }
+    },
+    "metadata": {
+      "description": "Additional metadata.",
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    },
+    "name": {
+      "description": "Plan name.",
+      "type": "string"
+    },
+    "price_model": {
+      "description": "Pricing model.",
+      "$ref": "#/$defs/PriceModel"
+    },
+    "tags": {
+      "description": "Tags for classification.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "description",
+    "price_model"
+  ],
+  "$defs": {
+    "PlanLimits": {
+      "description": "Plan limits used for entitlements.",
+      "type": "object",
+      "properties": {
+        "max_environments": {
+          "description": "Maximum environments allowed.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        },
+        "max_subscriptions": {
+          "description": "Maximum subscriptions allowed.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        },
+        "metadata": {
+          "description": "Additional metadata.",
+          "type": "object",
+          "additionalProperties": true,
+          "default": {}
+        },
+        "monthly_units_included": {
+          "description": "Included units per period (semantic depends on product).",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        }
+      }
+    },
+    "PriceModel": {
+      "description": "Pricing model for a plan.",
+      "oneOf": [
+        {
+          "description": "Free plan.",
+          "type": "string",
+          "const": "free"
+        },
+        {
+          "description": "Flat recurring price.",
+          "type": "object",
+          "properties": {
+            "flat": {
+              "type": "object",
+              "properties": {
+                "amount_micro": {
+                  "description": "Amount in micro-units per period.",
+                  "type": "integer",
+                  "format": "uint64",
+                  "minimum": 0
+                },
+                "period_days": {
+                  "description": "Billing period length in days.",
+                  "type": "integer",
+                  "format": "uint16",
+                  "maximum": 65535,
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "amount_micro",
+                "period_days"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "flat"
+          ]
+        },
+        {
+          "description": "Metered pricing with included units.",
+          "type": "object",
+          "properties": {
+            "metered": {
+              "type": "object",
+              "properties": {
+                "included_units": {
+                  "description": "Included units per period.",
+                  "type": "integer",
+                  "format": "uint64",
+                  "minimum": 0
+                },
+                "overage_rate_micro": {
+                  "description": "Overage rate per additional unit (micro-units).",
+                  "type": "integer",
+                  "format": "uint64",
+                  "minimum": 0
+                },
+                "unit_label": {
+                  "description": "Unit label (for example `build-minute`).",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "included_units",
+                "overage_rate_micro",
+                "unit_label"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "metered"
+          ]
+        },
+        {
+          "description": "Enterprise/custom pricing.",
+          "type": "object",
+          "properties": {
+            "enterprise": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "description": "Human-readable description.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "description"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "enterprise"
+          ]
+        }
+      ]
+    },
+    "StorePlanId": {
+      "description": "Identifier referencing a plan for a store product.",
+      "type": "string"
+    }
+  }
+}

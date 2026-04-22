@@ -1,0 +1,132 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/scan-result.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ScanResult",
+  "description": "Result summary for a scan.",
+  "type": "object",
+  "properties": {
+    "component": {
+      "description": "Component scanned.",
+      "$ref": "#/$defs/ComponentRef"
+    },
+    "findings": {
+      "description": "Scanner-specific findings.",
+      "default": null
+    },
+    "finished_at_utc": {
+      "description": "RFC3339 timestamp in UTC",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "description": "Scan kind.",
+      "$ref": "#/$defs/ScanKind"
+    },
+    "sbom": {
+      "description": "Optional SBOM reference emitted by the scan.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SbomRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "scan_id": {
+      "description": "Identifier for the scan.",
+      "$ref": "#/$defs/ScanRef"
+    },
+    "started_at_utc": {
+      "description": "RFC3339 timestamp in UTC",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "description": "Final scan status.",
+      "$ref": "#/$defs/ScanStatusKind"
+    }
+  },
+  "required": [
+    "scan_id",
+    "component",
+    "kind",
+    "status"
+  ],
+  "$defs": {
+    "ComponentRef": {
+      "description": "Supply-chain component reference (distinct from pack ComponentId).",
+      "type": "string"
+    },
+    "SbomRef": {
+      "description": "Reference to a Software Bill of Materials artifact.",
+      "type": "string"
+    },
+    "ScanKind": {
+      "description": "Supported scan kinds.",
+      "oneOf": [
+        {
+          "description": "Source code analysis (SAST).",
+          "type": "string",
+          "const": "source"
+        },
+        {
+          "description": "Dependency or composition analysis.",
+          "type": "string",
+          "const": "dependencies"
+        },
+        {
+          "description": "Binary or container image analysis.",
+          "type": "string",
+          "const": "artifact"
+        },
+        {
+          "description": "Custom or provider-specific scan.",
+          "type": "object",
+          "properties": {
+            "custom": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "custom"
+          ]
+        }
+      ]
+    },
+    "ScanRef": {
+      "description": "Scan reference within a supply chain.",
+      "type": "string"
+    },
+    "ScanStatusKind": {
+      "description": "Lifecycle status for a scan.",
+      "oneOf": [
+        {
+          "description": "Scan has been accepted but not started.",
+          "type": "string",
+          "const": "pending"
+        },
+        {
+          "description": "Scan is currently running.",
+          "type": "string",
+          "const": "running"
+        },
+        {
+          "description": "Scan finished successfully.",
+          "type": "string",
+          "const": "succeeded"
+        },
+        {
+          "description": "Scan failed.",
+          "type": "string",
+          "const": "failed"
+        }
+      ]
+    }
+  }
+}

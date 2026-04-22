@@ -1,0 +1,103 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/theme.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Theme",
+  "description": "Visual theme tokens for a storefront.",
+  "type": "object",
+  "properties": {
+    "accent_color": {
+      "description": "Accent color hex code.",
+      "type": "string"
+    },
+    "background_color": {
+      "description": "Background color hex code.",
+      "type": "string"
+    },
+    "button_style": {
+      "description": "Optional button style token.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "card_elevation": {
+      "description": "Optional card elevation hint.",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint8",
+      "maximum": 255,
+      "minimum": 0
+    },
+    "card_radius": {
+      "description": "Optional card corner radius in pixels.",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint8",
+      "maximum": 255,
+      "minimum": 0
+    },
+    "favicon_url": {
+      "description": "Optional favicon URL.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "font_family": {
+      "description": "Primary font family.",
+      "type": "string"
+    },
+    "hero_image_url": {
+      "description": "Optional hero image URL.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hero_subtitle": {
+      "description": "Optional hero subtitle.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hero_title": {
+      "description": "Optional hero title.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "logo_url": {
+      "description": "Optional logo URL.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "primary_color": {
+      "description": "Primary color hex code.",
+      "type": "string"
+    },
+    "secondary_color": {
+      "description": "Secondary color hex code.",
+      "type": "string"
+    },
+    "text_color": {
+      "description": "Text color hex code.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "primary_color",
+    "secondary_color",
+    "accent_color",
+    "background_color",
+    "text_color",
+    "font_family"
+  ]
+}

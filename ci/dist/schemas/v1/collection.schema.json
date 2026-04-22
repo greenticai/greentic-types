@@ -1,0 +1,73 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/collection.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Collection",
+  "description": "Collection of products curated for a storefront.",
+  "type": "object",
+  "properties": {
+    "description": {
+      "description": "Optional description.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "description": "Collection identifier.",
+      "$ref": "#/$defs/CollectionId"
+    },
+    "metadata": {
+      "description": "Additional metadata.",
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    },
+    "product_ids": {
+      "description": "Products included in the collection.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/StoreProductId"
+      }
+    },
+    "slug": {
+      "description": "Optional slug.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sort_order": {
+      "description": "Sort order hint.",
+      "type": "integer",
+      "format": "int32"
+    },
+    "storefront_id": {
+      "description": "Storefront owning the collection.",
+      "$ref": "#/$defs/StoreFrontId"
+    },
+    "title": {
+      "description": "Display title.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "storefront_id",
+    "title",
+    "sort_order"
+  ],
+  "$defs": {
+    "CollectionId": {
+      "description": "Identifier referencing a product collection.",
+      "type": "string"
+    },
+    "StoreFrontId": {
+      "description": "Identifier referencing a storefront.",
+      "type": "string"
+    },
+    "StoreProductId": {
+      "description": "Identifier referencing a product in the store catalog.",
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/transcript-offset.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TranscriptOffset",
+  "description": "Byte-range offsets referencing captured transcripts/logs.",
+  "type": "object",
+  "properties": {
+    "end": {
+      "description": "End offset (exclusive) counted in bytes.",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "start": {
+      "description": "Start offset (inclusive) counted in bytes.",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "start",
+    "end"
+  ]
+}

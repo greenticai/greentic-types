@@ -1,0 +1,102 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/layout-section.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LayoutSection",
+  "description": "Layout section configuration.",
+  "type": "object",
+  "properties": {
+    "collection_id": {
+      "description": "Optional collection backing the section.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CollectionId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "id": {
+      "description": "Stable section identifier.",
+      "type": "string"
+    },
+    "kind": {
+      "description": "Section kind.",
+      "$ref": "#/$defs/LayoutSectionKind"
+    },
+    "metadata": {
+      "description": "Free-form metadata for front-end rendering.",
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    },
+    "sort_order": {
+      "description": "Ordering hint for rendering.",
+      "type": "integer",
+      "format": "int32"
+    },
+    "subtitle": {
+      "description": "Optional subtitle.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "title": {
+      "description": "Optional title.",
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "kind",
+    "sort_order"
+  ],
+  "$defs": {
+    "CollectionId": {
+      "description": "Identifier referencing a product collection.",
+      "type": "string"
+    },
+    "LayoutSectionKind": {
+      "description": "Layout section kind for storefront composition.",
+      "oneOf": [
+        {
+          "description": "Hero section.",
+          "type": "string",
+          "const": "hero"
+        },
+        {
+          "description": "Featured collection of products.",
+          "type": "string",
+          "const": "featured_collection"
+        },
+        {
+          "description": "Grid of products.",
+          "type": "string",
+          "const": "grid"
+        },
+        {
+          "description": "Call-to-action section.",
+          "type": "string",
+          "const": "cta"
+        },
+        {
+          "description": "Custom section identified by name.",
+          "type": "object",
+          "properties": {
+            "custom": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "custom"
+          ]
+        }
+      ]
+    }
+  }
+}

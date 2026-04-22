@@ -1,0 +1,374 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/capabilities.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Capabilities",
+  "description": "Declarative capability toggles that packs may request from the runtime.",
+  "type": "object",
+  "properties": {
+    "fs": {
+      "description": "Optional filesystem bindings (for embedded assets or scratch space).",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FsCaps"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "http": {
+      "description": "Optional HTTP networking surface (maps to `http.fetch`).",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HttpCaps"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "kv": {
+      "description": "Optional key-value store bindings.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KvCaps"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "net": {
+      "description": "Optional raw networking permissions.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NetCaps"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "secrets": {
+      "description": "Optional secret resolution surface (maps to `secrets.get`).",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SecretsCaps"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "tools": {
+      "description": "Optional tool invocation metadata (for MCP/tool.invoke surfaces).",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ToolsCaps"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "AllowList": {
+      "description": "Allow list describing permitted domains, ports, and protocols.",
+      "type": "object",
+      "properties": {
+        "domains": {
+          "description": "Allowed domain suffixes or exact hosts.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ports": {
+          "description": "Allowed port numbers.",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint16",
+            "maximum": 65535,
+            "minimum": 0
+          }
+        },
+        "protocols": {
+          "description": "Allowed network protocols.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Protocol"
+          }
+        }
+      }
+    },
+    "FsCaps": {
+      "description": "Filesystem bindings exposed to packs.",
+      "type": "object",
+      "properties": {
+        "paths": {
+          "description": "List of host paths mapped into the pack sandbox.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "read_only": {
+          "description": "Whether the paths should be mounted read-only.",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "HttpCaps": {
+      "description": "HTTP capability descriptor controlling outbound fetch settings.",
+      "type": "object",
+      "properties": {
+        "allow_list": {
+          "description": "Optional allow list applied before requests are dispatched.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AllowList"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "max_body_bytes": {
+          "description": "Maximum request/response body size in bytes (when enforced).",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        }
+      }
+    },
+    "KvCaps": {
+      "description": "Key-value capability descriptor for packs that need durable storage.",
+      "type": "object",
+      "properties": {
+        "namespaces": {
+          "description": "Allowed logical namespaces.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "NetCaps": {
+      "description": "Low-level networking descriptor (raw sockets, tunnels, etc.).",
+      "type": "object",
+      "properties": {
+        "policy": {
+          "description": "Network policy enforced before the runtime opens connections.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NetworkPolicy"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "NetworkPolicy": {
+      "description": "High-level network policy composed of allow lists.",
+      "type": "object",
+      "properties": {
+        "deny_on_miss": {
+          "description": "Whether destinations not present in the allow list should be denied.",
+          "type": "boolean"
+        },
+        "egress": {
+          "description": "Allow list enforced for egress connections.",
+          "$ref": "#/$defs/AllowList"
+        }
+      },
+      "required": [
+        "egress",
+        "deny_on_miss"
+      ]
+    },
+    "Protocol": {
+      "description": "Network protocols supported by allow lists.",
+      "oneOf": [
+        {
+          "description": "Hypertext Transfer Protocol.",
+          "type": "string",
+          "const": "http"
+        },
+        {
+          "description": "Hypertext Transfer Protocol Secure.",
+          "type": "string",
+          "const": "https"
+        },
+        {
+          "description": "Generic TCP connectivity.",
+          "type": "string",
+          "const": "tcp"
+        },
+        {
+          "description": "Generic UDP connectivity.",
+          "type": "string",
+          "const": "udp"
+        },
+        {
+          "description": "gRPC.",
+          "type": "string",
+          "const": "grpc"
+        },
+        {
+          "description": "Any protocol not covered above.",
+          "type": "object",
+          "properties": {
+            "custom": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "custom"
+          ]
+        }
+      ]
+    },
+    "SecretFormat": {
+      "description": "Supported secret content formats.",
+      "oneOf": [
+        {
+          "description": "Arbitrary bytes.",
+          "type": "string",
+          "const": "bytes"
+        },
+        {
+          "description": "UTF-8 text.",
+          "type": "string",
+          "const": "text"
+        },
+        {
+          "description": "JSON document.",
+          "type": "string",
+          "const": "json"
+        }
+      ]
+    },
+    "SecretKey": {
+      "description": "Canonical secret identifier used across manifests and bindings.",
+      "type": "string"
+    },
+    "SecretRequirement": {
+      "description": "Structured secret requirement used in capabilities, bindings, and deployment plans.",
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Optional description for operator-facing tooling.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "examples": {
+          "description": "Example payloads for documentation.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "format": {
+          "description": "Preferred secret format when known.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SecretFormat"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "key": {
+          "description": "Logical key the runtime should resolve.",
+          "$ref": "#/$defs/SecretKey"
+        },
+        "required": {
+          "description": "Whether the secret is mandatory for execution.",
+          "type": "boolean",
+          "default": true
+        },
+        "schema": {
+          "description": "Optional JSON Schema fragment describing the value shape."
+        },
+        "scope": {
+          "description": "Expected scope for resolution (environment/tenant/team).",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SecretScope"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "key"
+      ]
+    },
+    "SecretScope": {
+      "description": "Canonical secret scope (environment, tenant, team).",
+      "type": "object",
+      "properties": {
+        "env": {
+          "description": "Environment identifier (e.g., `dev`, `prod`).",
+          "type": "string"
+        },
+        "team": {
+          "description": "Optional team for finer-grained isolation.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tenant": {
+          "description": "Tenant identifier within the environment.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "env",
+        "tenant"
+      ]
+    },
+    "SecretsCaps": {
+      "description": "Secret capability descriptor enumerating runtime-provided handles.",
+      "type": "object",
+      "properties": {
+        "required": {
+          "description": "Secret identifiers that must be bound before execution.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SecretRequirement"
+          }
+        }
+      }
+    },
+    "ToolsCaps": {
+      "description": "Tool invocation descriptor for packs relying on host tools.",
+      "type": "object",
+      "properties": {
+        "allowed": {
+          "description": "Tool identifiers the pack expects the host to resolve.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

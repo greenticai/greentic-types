@@ -1,0 +1,7 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/component-ref.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ComponentRef",
+  "description": "Supply-chain component reference (distinct from pack ComponentId).",
+  "type": "string"
+}

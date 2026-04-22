@@ -1,0 +1,23 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/store-product-kind.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StoreProductKind",
+  "description": "Kinds of products exposed by the store catalog.",
+  "oneOf": [
+    {
+      "description": "Component offering.",
+      "type": "string",
+      "const": "component"
+    },
+    {
+      "description": "Flow offering.",
+      "type": "string",
+      "const": "flow"
+    },
+    {
+      "description": "Pack offering.",
+      "type": "string",
+      "const": "pack"
+    }
+  ]
+}

@@ -11,6 +11,6 @@ concurrency:
 
 jobs:
   ci:
-    uses: greenticai/.github/.github/workflows/pr-ci.yml@main
+    uses: greenticai/.github/.github/workflows/host-crate-ci.yml@main
     with:
-      variant: host
+      run-semver-checks: true

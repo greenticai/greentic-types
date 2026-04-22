@@ -1,0 +1,23 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/validation-severity.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Severity",
+  "description": "Severity level for validation diagnostics.",
+  "oneOf": [
+    {
+      "description": "Informational validation message.",
+      "type": "string",
+      "const": "info"
+    },
+    {
+      "description": "Warning-level validation message.",
+      "type": "string",
+      "const": "warn"
+    },
+    {
+      "description": "Error-level validation message.",
+      "type": "string",
+      "const": "error"
+    }
+  ]
+}

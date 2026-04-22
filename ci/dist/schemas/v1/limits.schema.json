@@ -1,0 +1,43 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/limits.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Limits",
+  "description": "Resource limit declarations respected by runtimes.",
+  "type": "object",
+  "properties": {
+    "files": {
+      "description": "Optional file descriptor ceiling.",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint32",
+      "minimum": 0
+    },
+    "fuel": {
+      "description": "Optional fuel/step counter for deterministic engines.",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint64",
+      "minimum": 0
+    },
+    "memory_mb": {
+      "description": "Memory ceiling per flow instance (in megabytes).",
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "wall_time_ms": {
+      "description": "Wall-clock budget per invocation (milliseconds).",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "memory_mb",
+    "wall_time_ms"
+  ]
+}
