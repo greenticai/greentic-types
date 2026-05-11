@@ -13,7 +13,7 @@ use crate::pack::extensions::component_sources::{
     ComponentSourcesError, ComponentSourcesV1, EXT_COMPONENT_SOURCES_V1,
 };
 use crate::{
-    ComponentManifest, Flow, FlowId, FlowKind, PROVIDER_EXTENSION_ID, PackId,
+    ComponentManifest, Flow, FlowId, FlowKind, I18nText, PROVIDER_EXTENSION_ID, PackId,
     ProviderExtensionInline, SecretRequirement, SemverReq, Signature,
 };
 
@@ -118,6 +118,49 @@ pub struct PackManifest {
         serde(default, skip_serializing_if = "extensions_is_empty")
     )]
     pub extensions: Option<BTreeMap<String, ExtensionRef>>,
+    /// Loading hints describing which flow steps the runtime should surface
+    /// as a "working on it…" indicator. Populated by the pack producer for
+    /// slow handlers (HTTP, LLM, etc.). Consumers without Stage-3 spinner
+    /// support ignore the field.
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Vec::is_empty")
+    )]
+    pub loading_steps: Vec<LoadingStepHint>,
+}
+
+/// Visual presentation hint for a [`LoadingStepHint`]. Consumers that don't
+/// support the requested style fall back to whichever rendering they have.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
+#[cfg_attr(feature = "schemars", derive(JsonSchema))]
+pub enum LoadingDisplayStyle {
+    /// Inline spinner overlaid on the last bot reply.
+    #[default]
+    Spinner,
+    /// Bottom-of-conversation "is typing" indicator.
+    Typing,
+    /// Dim the last adaptive card while the slow leg runs.
+    DimCard,
+}
+
+/// Hint describing a single slow flow step that benefits from a runtime
+/// loading indicator. The pack producer (designer / packc orchestrator)
+/// emits one entry per node it considers slow; the runtime decides whether
+/// and how to render it.
+#[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "schemars", derive(JsonSchema))]
+pub struct LoadingStepHint {
+    /// Flow node id (matches `Flow::nodes[].id`).
+    pub step_id: String,
+    /// User-visible label rendered with the indicator. Designer-authored
+    /// copy that flows through the pack's i18n catalogue.
+    pub label: I18nText,
+    /// Preferred presentation style. Optional — defaults to `spinner`.
+    #[cfg_attr(feature = "serde", serde(default))]
+    pub display_style: LoadingDisplayStyle,
 }
 
 /// Flow entry embedded in a pack.
