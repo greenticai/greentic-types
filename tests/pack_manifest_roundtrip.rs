@@ -5,9 +5,10 @@ use std::collections::BTreeMap;
 use greentic_types::{
     BootstrapSpec, ComponentCapabilities, ComponentCapability, ComponentManifest,
     ComponentOperation, ComponentProfiles, DeploymentPlan, Flow, FlowComponentRef, FlowId,
-    FlowKind, FlowMetadata, InputMapping, Node, OutputMapping, PackDependency, PackFlowEntry,
-    PackId, PackKind, PackManifest, PackSignatures, ResourceHints, Routing, SecretFormat,
-    SecretRequirement, SecretScope, TelemetryHints, decode_pack_manifest, encode_pack_manifest,
+    FlowKind, FlowMetadata, I18nText, InputMapping, LoadingDisplayStyle, LoadingStepHint, Node,
+    OutputMapping, PackDependency, PackFlowEntry, PackId, PackKind, PackManifest, PackSignatures,
+    ResourceHints, Routing, SecretFormat, SecretRequirement, SecretScope, TelemetryHints,
+    decode_pack_manifest, encode_pack_manifest,
 };
 use indexmap::IndexMap;
 use semver::Version;
@@ -162,6 +163,7 @@ fn sample_pack_manifest() -> PackManifest {
         signatures: PackSignatures { signatures: vec![] },
         bootstrap: None,
         extensions: None,
+        loading_steps: Vec::new(),
     }
 }
 
@@ -222,6 +224,40 @@ fn pack_manifest_cbor_encoding_is_deterministic() {
     let first = encode_pack_manifest(&manifest).expect("encode");
     let second = encode_pack_manifest(&manifest).expect("encode");
     assert_eq!(first, second);
+}
+
+#[test]
+fn pack_manifest_roundtrips_loading_steps_through_cbor_and_json() {
+    let mut manifest = sample_pack_manifest();
+    manifest.loading_steps = vec![
+        LoadingStepHint {
+            step_id: "http_lookup".into(),
+            label: I18nText::new("loading.http_lookup", Some("Checking availability…".into())),
+            display_style: LoadingDisplayStyle::Spinner,
+        },
+        LoadingStepHint {
+            step_id: "llm_summary".into(),
+            label: I18nText::new("loading.llm_summary", None),
+            display_style: LoadingDisplayStyle::Typing,
+        },
+    ];
+
+    let bytes = encode_pack_manifest(&manifest).expect("encode");
+    let decoded = decode_pack_manifest(&bytes).expect("decode");
+    assert_eq!(decoded.loading_steps, manifest.loading_steps);
+
+    let json_roundtrip = roundtrip_json(&manifest);
+    assert_eq!(json_roundtrip.loading_steps, manifest.loading_steps);
+}
+
+#[test]
+fn pack_manifest_omits_empty_loading_steps_in_json() {
+    let manifest = sample_pack_manifest();
+    let json: Value = serde_json::to_value(&manifest).expect("serialize");
+    assert!(
+        json.get("loading_steps").is_none(),
+        "loading_steps should be omitted when empty"
+    );
 }
 
 #[test]
