@@ -185,7 +185,6 @@ fn pack_manifest_component_sources_helpers_work() {
         signatures: PackSignatures::default(),
         bootstrap: None,
         extensions: None,
-        loading_steps: Vec::new(),
     };
 
     let sources = ComponentSourcesV1::new(vec![ComponentSourceEntryV1 {
@@ -228,7 +227,6 @@ fn pack_manifest_without_component_sources_still_decodes() {
         signatures: PackSignatures::default(),
         bootstrap: None,
         extensions: None,
-        loading_steps: Vec::new(),
     };
 
     let cbor = encode_pack_manifest(&manifest).expect("encode pack manifest");
