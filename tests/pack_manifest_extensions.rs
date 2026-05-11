@@ -140,7 +140,6 @@ fn extension_refs_roundtrip_json_yaml_and_cbor() {
         signatures: PackSignatures::default(),
         bootstrap: None,
         extensions: Some(extensions),
-        loading_steps: Vec::new(),
     };
 
     let json_value = serde_json::to_value(&manifest).expect("serialize");
@@ -218,7 +217,6 @@ fn provider_extension_helpers_roundtrip_and_validate() {
         signatures: PackSignatures::default(),
         bootstrap: None,
         extensions: Some(extensions),
-        loading_steps: Vec::new(),
     };
 
     let json_roundtrip: PackManifest =
@@ -268,7 +266,6 @@ fn empty_extensions_are_skipped_on_serialization() {
         signatures: PackSignatures::default(),
         bootstrap: None,
         extensions: Some(BTreeMap::new()),
-        loading_steps: Vec::new(),
     };
 
     let value = serde_json::to_value(&manifest).expect("serialize");

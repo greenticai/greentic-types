@@ -6,7 +6,6 @@ use serde::{Deserialize, Serialize};
 
 /// I18n-aware text value with a stable key and optional fallback string.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "schemars", derive(schemars::JsonSchema))]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct I18nText {
     /// Stable i18n key.

@@ -207,8 +207,8 @@ pub use pack::extensions::component_sources::{
 };
 pub use pack::{PackRef, Signature, SignatureAlgorithm};
 pub use pack_manifest::{
-    BootstrapSpec, ComponentCapability, ExtensionInline, ExtensionRef, LoadingDisplayStyle,
-    LoadingStepHint, PackDependency, PackFlowEntry, PackKind, PackManifest, PackSignatures,
+    BootstrapSpec, ComponentCapability, ExtensionInline, ExtensionRef, PackDependency,
+    PackFlowEntry, PackKind, PackManifest, PackSignatures,
 };
 pub use policy::{AllowList, NetworkPolicy, PolicyDecision, PolicyDecisionStatus, Protocol};
 pub use provider::{

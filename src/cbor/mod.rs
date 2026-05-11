@@ -17,8 +17,8 @@ use crate::flow::{
     Routing, TelemetryHints,
 };
 use crate::pack_manifest::{
-    BootstrapSpec, ComponentCapability, ExtensionRef, LoadingStepHint, PackDependency,
-    PackFlowEntry, PackManifest, PackSignatures, extensions_is_empty,
+    BootstrapSpec, ComponentCapability, ExtensionRef, PackDependency, PackFlowEntry, PackManifest,
+    PackSignatures, extensions_is_empty,
 };
 use crate::{
     ComponentCapabilities, ComponentConfigurators, ComponentId, ComponentManifest,
@@ -163,8 +163,6 @@ struct EncodedPackManifest {
     bootstrap: Option<BootstrapSpec>,
     #[serde(default, skip_serializing_if = "extensions_is_empty")]
     extensions: Option<BTreeMap<String, ExtensionRef>>,
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    loading_steps: Vec<LoadingStepHint>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -375,7 +373,6 @@ impl TryFrom<&PackManifest> for EncodedPackManifest {
             signatures: manifest.signatures.clone(),
             bootstrap: manifest.bootstrap.clone(),
             extensions: manifest.extensions.clone(),
-            loading_steps: manifest.loading_steps.clone(),
         })
     }
 }
@@ -491,7 +488,6 @@ impl TryFrom<EncodedPackManifest> for PackManifest {
             signatures,
             bootstrap,
             extensions,
-            loading_steps,
         } = encoded;
 
         let pack_id_string = match pack_id {
@@ -649,7 +645,6 @@ impl TryFrom<EncodedPackManifest> for PackManifest {
             signatures,
             bootstrap,
             extensions,
-            loading_steps,
         })
     }
 }

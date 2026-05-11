@@ -25,7 +25,6 @@ fn base_manifest() -> PackManifest {
         signatures: PackSignatures::default(),
         bootstrap: None,
         extensions: None,
-        loading_steps: Vec::new(),
     }
 }
 
