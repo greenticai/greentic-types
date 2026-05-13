@@ -80,6 +80,12 @@ fn main() {
             schema_hash,
         }],
         config_schema,
+        supports: Vec::new(),
+        capabilities: None,
+        profiles: None,
+        configurators: None,
+        resources: None,
+        secret_requirements: Vec::new(),
     };
 
     let bytes = canonical::to_canonical_cbor_allow_floats(&describe).expect("canonical encode");

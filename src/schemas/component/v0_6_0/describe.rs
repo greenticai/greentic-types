@@ -6,8 +6,13 @@ use serde::{Deserialize, Serialize};
 
 use ciborium::value::Value;
 
+use crate::component::{
+    ComponentCapabilities, ComponentConfigurators, ComponentProfiles, ResourceHints,
+};
+use crate::flow::FlowKind;
 use crate::i18n_text::I18nText;
 use crate::schemas::common::schema_ir::SchemaIr;
+use crate::secrets::SecretRequirement;
 
 #[cfg(all(feature = "std", feature = "serde"))]
 use crate::cbor::canonical;
@@ -31,6 +36,7 @@ pub struct ComponentInfo {
 /// Component description payload.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Debug, PartialEq)]
+#[non_exhaustive]
 pub struct ComponentDescribe {
     /// Core component metadata.
     pub info: ComponentInfo,
@@ -44,6 +50,43 @@ pub struct ComponentDescribe {
     pub operations: Vec<ComponentOperation>,
     /// Component-level config schema (authoritative).
     pub config_schema: SchemaIr,
+
+    // -- Fields below are populated from describe() to replace component.manifest.json --
+    /// Flow kinds this component can participate in.
+    #[cfg_attr(feature = "serde", serde(default))]
+    pub supports: Vec<FlowKind>,
+
+    /// Structured capability contract (WASI + host).
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Option::is_none")
+    )]
+    pub capabilities: Option<ComponentCapabilities>,
+
+    /// Profile metadata (default + supported list).
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Option::is_none")
+    )]
+    pub profiles: Option<ComponentProfiles>,
+
+    /// Optional configurator flows.
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Option::is_none")
+    )]
+    pub configurators: Option<ComponentConfigurators>,
+
+    /// Resource usage hints for deployers/schedulers.
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Option::is_none")
+    )]
+    pub resources: Option<ResourceHints>,
+
+    /// Secret requirements declared by the component.
+    #[cfg_attr(feature = "serde", serde(default))]
+    pub secret_requirements: Vec<SecretRequirement>,
 }
 
 /// Component operation entry.
