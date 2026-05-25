@@ -98,8 +98,8 @@ mod tests {
 
     fn ctx() -> TenantCtx {
         TenantCtx::new(
-            EnvId::from_str("prod-eu").unwrap(),
-            TenantId::from_str("acme").unwrap(),
+            EnvId::from_str("prod-eu").unwrap_or_else(|err| panic!("{err}")),
+            TenantId::from_str("acme").unwrap_or_else(|err| panic!("{err}")),
         )
     }
 
