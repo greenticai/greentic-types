@@ -195,17 +195,24 @@ mod tests {
     /// `team` is projected from the typed `TenantCtx.team_id` field, NOT the
     /// `attributes` map — keeps the bridge consistent with `TenantIdentity::from`
     /// and the rest of the typed-field projections (`session`, `flow`, ...).
+    ///
+    /// Bypasses the `with_team` builder (which sets BOTH `team_id` and `team`
+    /// in lockstep) and directly assigns only `team_id`, so this test actually
+    /// proves the `team_id`-first branch of the bridge's `.or()` chain.
     #[test]
     fn bridge_projects_team_from_typed_field() {
         let team = TeamId::from_str("support").unwrap_or_else(|err| panic!("{err}"));
-        let c = ctx().with_team(Some(team));
+        let mut c = ctx();
+        c.team_id = Some(team); // typed slot only; legacy stays None
+        c.team = None;
         let t = super::tenant_ctx_to_telemetry(&c);
         assert_eq!(t.team.as_deref(), Some("support"));
     }
 
     /// Fallback path: if only the legacy `team` slot is populated (no
     /// `team_id`), the bridge still picks it up — same precedent as
-    /// `TenantIdentity::from`.
+    /// `TenantIdentity::from`. Reachable via deserialization from an older
+    /// `TenantCtx` schema that predates the `team_id` field.
     #[test]
     fn bridge_falls_back_to_legacy_team_slot() {
         let team = TeamId::from_str("support").unwrap_or_else(|err| panic!("{err}"));
@@ -214,6 +221,21 @@ mod tests {
         c.team_id = None;
         let t = super::tenant_ctx_to_telemetry(&c);
         assert_eq!(t.team.as_deref(), Some("support"));
+    }
+
+    /// Disambiguation: when both `team_id` (typed) and `team` (legacy) are
+    /// populated with DIFFERENT values, the typed `team_id` wins — matches
+    /// `TenantIdentity::from`'s `team_id.or(team)` precedent. Guards the
+    /// bridge's `.or()` chain against accidental reversal in a future refactor.
+    #[test]
+    fn bridge_team_id_wins_over_legacy_team_slot() {
+        let typed = TeamId::from_str("typed-team").unwrap_or_else(|err| panic!("{err}"));
+        let legacy = TeamId::from_str("legacy-team").unwrap_or_else(|err| panic!("{err}"));
+        let mut c = ctx();
+        c.team_id = Some(typed);
+        c.team = Some(legacy);
+        let t = super::tenant_ctx_to_telemetry(&c);
+        assert_eq!(t.team.as_deref(), Some("typed-team"));
     }
 
     /// Malformed `generation` attribute is silently dropped — the bridge is a
