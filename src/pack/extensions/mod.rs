@@ -3,3 +3,4 @@
 pub mod capabilities;
 pub mod component_manifests;
 pub mod component_sources;
+pub mod fast2flow;

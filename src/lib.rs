@@ -205,6 +205,13 @@ pub use pack::extensions::component_sources::{
 pub use pack::extensions::component_sources::{
     decode_component_sources_v1_from_cbor_bytes, encode_component_sources_v1_to_cbor_bytes,
 };
+pub use pack::extensions::fast2flow::{
+    EXT_FAST2FLOW_V1, Fast2FlowExtensionError, Fast2FlowExtensionV1, Fast2FlowFlowEntryV1,
+};
+#[cfg(feature = "serde")]
+pub use pack::extensions::fast2flow::{
+    decode_fast2flow_extension_v1_from_cbor_bytes, encode_fast2flow_extension_v1_to_cbor_bytes,
+};
 pub use pack::{PackRef, Signature, SignatureAlgorithm};
 pub use pack_manifest::{
     BootstrapSpec, ComponentCapability, ExtensionInline, ExtensionRef, PackDependency,
