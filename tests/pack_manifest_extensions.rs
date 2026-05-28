@@ -109,6 +109,7 @@ fn extension_refs_roundtrip_json_yaml_and_cbor() {
             inline: Some(ExtensionInline::Provider(ProviderExtensionInline {
                 providers: vec![ProviderDecl {
                     provider_type: "vendor.search".into(),
+                    provider_id: None,
                     capabilities: vec!["query".into()],
                     ops: vec!["index".into()],
                     config_schema_ref: "schemas/search.json".into(),
@@ -169,6 +170,7 @@ fn provider_extension_helpers_roundtrip_and_validate() {
     };
     let provider = ProviderDecl {
         provider_type: "vendor.cache".into(),
+        provider_id: None,
         capabilities: vec!["cache".into()],
         ops: vec!["put".into(), "get".into()],
         config_schema_ref: "schemas/cache.json".into(),
