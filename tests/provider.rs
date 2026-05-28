@@ -234,3 +234,37 @@ fn validate_basic_still_rejects_duplicate_type_even_with_distinct_ids() {
         "unexpected message: {err}"
     );
 }
+
+#[test]
+fn validate_basic_rejects_provider_id_colliding_with_another_decls_type() {
+    // The post-M1.1b runner-host resolves provider_id by first probing
+    // load_instance, then scanning inline by provider_id match. If a Slack
+    // decl declares provider_id="teams" while a Teams decl exists with no
+    // provider_id, a lookup keyed "teams" would silently bind to the Slack
+    // runtime. Reject at validation time.
+    let inline = ProviderExtensionInline {
+        providers: vec![decl("teams", None), decl("slack", Some("teams"))],
+        additional_fields: BTreeMap::new(),
+    };
+    let err = inline
+        .validate_basic()
+        .expect_err("cross-namespace collision rejected");
+    let msg = err.to_string();
+    assert!(
+        msg.contains("provider_id 'teams'") && msg.contains("provider_type"),
+        "unexpected message: {msg}"
+    );
+}
+
+#[test]
+fn validate_basic_permits_provider_id_aliasing_its_own_provider_type() {
+    // A decl declaring provider_id = its own provider_type is a harmless
+    // explicit alias (no other decl is shadowed), and is allowed.
+    let inline = ProviderExtensionInline {
+        providers: vec![decl("teams", Some("teams"))],
+        additional_fields: BTreeMap::new(),
+    };
+    inline
+        .validate_basic()
+        .expect("self-aliasing provider_id accepted");
+}

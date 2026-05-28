@@ -132,10 +132,14 @@ impl ProviderExtensionInline {
     /// - `provider_id`, when present, must be non-empty and globally unique
     ///   within the inline. Absent `provider_id` is permitted and marks the
     ///   declaration as single-instance.
+    /// - An explicit `provider_id` may equal its OWN `provider_type` (harmless
+    ///   alias), but must NOT equal any OTHER declaration's `provider_type`.
+    ///   This prevents a lookup keyed on `id == "teams"` from silently
+    ///   resolving to a Slack runtime when a Slack decl declared
+    ///   `provider_id: "teams"`.
     /// - Runtime fields (`component_ref`, `export`, `world`) must be set.
     pub fn validate_basic(&self) -> GResult<()> {
         let mut seen_types = BTreeSet::new();
-        let mut seen_ids = BTreeSet::new();
         for provider in &self.providers {
             if provider.provider_type.is_empty() {
                 return Err(GreenticError::new(
@@ -152,6 +156,10 @@ impl ProviderExtensionInline {
                     ),
                 ));
             }
+        }
+
+        let mut seen_ids = BTreeSet::new();
+        for provider in &self.providers {
             if let Some(id) = provider.provider_id.as_deref() {
                 if id.is_empty() {
                     return Err(GreenticError::new(
@@ -166,6 +174,14 @@ impl ProviderExtensionInline {
                     return Err(GreenticError::new(
                         ErrorCode::InvalidInput,
                         format!("duplicate provider_id '{id}' in ProviderExtensionInline"),
+                    ));
+                }
+                if id != provider.provider_type && seen_types.contains(id) {
+                    return Err(GreenticError::new(
+                        ErrorCode::InvalidInput,
+                        format!(
+                            "provider_id '{id}' collides with another declaration's provider_type"
+                        ),
                     ));
                 }
             }
