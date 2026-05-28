@@ -139,6 +139,10 @@ impl ProviderExtensionInline {
     ///   `provider_id: "teams"`.
     /// - Runtime fields (`component_ref`, `export`, `world`) must be set.
     pub fn validate_basic(&self) -> GResult<()> {
+        // Pass 1: per-provider structural checks + collect every provider_type.
+        // Building the complete provider_type set up front is what makes the
+        // cross-namespace check in Pass 2 order-independent (a provider_id on
+        // decl A can collide with a provider_type on a later-declared decl B).
         let mut seen_types = BTreeSet::new();
         for provider in &self.providers {
             if provider.provider_type.is_empty() {
@@ -156,8 +160,21 @@ impl ProviderExtensionInline {
                     ),
                 ));
             }
+            if provider.runtime.component_ref.trim().is_empty()
+                || provider.runtime.export.trim().is_empty()
+                || provider.runtime.world.trim().is_empty()
+            {
+                return Err(GreenticError::new(
+                    ErrorCode::InvalidInput,
+                    format!(
+                        "runtime fields must be set for provider '{}'",
+                        provider.provider_type
+                    ),
+                ));
+            }
         }
 
+        // Pass 2: provider_id uniqueness + cross-namespace collision.
         let mut seen_ids = BTreeSet::new();
         for provider in &self.providers {
             if let Some(id) = provider.provider_id.as_deref() {
@@ -184,18 +201,6 @@ impl ProviderExtensionInline {
                         ),
                     ));
                 }
-            }
-            if provider.runtime.component_ref.trim().is_empty()
-                || provider.runtime.export.trim().is_empty()
-                || provider.runtime.world.trim().is_empty()
-            {
-                return Err(GreenticError::new(
-                    ErrorCode::InvalidInput,
-                    format!(
-                        "runtime fields must be set for provider '{}'",
-                        provider.provider_type
-                    ),
-                ));
             }
         }
         Ok(())
