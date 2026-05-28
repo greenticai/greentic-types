@@ -70,6 +70,15 @@ pub struct ProviderRuntimeRef {
 pub struct ProviderDecl {
     /// Provider type identifier (string-based to avoid enum coupling).
     pub provider_type: String,
+    /// Instance identifier for this provider declaration. Distinct from
+    /// `provider_type`: a single `provider_type` may be instanced multiple
+    /// times at the environment level, each instance carrying its own
+    /// `provider_id`. Absent when the declaration is single-instance.
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Option::is_none")
+    )]
+    pub provider_id: Option<String>,
     /// Capabilities advertised by the provider.
     #[cfg_attr(
         feature = "serde",
@@ -117,8 +126,16 @@ pub struct ProviderExtensionInline {
 
 impl ProviderExtensionInline {
     /// Performs basic structural validation without provider-specific semantics.
+    ///
+    /// Rules:
+    /// - `provider_type` must be non-empty and globally unique within the inline.
+    /// - `provider_id`, when present, must be non-empty and globally unique
+    ///   within the inline. Absent `provider_id` is permitted and marks the
+    ///   declaration as single-instance.
+    /// - Runtime fields (`component_ref`, `export`, `world`) must be set.
     pub fn validate_basic(&self) -> GResult<()> {
-        let mut seen = BTreeSet::new();
+        let mut seen_types = BTreeSet::new();
+        let mut seen_ids = BTreeSet::new();
         for provider in &self.providers {
             if provider.provider_type.is_empty() {
                 return Err(GreenticError::new(
@@ -126,7 +143,7 @@ impl ProviderExtensionInline {
                     "ProviderDecl.provider_type must not be empty",
                 ));
             }
-            if !seen.insert(&provider.provider_type) {
+            if !seen_types.insert(provider.provider_type.as_str()) {
                 return Err(GreenticError::new(
                     ErrorCode::InvalidInput,
                     format!(
@@ -134,6 +151,23 @@ impl ProviderExtensionInline {
                         provider.provider_type
                     ),
                 ));
+            }
+            if let Some(id) = provider.provider_id.as_deref() {
+                if id.is_empty() {
+                    return Err(GreenticError::new(
+                        ErrorCode::InvalidInput,
+                        format!(
+                            "ProviderDecl.provider_id must not be empty when set (provider_type '{}')",
+                            provider.provider_type
+                        ),
+                    ));
+                }
+                if !seen_ids.insert(id) {
+                    return Err(GreenticError::new(
+                        ErrorCode::InvalidInput,
+                        format!("duplicate provider_id '{id}' in ProviderExtensionInline"),
+                    ));
+                }
             }
             if provider.runtime.component_ref.trim().is_empty()
                 || provider.runtime.export.trim().is_empty()
