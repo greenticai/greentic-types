@@ -175,10 +175,9 @@ optional = true
 
 [dependencies.greentic-telemetry]
 # Floor pinned to the M1.4b-i publish (PR #74) that adds
-# `TelemetryCtx::with_messaging_endpoint_id`, on top of the C5.1 builders
-# (`with_team`, `with_pack_id`, `with_env_pack_kind`, `with_generation`) used by
-# the bridge in `src/telemetry/mod.rs`. Lower versions in the same range satisfy
-# `>=1.1.0-dev` but lack those methods; a stale lockfile or minimal-version
+# `TelemetryCtx::with_messaging_endpoint_id`, used by the bridge in
+# `src/telemetry/mod.rs`. Lower versions in the same range satisfy
+# `>=1.1.0-dev` but lack the method; a stale lockfile or minimal-version
 # resolution would break compilation under `--features telemetry-autoinit`.
 version = ">=1.1.0-dev.26636918276, <1.2.0-0"
 optional = true
