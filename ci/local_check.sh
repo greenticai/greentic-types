@@ -74,11 +74,10 @@ run_tool_step cargo "cargo run --bin export-schemas --all-features" \
 # must match a fresh `export-schemas` run; downstream readers (and Codex)
 # treat them as the public schema surface. The pages workflow regenerates
 # from `main`, but a stale committed snapshot is still a hygiene + review
-# trap. Fail loudly when they drift.
-if [[ -d ci/dist/schemas/v1 && -d dist/schemas/v1 ]]; then
-  run_required "schema snapshot drift guard" \
-    diff -rq ci/dist/schemas/v1 dist/schemas/v1
-fi
+# trap. Fail loudly when they drift — silent skip would mask an `export-schemas`
+# step that didn't produce output.
+run_required "schema snapshot drift guard" \
+  diff -rq ci/dist/schemas/v1 dist/schemas/v1
 
 # deny_dupes script
 if [[ -x scripts/deny_dupes.sh ]]; then
