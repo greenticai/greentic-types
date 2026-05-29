@@ -162,6 +162,17 @@
           "description": "Component binding referenced by the node.",
           "$ref": "#/$defs/ComponentRef"
         },
+        "err_map": {
+          "description": "Optional error mapping configuration.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OutputMapping"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "id": {
           "description": "Node identifier.",
           "$ref": "#/$defs/NodeId"

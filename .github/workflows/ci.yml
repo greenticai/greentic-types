@@ -14,3 +14,14 @@ jobs:
     uses: greenticai/.github/.github/workflows/pr-ci.yml@main
     with:
       variant: host
+
+  schema-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.95.0
+      - uses: Swatinem/rust-cache@v2
+      - name: Regenerate schemas
+        run: cargo run --bin export-schemas --all-features
+      - name: Verify ci/dist snapshot matches generated output
+        run: diff -rq ci/dist/schemas/v1 dist/schemas/v1
