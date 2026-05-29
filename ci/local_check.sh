@@ -70,6 +70,16 @@ run_tool_step cargo "cargo test" cargo test --workspace --all-features -- --noca
 run_tool_step cargo "cargo run --bin export-schemas --all-features" \
   cargo run --bin export-schemas --all-features
 
+# Schema snapshot drift guard. The committed snapshots under `ci/dist/schemas/v1`
+# must match a fresh `export-schemas` run; downstream readers (and Codex)
+# treat them as the public schema surface. The pages workflow regenerates
+# from `main`, but a stale committed snapshot is still a hygiene + review
+# trap. Fail loudly when they drift.
+if [[ -d ci/dist/schemas/v1 && -d dist/schemas/v1 ]]; then
+  run_required "schema snapshot drift guard" \
+    diff -rq ci/dist/schemas/v1 dist/schemas/v1
+fi
+
 # deny_dupes script
 if [[ -x scripts/deny_dupes.sh ]]; then
   if need rg; then

@@ -47,6 +47,13 @@
             "type": "string"
           }
         },
+        "provider_id": {
+          "description": "Instance identifier for this provider declaration. Distinct from\n`provider_type`: a single `provider_type` may be instanced multiple\ntimes at the environment level, each instance carrying its own\n`provider_id`. Absent when the declaration is single-instance.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "provider_type": {
           "description": "Provider type identifier (string-based to avoid enum coupling).",
           "type": "string"

@@ -2,7 +2,7 @@
   "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/channel-message-envelope.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "ChannelMessageEnvelope",
-  "description": "Envelope for channel messages exchanged with adapters.",
+  "description": "Envelope for channel messages exchanged with adapters.\n\nNOTE: Intentionally not `#[non_exhaustive]` — consumers construct this\ntype directly via struct literals (see greentic-messaging-providers, etc).\nAdding a new field is a coordinated breaking change that requires a minor\nversion bump and synchronized updates across consumer submodules.",
   "type": "object",
   "properties": {
     "attachments": {
@@ -22,6 +22,11 @@
         "string",
         "null"
       ]
+    },
+    "extensions": {
+      "description": "Structured provider-agnostic and provider-native extension data.\n\nUse well-known keys from [`extensions::ext_keys`] to avoid typos.\nValues are typed JSON (`serde_json::Value`) — no re-serialization\nneeded at provider boundaries.",
+      "type": "object",
+      "additionalProperties": true
     },
     "from": {
       "description": "Optional actor (sender/initiator) associated with the message (primarily ingress).",
