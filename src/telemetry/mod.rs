@@ -9,15 +9,17 @@ pub use keys::OtlpKeys;
 pub use span_context::SpanContext;
 
 /// Canonical [`TenantCtx`](crate::TenantCtx)`.attributes` keys that carry the
-/// deploy-spec rollout identifiers into telemetry (B11/C5).
+/// deploy-spec rollout identifiers (B11/C5) and the messaging endpoint
+/// discriminator (M1.4) into telemetry.
 ///
 /// The runtime (runner-host) populates these on the per-invocation
 /// `TenantCtx`; the telemetry bridge ([`set_current_tenant_ctx`]) copies any
 /// present value into the corresponding `TelemetryCtx` field. Riding the
 /// existing free-form `attributes` map avoids adding typed fields to the
 /// foundation `TenantCtx` — no serialized-shape or API cascade across the 30+
-/// downstream crates. The producer of these values (the revision dispatcher)
-/// is Phase D; until then the keys are simply absent.
+/// downstream crates. The producer of these values (the revision dispatcher
+/// for rollout IDs, the ingress dispatcher for `MESSAGING_ENDPOINT_ID`) is
+/// Phase D / M1.4c; until then the keys are simply absent.
 ///
 /// `TEAM` is exposed as a key for parity with the other attribute names, but
 /// the bridge first reads the typed [`TenantCtx::team_id`](crate::TenantCtx)
@@ -43,6 +45,10 @@ pub mod attr_keys {
     /// the decimal string of a `u64`. Non-numeric values are skipped by the
     /// bridge.
     pub const GENERATION: &str = "gt.generation";
+    /// Messaging endpoint id the inbound activity arrived on (M1.4, e.g.
+    /// `teams-legal` vs `teams-accounting`). Disambiguates traces and logs
+    /// when one env hosts multiple provider instances of the same type.
+    pub const MESSAGING_ENDPOINT_ID: &str = "gt.messaging_endpoint_id";
 }
 
 #[cfg(feature = "telemetry-autoinit")]
@@ -72,12 +78,13 @@ pub fn install_telemetry(service_name: &str) -> anyhow::Result<()> {
 /// field (with [`team`](crate::TenantCtx) as fallback, matching
 /// `TenantIdentity::from`). The B11/C5 rollout identifiers
 /// (`customer_id`/`deployment_id`/`bundle_id`/`revision_id`/`pack_id`/
-/// `env_pack_kind`/`generation`) ride the free-form `attributes` map; the
-/// producer (revision dispatcher) is Phase D and these keys are simply absent
-/// until then. `generation` is parsed as `u64`; malformed values are skipped
-/// rather than panicking — the bridge is a hot-path projection, not a
-/// validator. Pure and allocation-light so it can be unit-tested without the
-/// task-local slot.
+/// `env_pack_kind`/`generation`) and the M1.4 `messaging_endpoint_id` ride the
+/// free-form `attributes` map; the producers (revision dispatcher / ingress
+/// dispatcher) land in Phase D / M1.4c and these keys are simply absent until
+/// then. `generation` is parsed as `u64`; malformed values are skipped rather
+/// than panicking — the bridge is a hot-path projection, not a validator.
+/// Pure and allocation-light so it can be unit-tested without the task-local
+/// slot.
 pub fn tenant_ctx_to_telemetry(ctx: &crate::TenantCtx) -> TelemetryCtx {
     let mut telemetry = TelemetryCtx::new(ctx.tenant_id.as_ref()).with_env(ctx.env.as_str());
     if let Some(team) = ctx.team_id.as_ref().or(ctx.team.as_ref()) {
@@ -120,6 +127,10 @@ pub fn tenant_ctx_to_telemetry(ctx: &crate::TenantCtx) -> TelemetryCtx {
         .and_then(|v| v.parse::<u64>().ok())
     {
         telemetry = telemetry.with_generation(n);
+    }
+    // M1.4: messaging endpoint discriminator rides the same attributes map.
+    if let Some(v) = ctx.attributes.get(attr_keys::MESSAGING_ENDPOINT_ID) {
+        telemetry = telemetry.with_messaging_endpoint_id(v);
     }
     telemetry
 }
@@ -165,6 +176,10 @@ mod tests {
         );
         c.attributes
             .insert(super::attr_keys::GENERATION.into(), "3".into());
+        c.attributes.insert(
+            super::attr_keys::MESSAGING_ENDPOINT_ID.into(),
+            "teams-legal".into(),
+        );
 
         let t = super::tenant_ctx_to_telemetry(&c);
         assert_eq!(t.tenant, "acme");
@@ -176,6 +191,7 @@ mod tests {
         assert_eq!(t.pack_id.as_deref(), Some("customer.support@1.2.0"));
         assert_eq!(t.env_pack_kind.as_deref(), Some("greentic.deployer.k8s"));
         assert_eq!(t.generation.as_deref(), Some("3"));
+        assert_eq!(t.messaging_endpoint_id.as_deref(), Some("teams-legal"));
     }
 
     #[test]
@@ -190,6 +206,7 @@ mod tests {
         assert!(t.pack_id.is_none());
         assert!(t.env_pack_kind.is_none());
         assert!(t.generation.is_none());
+        assert!(t.messaging_endpoint_id.is_none());
     }
 
     /// `team` is projected from the typed `TenantCtx.team_id` field, NOT the
