@@ -159,6 +159,7 @@ fn sample_pack_manifest() -> PackManifest {
         signatures: PackSignatures { signatures: vec![] },
         bootstrap: None,
         extensions: None,
+        agents: BTreeMap::new(),
     }
 }
 

@@ -163,6 +163,8 @@ struct EncodedPackManifest {
     bootstrap: Option<BootstrapSpec>,
     #[serde(default, skip_serializing_if = "extensions_is_empty")]
     extensions: Option<BTreeMap<String, ExtensionRef>>,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    agents: BTreeMap<String, serde_json::Value>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -372,6 +374,7 @@ impl TryFrom<&PackManifest> for EncodedPackManifest {
             signatures: manifest.signatures.clone(),
             bootstrap: manifest.bootstrap.clone(),
             extensions: manifest.extensions.clone(),
+            agents: manifest.agents.clone(),
         })
     }
 }
@@ -486,6 +489,7 @@ impl TryFrom<EncodedPackManifest> for PackManifest {
             signatures,
             bootstrap,
             extensions,
+            agents,
         } = encoded;
 
         let pack_id_string = match pack_id {
@@ -643,6 +647,7 @@ impl TryFrom<EncodedPackManifest> for PackManifest {
             signatures,
             bootstrap,
             extensions,
+            agents,
         })
     }
 }

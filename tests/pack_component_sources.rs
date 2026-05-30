@@ -1,5 +1,7 @@
 #![cfg(feature = "serde")]
 
+use std::collections::BTreeMap;
+
 use greentic_types::pack::extensions::component_sources::{
     ArtifactLocationV1, ComponentSourceEntryV1, ComponentSourcesV1, ResolvedComponentV1,
     decode_component_sources_v1_from_cbor_bytes, encode_component_sources_v1_to_cbor_bytes,
@@ -185,6 +187,7 @@ fn pack_manifest_component_sources_helpers_work() {
         signatures: PackSignatures::default(),
         bootstrap: None,
         extensions: None,
+        agents: BTreeMap::new(),
     };
 
     let sources = ComponentSourcesV1::new(vec![ComponentSourceEntryV1 {
@@ -227,6 +230,7 @@ fn pack_manifest_without_component_sources_still_decodes() {
         signatures: PackSignatures::default(),
         bootstrap: None,
         extensions: None,
+        agents: BTreeMap::new(),
     };
 
     let cbor = encode_pack_manifest(&manifest).expect("encode pack manifest");
