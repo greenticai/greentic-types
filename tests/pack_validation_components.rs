@@ -76,6 +76,7 @@ fn base_manifest() -> PackManifest {
         },
         bootstrap: None,
         extensions: None,
+        agents: BTreeMap::new(),
     }
 }
 
