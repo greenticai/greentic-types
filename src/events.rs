@@ -1,6 +1,8 @@
 //! Canonical Greentic event envelope shared across repos.
 
-use alloc::{collections::BTreeMap, string::String};
+use alloc::string::{String, ToString};
+use alloc::vec::Vec;
+use alloc::{collections::BTreeMap, format};
 use core::fmt;
 use core::str::FromStr;
 
@@ -121,4 +123,128 @@ pub struct EventEnvelope {
     /// Free-form metadata such as idempotency keys.
     #[cfg_attr(feature = "serde", serde(default))]
     pub metadata: EventMetadata,
+}
+
+/// Schema identifier for the business-event profile.
+pub const BUSINESS_EVENT_SCHEMA: &str = "greentic.business-event.v1";
+
+const BUSINESS_EVENT_TYPE_PREFIX: &str = "cap://greentic/events/";
+
+/// Parse a business-event `type` of the form
+/// `cap://greentic/events/{domain}/{name}` into `(domain, name)`.
+pub fn parse_business_event_type(type_str: &str) -> Result<(String, String), String> {
+    let rest = type_str.strip_prefix(BUSINESS_EVENT_TYPE_PREFIX).ok_or_else(|| {
+        format!("event type '{type_str}' must start with '{BUSINESS_EVENT_TYPE_PREFIX}'")
+    })?;
+    let segments: Vec<&str> = rest.split('/').collect();
+    if segments.len() != 2 {
+        return Err(format!(
+            "event type '{type_str}' must be cap://greentic/events/{{domain}}/{{name}} (got {} segment(s) after the prefix)",
+            segments.len()
+        ));
+    }
+    let domain = segments[0];
+    let name = segments[1];
+    if domain.is_empty() || name.is_empty() {
+        return Err(format!("event type '{type_str}' has an empty domain or name segment"));
+    }
+    Ok((domain.to_string(), name.to_string()))
+}
+
+/// Validate an [`EventEnvelope`] against the `greentic.business-event.v1`
+/// profile. Returns ALL violations so callers can correct everything at once.
+pub fn validate_business_event(event: &EventEnvelope) -> Result<(), Vec<String>> {
+    let mut errors: Vec<String> = Vec::new();
+    match parse_business_event_type(&event.r#type) {
+        Ok((domain, _name)) => {
+            if event.topic != domain {
+                errors.push(format!(
+                    "topic '{}' must equal the domain '{}' from the event type",
+                    event.topic, domain
+                ));
+            }
+        }
+        Err(message) => errors.push(message),
+    }
+    for key in ["schema_version", "producer"] {
+        match event.metadata.get(key) {
+            Some(value) if !value.is_empty() => {}
+            _ => errors.push(format!("metadata['{key}'] is required and must be non-empty")),
+        }
+    }
+    if errors.is_empty() { Ok(()) } else { Err(errors) }
+}
+
+#[cfg(all(test, feature = "std"))]
+#[allow(clippy::unwrap_used, clippy::expect_used)]
+mod business_event_tests {
+    use super::*;
+    use crate::{EnvId, TenantCtx, TenantId};
+    use alloc::string::ToString;
+
+    fn ctx() -> TenantCtx {
+        TenantCtx::new(
+            EnvId::try_from("prod").unwrap(),
+            TenantId::try_from("tenant-1").unwrap(),
+        )
+    }
+
+    fn valid_event() -> EventEnvelope {
+        let mut metadata = EventMetadata::new();
+        metadata.insert("schema_version".to_string(), "1".to_string());
+        metadata.insert("producer".to_string(), "trigger:daily".to_string());
+        EventEnvelope {
+            id: EventId::new("evt-1").unwrap(),
+            topic: "tenancy".to_string(),
+            r#type: "cap://greentic/events/tenancy/daily-rent-reminder".to_string(),
+            source: "operala".to_string(),
+            tenant: ctx(),
+            subject: None,
+            time: chrono::DateTime::UNIX_EPOCH,
+            correlation_id: None,
+            payload: serde_json::json!({}),
+            metadata,
+        }
+    }
+
+    #[test]
+    fn parses_well_formed_business_event_type() {
+        let (domain, name) =
+            parse_business_event_type("cap://greentic/events/tenancy/daily-rent-reminder").unwrap();
+        assert_eq!(domain, "tenancy");
+        assert_eq!(name, "daily-rent-reminder");
+    }
+
+    #[test]
+    fn rejects_type_without_cap_prefix() {
+        assert!(parse_business_event_type("greentic/events/x/y").is_err());
+    }
+
+    #[test]
+    fn rejects_type_with_wrong_segment_count() {
+        assert!(parse_business_event_type("cap://greentic/events/onlyone").is_err());
+        assert!(parse_business_event_type("cap://greentic/events/a/b/c").is_err());
+    }
+
+    #[test]
+    fn valid_event_passes_validation() {
+        validate_business_event(&valid_event()).expect("valid event");
+    }
+
+    #[test]
+    fn topic_must_equal_domain() {
+        let mut e = valid_event();
+        e.topic = "wrong".to_string();
+        let errors = validate_business_event(&e).unwrap_err();
+        assert!(errors.iter().any(|m| m.contains("topic")), "{errors:?}");
+    }
+
+    #[test]
+    fn missing_metadata_keys_are_reported_together() {
+        let mut e = valid_event();
+        e.metadata.clear();
+        let errors = validate_business_event(&e).unwrap_err();
+        assert!(errors.iter().any(|m| m.contains("schema_version")), "{errors:?}");
+        assert!(errors.iter().any(|m| m.contains("producer")), "{errors:?}");
+    }
 }
