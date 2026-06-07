@@ -5,6 +5,11 @@
   "description": "Canonical pack manifest embedding flows, components, dependencies and signatures.",
   "type": "object",
   "properties": {
+    "agents": {
+      "description": "Per-agent config blobs (opaque, self-describing) for Agentic Worker\n(`dw.agent`) flow nodes, keyed by `agent_id`. The runtime deserialises\neach blob into its own agent config type; this crate stays agnostic.",
+      "type": "object",
+      "additionalProperties": true
+    },
     "bootstrap": {
       "description": "Optional bootstrap/install hints for platform-controlled packs.",
       "anyOf": [

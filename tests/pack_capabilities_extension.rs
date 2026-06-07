@@ -25,6 +25,7 @@ fn base_manifest() -> PackManifest {
         signatures: PackSignatures::default(),
         bootstrap: None,
         extensions: None,
+        agents: BTreeMap::new(),
     }
 }
 
