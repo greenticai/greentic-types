@@ -186,3 +186,23 @@ fn flow_component_resolves_via_manifest_components() {
         "explicit components should not warn"
     );
 }
+
+#[test]
+fn runtime_builtin_dw_agent_does_not_require_pack_component() {
+    let mut manifest = base_manifest();
+    manifest.flows = vec![flow_with_component("dw.agent.tx-network-assistant")];
+
+    let diagnostics = validate_pack_manifest_core(&manifest);
+    assert!(
+        diagnostics
+            .iter()
+            .all(|diag| diag.code != "PACK_FLOW_COMPONENT_MISSING"),
+        "runtime builtin dw.agent nodes should not require pack components"
+    );
+    assert!(
+        diagnostics
+            .iter()
+            .all(|diag| diag.code != "PACK_COMPONENT_NOT_EXPLICIT"),
+        "runtime builtin dw.agent nodes should not warn as implicit components"
+    );
+}
