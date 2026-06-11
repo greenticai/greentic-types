@@ -118,6 +118,15 @@ pub struct PackManifest {
         serde(default, skip_serializing_if = "extensions_is_empty")
     )]
     pub extensions: Option<BTreeMap<String, ExtensionRef>>,
+    /// Per-agent config blobs (opaque, self-describing) for Agentic Worker
+    /// (`dw.agent`) flow nodes, keyed by `agent_id`. The runtime deserialises
+    /// each blob into its own agent config type; this crate stays agnostic.
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "BTreeMap::is_empty")
+    )]
+    #[cfg_attr(feature = "schemars", schemars(default))]
+    pub agents: BTreeMap<String, serde_json::Value>,
 }
 
 /// Flow entry embedded in a pack.

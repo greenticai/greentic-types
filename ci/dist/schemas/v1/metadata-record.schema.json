@@ -1,0 +1,44 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/metadata-record.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MetadataRecord",
+  "description": "Generic metadata record attached to supply-chain entities.",
+  "type": "object",
+  "properties": {
+    "key": {
+      "description": "Metadata key (lower_snake_case or dotted).",
+      "type": "string"
+    },
+    "namespace": {
+      "description": "Optional namespace grouping related keys.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "value": {
+      "description": "Metadata value as arbitrary JSON."
+    },
+    "version": {
+      "description": "Optional version reference associated with the record.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VersionRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "key",
+    "value"
+  ],
+  "$defs": {
+    "VersionRef": {
+      "description": "Version reference for a component or metadata record.",
+      "type": "string"
+    }
+  }
+}

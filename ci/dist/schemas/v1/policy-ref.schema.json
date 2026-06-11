@@ -1,0 +1,7 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/policy-ref.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PolicyRef",
+  "description": "Policy reference within a supply chain.",
+  "type": "string"
+}

@@ -1,0 +1,113 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/attestation-statement.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AttestationStatement",
+  "description": "Attestation statement descriptor.",
+  "type": "object",
+  "properties": {
+    "attestation": {
+      "description": "Attestation identifier.",
+      "$ref": "#/$defs/AttestationRef"
+    },
+    "attestation_id": {
+      "description": "Optional generated attestation identifier.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AttestationId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Provider-specific metadata.",
+      "default": null
+    },
+    "predicate_type": {
+      "description": "Predicate type describing the attestation.",
+      "$ref": "#/$defs/PredicateType"
+    },
+    "registry": {
+      "description": "Optional registry where the attestation is stored.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RegistryRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "statement": {
+      "description": "Statement reference (for example DSSE envelope).",
+      "$ref": "#/$defs/StatementRef"
+    },
+    "store": {
+      "description": "Optional content store reference.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StoreRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "attestation",
+    "predicate_type",
+    "statement"
+  ],
+  "$defs": {
+    "AttestationId": {
+      "description": "Identifier referencing an attestation.",
+      "type": "string"
+    },
+    "AttestationRef": {
+      "description": "Attestation reference within a supply chain.",
+      "type": "string"
+    },
+    "PredicateType": {
+      "description": "Predicate type for attestations.",
+      "oneOf": [
+        {
+          "description": "SLSA provenance predicate.",
+          "type": "string",
+          "const": "slsa"
+        },
+        {
+          "description": "Vulnerability assessment predicate.",
+          "type": "string",
+          "const": "vulnerability"
+        },
+        {
+          "description": "Custom predicate identified by name.",
+          "type": "object",
+          "properties": {
+            "custom": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "custom"
+          ]
+        }
+      ]
+    },
+    "RegistryRef": {
+      "description": "Registry reference for OCI or artifact storage.",
+      "type": "string"
+    },
+    "StatementRef": {
+      "description": "Reference to an attestation statement.",
+      "type": "string"
+    },
+    "StoreRef": {
+      "description": "Content store reference within a supply chain.",
+      "type": "string"
+    }
+  }
+}

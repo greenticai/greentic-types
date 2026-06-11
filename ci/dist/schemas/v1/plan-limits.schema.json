@@ -1,0 +1,42 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/plan-limits.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PlanLimits",
+  "description": "Plan limits used for entitlements.",
+  "type": "object",
+  "properties": {
+    "max_environments": {
+      "description": "Maximum environments allowed.",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint32",
+      "minimum": 0
+    },
+    "max_subscriptions": {
+      "description": "Maximum subscriptions allowed.",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint32",
+      "minimum": 0
+    },
+    "metadata": {
+      "description": "Additional metadata.",
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    },
+    "monthly_units_included": {
+      "description": "Included units per period (semantic depends on product).",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint64",
+      "minimum": 0
+    }
+  }
+}

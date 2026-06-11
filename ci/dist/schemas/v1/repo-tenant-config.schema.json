@@ -1,0 +1,304 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/repo-tenant-config.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RepoTenantConfig",
+  "description": "Tenant UI configuration exposed to the console (`config.json`).",
+  "type": "object",
+  "properties": {
+    "default_pipeline": {
+      "description": "Default pipeline choices.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DefaultPipeline"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "distributors": {
+      "description": "Optional configured distributors.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "$ref": "#/$defs/DistributorTarget"
+      }
+    },
+    "enabled_packs": {
+      "description": "Enabled packs grouped by kind.",
+      "$ref": "#/$defs/EnabledPacks"
+    },
+    "enabled_tabs": {
+      "description": "Structural flags: active sections for the UI. Values are conventions, not enforced here.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "features": {
+      "description": "Feature flags for the UI.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RepoConfigFeatures"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "page_handlers": {
+      "description": "Maps page slots to UI action handler pack identifiers.",
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "stores": {
+      "description": "Optional configured stores.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "$ref": "#/$defs/StoreTarget"
+      }
+    },
+    "tenant_id": {
+      "description": "Tenant identifier the config belongs to.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tenant_id",
+    "enabled_packs"
+  ],
+  "$defs": {
+    "DefaultPipeline": {
+      "description": "Default pipeline selections per capability.",
+      "type": "object",
+      "properties": {
+        "attestation": {
+          "description": "Default attestation provider identifier.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "oci_provider": {
+          "description": "Default OCI provider identifier.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "policy_engine": {
+          "description": "Default policy engine identifier.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "scanners": {
+          "description": "Default scanners to run.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "default": null,
+          "items": {
+            "type": "string"
+          }
+        },
+        "signing": {
+          "description": "Default signing provider identifier.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        }
+      }
+    },
+    "DistributorTarget": {
+      "description": "Public distributor target descriptor.",
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Optional description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Distributor identifier.",
+          "type": "string"
+        },
+        "label": {
+          "description": "Human-readable label.",
+          "type": "string"
+        },
+        "url": {
+          "description": "Distributor URL.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "url"
+      ]
+    },
+    "EnabledPacks": {
+      "description": "Enabled packs grouped by capability.",
+      "type": "object",
+      "properties": {
+        "attestation": {
+          "description": "Attestation pack identifiers.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "default": null,
+          "items": {
+            "type": "string"
+          }
+        },
+        "identity_providers": {
+          "description": "Identity provider pack identifiers.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "default": null,
+          "items": {
+            "type": "string"
+          }
+        },
+        "oci_providers": {
+          "description": "OCI provider pack identifiers.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "default": null,
+          "items": {
+            "type": "string"
+          }
+        },
+        "policy_engines": {
+          "description": "Policy engine pack identifiers.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "default": null,
+          "items": {
+            "type": "string"
+          }
+        },
+        "scanners": {
+          "description": "Scanner pack identifiers.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "default": null,
+          "items": {
+            "type": "string"
+          }
+        },
+        "signing": {
+          "description": "Signing pack identifiers.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "default": null,
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_providers": {
+          "description": "Source provider pack identifiers.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "default": null,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "RepoConfigFeatures": {
+      "description": "Feature flags for the UI.",
+      "type": "object",
+      "properties": {
+        "allow_manual_approve": {
+          "description": "Whether manual approvals are allowed.",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "default": null
+        },
+        "show_advanced_scan_views": {
+          "description": "Whether to show advanced scan views.",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "default": null
+        },
+        "show_experimental_modules": {
+          "description": "Whether to surface experimental modules.",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "default": null
+        }
+      }
+    },
+    "StoreTarget": {
+      "description": "Public store target descriptor.",
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Optional description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Store identifier.",
+          "type": "string"
+        },
+        "label": {
+          "description": "Human-readable label.",
+          "type": "string"
+        },
+        "url": {
+          "description": "Store URL.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "url"
+      ]
+    }
+  }
+}

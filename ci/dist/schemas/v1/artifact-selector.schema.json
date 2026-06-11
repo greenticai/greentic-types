@@ -1,0 +1,122 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/artifact-selector.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ArtifactSelector",
+  "description": "Selector describing whether a component or pack should be deployed.",
+  "oneOf": [
+    {
+      "description": "Component reference.",
+      "type": "object",
+      "properties": {
+        "component": {
+          "$ref": "#/$defs/ComponentRef"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "component"
+      ]
+    },
+    {
+      "description": "Pack reference.",
+      "type": "object",
+      "properties": {
+        "pack": {
+          "$ref": "#/$defs/PackRef"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "pack"
+      ]
+    }
+  ],
+  "$defs": {
+    "ComponentRef": {
+      "description": "Supply-chain component reference (distinct from pack ComponentId).",
+      "type": "string"
+    },
+    "PackRef": {
+      "description": "Reference to a pack stored in an OCI registry.",
+      "type": "object",
+      "properties": {
+        "digest": {
+          "description": "Content digest of the pack.",
+          "type": "string"
+        },
+        "oci_url": {
+          "description": "OCI reference pointing to the pack.",
+          "type": "string"
+        },
+        "signatures": {
+          "description": "Optional detached signatures.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Signature"
+          }
+        },
+        "version": {
+          "description": "SemVer version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "oci_url",
+        "version",
+        "digest"
+      ]
+    },
+    "Signature": {
+      "description": "Detached signature accompanying a [`PackRef`].",
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "description": "Signature algorithm (for example `ed25519`).",
+          "$ref": "#/$defs/SignatureAlgorithm"
+        },
+        "key_id": {
+          "description": "Identifier of the public key.",
+          "type": "string"
+        },
+        "signature": {
+          "description": "Raw signature bytes (base64 encoded when serialized).",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint8",
+            "maximum": 255,
+            "minimum": 0
+          }
+        }
+      },
+      "required": [
+        "key_id",
+        "algorithm",
+        "signature"
+      ]
+    },
+    "SignatureAlgorithm": {
+      "description": "Supported signature algorithms for packs.",
+      "oneOf": [
+        {
+          "description": "Ed25519 signatures.",
+          "type": "string",
+          "const": "ed25519"
+        },
+        {
+          "description": "Other algorithms identified by name.",
+          "type": "object",
+          "properties": {
+            "other": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "other"
+          ]
+        }
+      ]
+    }
+  }
+}

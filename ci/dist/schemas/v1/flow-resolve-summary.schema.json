@@ -1,0 +1,166 @@
+{
+  "$id": "greentic.flow.resolve-summary.v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Greentic Flow Resolve Summary v1",
+  "description": "Stable component resolution summary for flow nodes.",
+  "type": "object",
+  "properties": {
+    "flow": {
+      "description": "Flow file basename (for example `main.ygtc`).",
+      "type": "string"
+    },
+    "nodes": {
+      "description": "Resolve summary keyed by node name.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/NodeResolveSummaryV1"
+      }
+    },
+    "schema_version": {
+      "description": "Schema version (must be 1).",
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "schema_version",
+    "flow",
+    "nodes"
+  ],
+  "$defs": {
+    "ComponentId": {
+      "description": "Identifier referencing a component binding in a pack.",
+      "type": "string"
+    },
+    "FlowResolveSummaryManifestV1": {
+      "description": "Minimal manifest metadata included in the summary.",
+      "type": "object",
+      "properties": {
+        "version": {
+          "description": "SemVer version",
+          "type": "string"
+        },
+        "world": {
+          "description": "Referenced WIT world binding.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "world",
+        "version"
+      ]
+    },
+    "FlowResolveSummarySourceRefV1": {
+      "description": "Component source references for flow resolve summaries.",
+      "oneOf": [
+        {
+          "description": "Local wasm path relative to the flow file.",
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "local"
+            },
+            "path": {
+              "description": "Relative path to the wasm artifact.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "path"
+          ]
+        },
+        {
+          "description": "OCI component reference.",
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "oci"
+            },
+            "ref": {
+              "description": "OCI reference.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "ref"
+          ]
+        },
+        {
+          "description": "Repository component reference.",
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "repo"
+            },
+            "ref": {
+              "description": "Repository reference.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "ref"
+          ]
+        },
+        {
+          "description": "Store component reference.",
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "store"
+            },
+            "ref": {
+              "description": "Store reference.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "ref"
+          ]
+        }
+      ]
+    },
+    "NodeResolveSummaryV1": {
+      "description": "Resolve summary for a flow node.",
+      "type": "object",
+      "properties": {
+        "component_id": {
+          "description": "Component identifier referenced by this node.",
+          "$ref": "#/$defs/ComponentId"
+        },
+        "digest": {
+          "description": "Pinned digest for the resolved artifact.",
+          "type": "string"
+        },
+        "manifest": {
+          "description": "Optional manifest metadata captured at resolve time.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FlowResolveSummaryManifestV1"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source": {
+          "description": "Component source reference.",
+          "$ref": "#/$defs/FlowResolveSummarySourceRefV1"
+        }
+      },
+      "required": [
+        "component_id",
+        "source",
+        "digest"
+      ]
+    }
+  }
+}
