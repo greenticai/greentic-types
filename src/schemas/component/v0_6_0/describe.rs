@@ -44,6 +44,12 @@ pub struct ComponentDescribe {
     pub operations: Vec<ComponentOperation>,
     /// Component-level config schema (authoritative).
     pub config_schema: SchemaIr,
+    /// Emitted outcomes vocabulary — the routing events a flow may wire from a
+    /// node backed by this component (e.g. `on_success`, `on_error`,
+    /// `on_submit`). Additive in 0.6.x: descriptors predating this field decode
+    /// to an empty list, so older components keep working unchanged.
+    #[cfg_attr(feature = "serde", serde(default))]
+    pub outcomes: Vec<String>,
 }
 
 /// Component operation entry.
@@ -136,4 +142,65 @@ pub fn schema_hash(
         hex.push_str(&format!("{byte:02x}"));
     }
     Ok(hex)
+}
+
+#[cfg(all(test, feature = "std", feature = "serde"))]
+mod tests {
+    use super::*;
+    use crate::schemas::common::schema_ir::{AdditionalProperties, SchemaIr};
+
+    fn minimal_descriptor() -> ComponentDescribe {
+        ComponentDescribe {
+            info: ComponentInfo {
+                id: "component-x".into(),
+                version: "1.0.0".into(),
+                role: "runtime".into(),
+                display_name: None,
+            },
+            provided_capabilities: Vec::new(),
+            required_capabilities: Vec::new(),
+            metadata: BTreeMap::new(),
+            operations: Vec::new(),
+            config_schema: SchemaIr::Object {
+                properties: BTreeMap::new(),
+                required: Vec::new(),
+                additional: AdditionalProperties::Allow,
+            },
+            outcomes: Vec::new(),
+        }
+    }
+
+    // Cascade safety: descriptors produced before `outcomes` existed omit the
+    // field entirely. They MUST decode (to an empty list), not error — this is
+    // what makes the field additive across every downstream component.
+    #[test]
+    fn outcomes_absent_decodes_to_empty() -> Result<(), Box<dyn std::error::Error>> {
+        let legacy = serde_json::json!({
+            "info": { "id": "component-x", "version": "1.0.0", "role": "runtime", "display_name": null },
+            "provided_capabilities": [],
+            "required_capabilities": [],
+            "metadata": {},
+            "operations": [],
+            "config_schema": { "type": "object" }
+        });
+        let decoded: ComponentDescribe = serde_json::from_value(legacy)?;
+        assert!(decoded.outcomes.is_empty());
+        Ok(())
+    }
+
+    // Populated outcomes survive the canonical CBOR round trip used by
+    // `describe()` (component → bytes → greentic-types).
+    #[test]
+    fn outcomes_round_trip_through_canonical_cbor() -> Result<(), Box<dyn std::error::Error>> {
+        let mut descriptor = minimal_descriptor();
+        descriptor.outcomes = vec!["on_success".into(), "on_error".into()];
+        let bytes = canonical::to_canonical_cbor_allow_floats(&descriptor)?;
+        let decoded: ComponentDescribe = canonical::from_cbor(&bytes)?;
+        assert_eq!(
+            decoded.outcomes,
+            vec!["on_success".to_string(), "on_error".to_string()]
+        );
+        assert_eq!(decoded, descriptor);
+        Ok(())
+    }
 }
