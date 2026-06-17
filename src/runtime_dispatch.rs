@@ -90,8 +90,9 @@ mod tests {
             input: json!({ "amount": 10 }),
             deadline_ms: Some(30_000),
         };
-        let encoded = serde_json::to_value(&req).unwrap();
-        let decoded: RuntimeDispatchRequest = serde_json::from_value(encoded).unwrap();
+        let encoded = serde_json::to_value(&req).expect("serialize dispatch request");
+        let decoded: RuntimeDispatchRequest =
+            serde_json::from_value(encoded).expect("deserialize dispatch request");
         assert_eq!(decoded, req);
     }
 
