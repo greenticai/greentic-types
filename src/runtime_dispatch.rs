@@ -77,6 +77,7 @@ pub fn response_topic(runtime: &str) -> String {
 }
 
 #[cfg(all(test, feature = "serde"))]
+#[allow(clippy::unwrap_used, clippy::expect_used)]
 mod tests {
     use super::*;
     use serde_json::json;
@@ -90,9 +91,8 @@ mod tests {
             input: json!({ "amount": 10 }),
             deadline_ms: Some(30_000),
         };
-        let encoded = serde_json::to_value(&req).expect("serialize dispatch request");
-        let decoded: RuntimeDispatchRequest =
-            serde_json::from_value(encoded).expect("deserialize dispatch request");
+        let encoded = serde_json::to_value(&req).unwrap();
+        let decoded: RuntimeDispatchRequest = serde_json::from_value(encoded).unwrap();
         assert_eq!(decoded, req);
     }
 
