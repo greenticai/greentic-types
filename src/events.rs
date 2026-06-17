@@ -133,9 +133,11 @@ const BUSINESS_EVENT_TYPE_PREFIX: &str = "cap://greentic/events/";
 /// Parse a business-event `type` of the form
 /// `cap://greentic/events/{domain}/{name}` into `(domain, name)`.
 pub fn parse_business_event_type(type_str: &str) -> Result<(String, String), String> {
-    let rest = type_str.strip_prefix(BUSINESS_EVENT_TYPE_PREFIX).ok_or_else(|| {
-        format!("event type '{type_str}' must start with '{BUSINESS_EVENT_TYPE_PREFIX}'")
-    })?;
+    let rest = type_str
+        .strip_prefix(BUSINESS_EVENT_TYPE_PREFIX)
+        .ok_or_else(|| {
+            format!("event type '{type_str}' must start with '{BUSINESS_EVENT_TYPE_PREFIX}'")
+        })?;
     let segments: Vec<&str> = rest.split('/').collect();
     if segments.len() != 2 {
         return Err(format!(
@@ -146,7 +148,9 @@ pub fn parse_business_event_type(type_str: &str) -> Result<(String, String), Str
     let domain = segments[0];
     let name = segments[1];
     if domain.is_empty() || name.is_empty() {
-        return Err(format!("event type '{type_str}' has an empty domain or name segment"));
+        return Err(format!(
+            "event type '{type_str}' has an empty domain or name segment"
+        ));
     }
     Ok((domain.to_string(), name.to_string()))
 }
@@ -169,10 +173,16 @@ pub fn validate_business_event(event: &EventEnvelope) -> Result<(), Vec<String>>
     for key in ["schema_version", "producer"] {
         match event.metadata.get(key) {
             Some(value) if !value.is_empty() => {}
-            _ => errors.push(format!("metadata['{key}'] is required and must be non-empty")),
+            _ => errors.push(format!(
+                "metadata['{key}'] is required and must be non-empty"
+            )),
         }
     }
-    if errors.is_empty() { Ok(()) } else { Err(errors) }
+    if errors.is_empty() {
+        Ok(())
+    } else {
+        Err(errors)
+    }
 }
 
 /// Ergonomic builder for `greentic.business-event.v1` envelopes. Assembles the
@@ -376,7 +386,10 @@ mod business_event_tests {
         let mut e = valid_event();
         e.metadata.clear();
         let errors = validate_business_event(&e).unwrap_err();
-        assert!(errors.iter().any(|m| m.contains("schema_version")), "{errors:?}");
+        assert!(
+            errors.iter().any(|m| m.contains("schema_version")),
+            "{errors:?}"
+        );
         assert!(errors.iter().any(|m| m.contains("producer")), "{errors:?}");
     }
 
@@ -391,7 +404,10 @@ mod business_event_tests {
             .time(chrono::DateTime::UNIX_EPOCH)
             .build()
             .expect("builds valid event");
-        assert_eq!(event.r#type, "cap://greentic/events/tenancy/daily-rent-reminder");
+        assert_eq!(
+            event.r#type,
+            "cap://greentic/events/tenancy/daily-rent-reminder"
+        );
         assert_eq!(event.topic, "tenancy");
         assert_eq!(event.metadata.get("producer").unwrap(), "trigger:daily");
         validate_business_event(&event).expect("builder output validates");
