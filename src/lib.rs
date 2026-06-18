@@ -113,7 +113,8 @@ pub use bindings::hints::{
     BindingsHints, EnvHints, McpHints, McpServer, NetworkHints, SecretsHints,
 };
 pub use capabilities::{
-    Capabilities, FsCaps, HttpCaps, KvCaps, Limits, NetCaps, SecretsCaps, TelemetrySpec, ToolsCaps,
+    AuthCaps, AuthKind, Capabilities, FsCaps, HttpCaps, KvCaps, Limits, NetCaps, OAuthSpec,
+    SecretsCaps, TelemetrySpec, TokenAuthStyle, ToolsCaps,
 };
 #[cfg(feature = "std")]
 pub use cbor::{CborError, decode_pack_manifest, encode_pack_manifest};
