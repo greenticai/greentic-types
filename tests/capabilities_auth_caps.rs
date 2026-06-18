@@ -1,6 +1,6 @@
 #![cfg(feature = "serde")]
 
-use greentic_types::{AuthCaps, AuthKind, OAuthSpec, TokenAuthStyle};
+use greentic_types::{AuthCaps, AuthKind, Capabilities, OAuthSpec, TokenAuthStyle};
 
 #[test]
 fn auth_kind_wire_strings_are_lowercase() {
@@ -69,4 +69,29 @@ fn auth_caps_apikey_omits_oauth() {
     let value = serde_json::to_value(&caps).expect("serialize");
     assert_eq!(value["kind"], "apikey");
     assert!(value.get("oauth").is_none(), "None oauth must be skipped");
+}
+
+#[test]
+fn capabilities_without_auth_field_deserializes_to_none() {
+    // A pre-existing manifest that predates the auth field must still load.
+    let caps: Capabilities = serde_json::from_str(r#"{"secrets":{"required":[]}}"#)
+        .expect("legacy capabilities deserialize");
+    assert!(caps.auth.is_none());
+
+    // Round-trip a default Capabilities: auth must be omitted when None.
+    let value = serde_json::to_value(Capabilities::new()).expect("serialize");
+    assert!(value.get("auth").is_none(), "None auth must be skipped");
+}
+
+#[test]
+fn capabilities_is_empty_tracks_auth() {
+    let mut caps = Capabilities::new();
+    assert!(caps.is_empty());
+    let mut auth = AuthCaps::new();
+    auth.kind = AuthKind::OAuth;
+    caps.auth = Some(auth);
+    assert!(
+        !caps.is_empty(),
+        "auth presence must make capabilities non-empty"
+    );
 }

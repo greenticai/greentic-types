@@ -51,6 +51,13 @@ pub struct Capabilities {
         serde(default, skip_serializing_if = "Option::is_none")
     )]
     pub tools: Option<ToolsCaps>,
+    /// Optional authentication surface describing how the host collects this
+    /// extension's credentials (api-key vs OAuth login).
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Option::is_none")
+    )]
+    pub auth: Option<AuthCaps>,
 }
 
 impl Capabilities {
@@ -67,6 +74,7 @@ impl Capabilities {
             && self.fs.is_none()
             && self.net.is_none()
             && self.tools.is_none()
+            && self.auth.is_none()
     }
 }
 
