@@ -158,7 +158,7 @@ impl AuthCaps {
 #[non_exhaustive]
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
 pub enum AuthKind {
     /// No credential required.
@@ -167,6 +167,7 @@ pub enum AuthKind {
     /// One or more secret values entered directly (API keys, bot tokens).
     ApiKey,
     /// OAuth 2.0 authorization-code login driven by the host.
+    #[cfg_attr(feature = "serde", serde(rename = "oauth"))]
     OAuth,
 }
 
@@ -222,7 +223,7 @@ impl OAuthSpec {
 #[non_exhaustive]
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
 pub enum TokenAuthStyle {
     /// HTTP Basic auth header (RFC 6749 default).

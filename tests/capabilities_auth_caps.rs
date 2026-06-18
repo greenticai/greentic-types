@@ -3,9 +3,9 @@
 use greentic_types::{AuthCaps, AuthKind, Capabilities, OAuthSpec, TokenAuthStyle};
 
 #[test]
-fn auth_kind_wire_strings_are_lowercase() {
+fn auth_kind_wire_strings_use_snake_case() {
     assert_eq!(serde_json::to_value(AuthKind::None).unwrap(), "none");
-    assert_eq!(serde_json::to_value(AuthKind::ApiKey).unwrap(), "apikey");
+    assert_eq!(serde_json::to_value(AuthKind::ApiKey).unwrap(), "api_key");
     assert_eq!(serde_json::to_value(AuthKind::OAuth).unwrap(), "oauth");
 }
 
@@ -67,7 +67,7 @@ fn auth_caps_apikey_omits_oauth() {
     let mut caps = AuthCaps::new();
     caps.kind = AuthKind::ApiKey;
     let value = serde_json::to_value(&caps).expect("serialize");
-    assert_eq!(value["kind"], "apikey");
+    assert_eq!(value["kind"], "api_key");
     assert!(value.get("oauth").is_none(), "None oauth must be skipped");
 }
 
