@@ -18,14 +18,14 @@ fn auth_kind_defaults_to_none() {
 fn oauth_spec_round_trips_in_camel_case() {
     let mut extra = std::collections::BTreeMap::new();
     extra.insert("access_type".to_string(), "offline".to_string());
-    let spec = OAuthSpec {
-        authorize_url: "https://accounts.google.com/o/oauth2/v2/auth".to_string(),
-        token_url: "https://oauth2.googleapis.com/token".to_string(),
-        scopes: vec!["openid".to_string(), "email".to_string()],
-        pkce: true,
-        extra_auth_params: extra,
-        token_auth_style: TokenAuthStyle::Body,
-    };
+    let mut spec = OAuthSpec::new(
+        "https://accounts.google.com/o/oauth2/v2/auth",
+        "https://oauth2.googleapis.com/token",
+    );
+    spec.scopes = vec!["openid".to_string(), "email".to_string()];
+    spec.pkce = true;
+    spec.extra_auth_params = extra;
+    spec.token_auth_style = TokenAuthStyle::Body;
 
     let value = serde_json::to_value(&spec).expect("serialize");
     assert_eq!(
@@ -64,10 +64,8 @@ fn auth_caps_oauth_round_trips() {
 
 #[test]
 fn auth_caps_apikey_omits_oauth() {
-    let caps = AuthCaps {
-        kind: AuthKind::ApiKey,
-        oauth: None,
-    };
+    let mut caps = AuthCaps::new();
+    caps.kind = AuthKind::ApiKey;
     let value = serde_json::to_value(&caps).expect("serialize");
     assert_eq!(value["kind"], "apikey");
     assert!(value.get("oauth").is_none(), "None oauth must be skipped");

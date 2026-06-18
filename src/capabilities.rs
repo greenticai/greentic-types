@@ -123,6 +123,7 @@ impl SecretsCaps {
 /// Additive sibling of [`SecretsCaps`]: `SecretsCaps` lists *which* secret keys
 /// must be bound, while `AuthCaps` describes *how* they are obtained (entered
 /// directly vs. an OAuth login). Absent on `Capabilities` means "no auth".
+#[non_exhaustive]
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
@@ -163,6 +164,7 @@ pub enum AuthKind {
 
 /// OAuth 2.0 authorization-code parameters an extension declares so the host can
 /// drive login + token refresh without provider-specific code.
+#[non_exhaustive]
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
