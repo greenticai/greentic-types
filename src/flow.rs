@@ -134,6 +134,51 @@ impl Node {
     pub fn err_map(&self) -> Option<&OutputMapping> {
         self.err_map.as_ref()
     }
+
+    /// Whether this node is a runner builtin (engine-handled, resolving to no
+    /// pack component): `dw.agent[.<id>]`, `dw.agent_graph[.<id>]`,
+    /// `sorla.call`, `operala.call`, `agentic.call`, `session.wait`,
+    /// `flow.call`, `provider.invoke`, `emit.*`.
+    ///
+    /// A `dw.agent.<id>` (and other dispatch) node compiles to the generic
+    /// `component.exec` placeholder with the real kind in `operation`, so the
+    /// operation is authoritative when the component id is empty/`component.exec`.
+    pub fn is_builtin(&self) -> bool {
+        let id = self.component.id.as_str();
+        let effective = if id.is_empty() || id == "component.exec" {
+            self.component.operation.as_deref().unwrap_or(id)
+        } else {
+            id
+        };
+        is_builtin_component_id(effective)
+    }
+}
+
+/// Builtin/dispatch flow-node kinds handled by the runner engine itself, with
+/// no pack component to resolve. MUST mirror the runner's `NodeKind` dispatch.
+/// Agentic/dispatch kinds appear as `dw.agent.<id>` etc., so callers match both
+/// the bare kind and the dotted `<kind>.<suffix>` form (see [`Node::is_builtin`]).
+pub const BUILTIN_NODE_KINDS: &[&str] = &[
+    "session.wait",
+    "flow.call",
+    "provider.invoke",
+    "dw.agent",
+    "dw.agent_graph",
+    "sorla.call",
+    "operala.call",
+    "agentic.call",
+];
+
+/// Whether a component-id string names a runner builtin (bare or dotted form;
+/// `emit.*` is always builtin).
+pub fn is_builtin_component_id(id: &str) -> bool {
+    id.starts_with("emit.")
+        || BUILTIN_NODE_KINDS.iter().any(|kind| {
+            id == *kind
+                || id
+                    .strip_prefix(kind)
+                    .is_some_and(|rest| rest.starts_with('.'))
+        })
 }
 
 /// Component reference within a flow.
@@ -268,4 +313,36 @@ pub struct TelemetryHints {
         serde(default, skip_serializing_if = "Option::is_none")
     )]
     pub sampling: Option<String>,
+}
+
+#[cfg(test)]
+mod builtin_tests {
+    use super::is_builtin_component_id;
+
+    #[test]
+    fn builtin_component_ids_cover_runner_node_kinds() {
+        for id in [
+            "session.wait",
+            "flow.call",
+            "provider.invoke",
+            "emit.response",
+            "dw.agent",
+            "dw.agent.support",
+            "dw.agent_graph",
+            "dw.agent_graph.triage",
+            "sorla.call",
+            "operala.call",
+            "agentic.call",
+        ] {
+            assert!(is_builtin_component_id(id), "{id} should be builtin");
+        }
+        for id in [
+            "qa.process",
+            "templating.handlebars",
+            "dw.agentish",
+            "agentic",
+        ] {
+            assert!(!is_builtin_component_id(id), "{id} must NOT be builtin");
+        }
+    }
 }
