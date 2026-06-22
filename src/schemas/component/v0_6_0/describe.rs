@@ -44,6 +44,12 @@ pub struct ComponentDescribe {
     pub operations: Vec<ComponentOperation>,
     /// Component-level config schema (authoritative).
     pub config_schema: SchemaIr,
+    /// Emitted outcomes vocabulary — the routing events a flow may wire from a
+    /// node backed by this component (e.g. `on_success`, `on_error`,
+    /// `on_submit`). Additive in 0.6.x: descriptors predating this field decode
+    /// to an empty list, so older components keep working unchanged.
+    #[cfg_attr(feature = "serde", serde(default))]
+    pub outcomes: Vec<String>,
 }
 
 /// Component operation entry.
