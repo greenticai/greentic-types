@@ -5,6 +5,9 @@
   "description": "Generic attachment referenced by a channel message.",
   "type": "object",
   "properties": {
+    "content": {
+      "description": "Inline structured content (Adaptive Card JSON, Block Kit blocks, etc.).\nMutually exclusive with `url` in most cases but both may coexist\n(e.g. a card with a thumbnail URL)."
+    },
     "mime_type": {
       "description": "MIME type of the attachment (for example `image/png`).",
       "type": "string"
@@ -26,12 +29,14 @@
       "minimum": 0
     },
     "url": {
-      "description": "URL pointing at the attachment payload.",
-      "type": "string"
+      "description": "Remote URL for the attachment content (file download, image, etc.).\nEither `url` or `content` (or both) should be set.",
+      "type": [
+        "string",
+        "null"
+      ]
     }
   },
   "required": [
-    "mime_type",
-    "url"
+    "mime_type"
   ]
 }
