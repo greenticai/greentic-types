@@ -92,6 +92,7 @@ pub mod worker;
 
 pub mod context;
 pub mod error;
+pub mod node_io;
 pub mod outcome;
 pub mod pack;
 pub mod policy;
