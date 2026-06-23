@@ -2,16 +2,17 @@
 //! These pin the wire shapes the runner/flow/designer will standardize on.
 #![cfg(feature = "serde")]
 
-use greentic_types::node_io::{
-    ErrorKind, InputValue, NodeError, NodeOutput, StructuredInput,
-};
+use greentic_types::node_io::{ErrorKind, InputValue, NodeError, NodeOutput, StructuredInput};
 use serde_json::json;
 
 #[test]
 fn node_output_success_serializes_as_data() {
     let out = NodeOutput::ok(json!({ "ticket_id": "T-1" }));
     assert!(out.is_ok());
-    assert_eq!(serde_json::to_value(&out).unwrap(), json!({ "data": { "ticket_id": "T-1" } }));
+    assert_eq!(
+        serde_json::to_value(&out).unwrap(),
+        json!({ "data": { "ticket_id": "T-1" } })
+    );
     // round-trip
     let back: NodeOutput = serde_json::from_value(json!({ "data": { "x": 1 } })).unwrap();
     assert_eq!(back.data(), Some(&json!({ "x": 1 })));
@@ -36,7 +37,12 @@ fn node_output_failure_serializes_as_errors_and_is_mutually_exclusive() {
     assert_eq!(v["errors"][0]["kind"], json!("timeout"));
     assert_eq!(v["errors"][0]["retryable"], json!(true));
     // a success output must NOT carry an `errors` key, and vice-versa
-    assert!(serde_json::to_value(NodeOutput::ok(json!({}))).unwrap().get("errors").is_none());
+    assert!(
+        serde_json::to_value(NodeOutput::ok(json!({})))
+            .unwrap()
+            .get("errors")
+            .is_none()
+    );
     assert!(v.get("data").is_none());
 }
 
