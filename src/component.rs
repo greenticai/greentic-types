@@ -168,6 +168,13 @@ pub struct ComponentConfigurators {
 pub struct ComponentOperation {
     /// Operation name (for example `handle_message`).
     pub name: String,
+    /// Human/LLM-facing description, sourced from the component's WIT doc comment
+    /// at prepare/describe time. None when the WIT carries no doc.
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Option::is_none")
+    )]
+    pub description: Option<String>,
     /// Input schema for the operation.
     pub input_schema: serde_json::Value,
     /// Output schema for the operation.
@@ -470,3 +477,54 @@ impl core::fmt::Display for ComponentProfileError {
 
 #[cfg(feature = "std")]
 impl std::error::Error for ComponentProfileError {}
+
+#[cfg(all(test, feature = "serde"))]
+mod tests {
+    use super::ComponentOperation;
+    use serde_json::json;
+
+    #[test]
+    fn operation_without_description_deserializes_to_none() {
+        // Backward compatibility: manifests produced before the `description`
+        // field existed must still deserialize, yielding `None`.
+        let value = json!({
+            "name": "handle",
+            "input_schema": {},
+            "output_schema": {},
+        });
+        let operation: ComponentOperation =
+            serde_json::from_value(value).expect("legacy operation must deserialize");
+        assert_eq!(operation.description, None);
+    }
+
+    #[test]
+    fn operation_description_round_trips() {
+        let operation = ComponentOperation {
+            name: "handle".to_owned(),
+            description: Some("Handle an inbound message".to_owned()),
+            input_schema: json!({}),
+            output_schema: json!({}),
+        };
+        let serialized = serde_json::to_value(&operation).expect("serialize");
+        assert_eq!(
+            serialized.get("description").and_then(|v| v.as_str()),
+            Some("Handle an inbound message"),
+        );
+        let round_tripped: ComponentOperation =
+            serde_json::from_value(serialized).expect("deserialize");
+        assert_eq!(round_tripped, operation);
+    }
+
+    #[test]
+    fn operation_without_description_skips_field_when_serializing() {
+        // `skip_serializing_if` keeps the wire format clean for the common case.
+        let operation = ComponentOperation {
+            name: "handle".to_owned(),
+            description: None,
+            input_schema: json!({}),
+            output_schema: json!({}),
+        };
+        let serialized = serde_json::to_value(&operation).expect("serialize");
+        assert!(serialized.get("description").is_none());
+    }
+}

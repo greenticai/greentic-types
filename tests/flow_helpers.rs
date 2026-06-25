@@ -145,6 +145,7 @@ fn component_manifest_defaults_extend() {
         configurators: None,
         operations: vec![ComponentOperation {
             name: "handle".into(),
+            description: None,
             input_schema: Value::Null,
             output_schema: Value::Null,
         }],

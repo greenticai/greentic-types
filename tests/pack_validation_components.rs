@@ -94,6 +94,7 @@ fn sample_component(id: &str) -> ComponentManifest {
         configurators: None,
         operations: vec![ComponentOperation {
             name: "handle".into(),
+            description: None,
             input_schema: Value::Null,
             output_schema: Value::Null,
         }],

@@ -103,6 +103,7 @@ fn sample_component(id: &str, supports: Vec<FlowKind>) -> ComponentManifest {
         configurators: None,
         operations: vec![ComponentOperation {
             name: "handle".into(),
+            description: None,
             input_schema: Value::Null,
             output_schema: Value::Null,
         }],
