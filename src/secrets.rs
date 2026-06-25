@@ -57,9 +57,44 @@ impl SecretKey {
         }
         Ok(Self(value.to_owned()))
     }
+
+    /// Parses and validates a secret key in **canonical** form.
+    ///
+    /// Canonical keys must satisfy all rules of [`Self::parse`] plus:
+    /// - no ASCII uppercase letters (`A-Z`) — use [`Self::normalize`] to lowercase first
+    /// - must not end with `/`
+    ///
+    /// A single-segment lowercase key (e.g. `"flat_lower"`) is valid; a `/` separator is
+    /// not required.
+    pub fn parse_canonical(value: &str) -> Result<Self, SecretKeyError> {
+        // Run base validation first (handles empty, leading slash, invalid chars, `..`).
+        Self::parse(value)?;
+
+        // Reject any uppercase ASCII letter.
+        if value.chars().any(|c| c.is_ascii_uppercase()) {
+            return Err(SecretKeyError::Uppercase);
+        }
+
+        // Reject trailing `/`.
+        if value.ends_with('/') {
+            return Err(SecretKeyError::TrailingSlash);
+        }
+
+        Ok(Self(value.to_owned()))
+    }
+
+    /// Lowercases the input (ASCII only, lossless apart from case) and then validates it
+    /// with [`Self::parse_canonical`].
+    ///
+    /// This is the preferred entry-point when ingesting externally-sourced keys that may
+    /// use `UPPER_SNAKE_CASE` or `Mixed/Case` conventions.
+    pub fn normalize(value: impl Into<String>) -> Result<Self, SecretKeyError> {
+        let lowered = value.into().to_ascii_lowercase();
+        Self::parse_canonical(&lowered)
+    }
 }
 
-/// Validation errors produced by [`SecretKey::parse`].
+/// Validation errors produced by [`SecretKey::parse`] and [`SecretKey::parse_canonical`].
 #[derive(Clone, Debug, PartialEq, Eq, thiserror::Error)]
 pub enum SecretKeyError {
     /// Input was empty.
@@ -77,6 +112,14 @@ pub enum SecretKeyError {
         /// The offending character.
         c: char,
     },
+    /// Canonical key contained an ASCII uppercase letter.
+    ///
+    /// Use [`SecretKey::normalize`] to lowercase the input before parsing canonically.
+    #[error("canonical secret key must not contain uppercase letters")]
+    Uppercase,
+    /// Canonical key ended with `/`.
+    #[error("canonical secret key must not end with '/'")]
+    TrailingSlash,
 }
 
 impl Deref for SecretKey {
