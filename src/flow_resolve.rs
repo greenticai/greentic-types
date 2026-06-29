@@ -142,6 +142,19 @@ pub enum ComponentSourceRefV1 {
         )]
         meter: Option<bool>,
     },
+    /// Extension-sourced component reference: the runtime component embedded in
+    /// an extension's `.gtxpack` (resolved by packc to a `Local` embed at build).
+    /// Ref form: `ext://<extension-id>#component`.
+    Ext {
+        /// Extension component reference (`ext://<id>#component`).
+        r#ref: String,
+        /// Optional pinned digest of the embedded component wasm.
+        #[cfg_attr(
+            feature = "serde",
+            serde(default, skip_serializing_if = "Option::is_none")
+        )]
+        digest: Option<String>,
+    },
 }
 
 #[cfg(feature = "std")]
@@ -214,7 +227,8 @@ pub fn validate_flow_resolve(doc: &FlowResolveV1) -> GResult<()> {
             }
             ComponentSourceRefV1::Oci { digest, .. }
             | ComponentSourceRefV1::Repo { digest, .. }
-            | ComponentSourceRefV1::Store { digest, .. } => {
+            | ComponentSourceRefV1::Store { digest, .. }
+            | ComponentSourceRefV1::Ext { digest, .. } => {
                 if let Some(value) = digest {
                     validate_digest(value)?;
                 }

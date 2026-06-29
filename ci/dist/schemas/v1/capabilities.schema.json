@@ -5,17 +5,6 @@
   "description": "Declarative capability toggles that packs may request from the runtime.",
   "type": "object",
   "properties": {
-    "auth": {
-      "description": "Optional authentication surface describing how the host collects this\nextension's credentials (api-key vs OAuth login).",
-      "anyOf": [
-        {
-          "$ref": "#/$defs/AuthCaps"
-        },
-        {
-          "type": "null"
-        }
-      ]
-    },
     "fs": {
       "description": "Optional filesystem bindings (for embedded assets or scratch space).",
       "anyOf": [
@@ -114,48 +103,6 @@
         }
       }
     },
-    "AuthCaps": {
-      "description": "How a host should collect credentials for an extension before execution.\n\nAdditive sibling of [`SecretsCaps`]: `SecretsCaps` lists *which* secret keys\nmust be bound, while `AuthCaps` describes *how* they are obtained (entered\ndirectly vs. an OAuth login). Absent on `Capabilities` means \"no auth\".",
-      "type": "object",
-      "properties": {
-        "kind": {
-          "description": "The authentication style the host must drive.",
-          "$ref": "#/$defs/AuthKind",
-          "default": "none"
-        },
-        "oauth": {
-          "description": "OAuth authorization-code parameters, present iff `kind == AuthKind::OAuth`.",
-          "anyOf": [
-            {
-              "$ref": "#/$defs/OAuthSpec"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        }
-      }
-    },
-    "AuthKind": {
-      "description": "Authentication style an extension requires.",
-      "oneOf": [
-        {
-          "description": "No credential required.",
-          "type": "string",
-          "const": "none"
-        },
-        {
-          "description": "One or more secret values entered directly (API keys, bot tokens).",
-          "type": "string",
-          "const": "api_key"
-        },
-        {
-          "description": "OAuth 2.0 authorization-code login driven by the host.",
-          "type": "string",
-          "const": "oauth"
-        }
-      ]
-    },
     "FsCaps": {
       "description": "Filesystem bindings exposed to packs.",
       "type": "object",
@@ -246,48 +193,6 @@
       "required": [
         "egress",
         "deny_on_miss"
-      ]
-    },
-    "OAuthSpec": {
-      "description": "OAuth 2.0 authorization-code parameters an extension declares so the host can\ndrive login + token refresh without provider-specific code.",
-      "type": "object",
-      "properties": {
-        "authorizeUrl": {
-          "description": "Provider authorization endpoint the user is redirected to.",
-          "type": "string"
-        },
-        "extraAuthParams": {
-          "description": "Extra static query params appended to the authorize URL (e.g. Google's\n`access_type=offline` + `prompt=consent` to force a refresh token).\n`BTreeMap` keeps a deterministic order for stable encoding.",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "pkce": {
-          "description": "Whether PKCE (RFC 7636) is used (recommended; required for public clients).",
-          "type": "boolean",
-          "default": false
-        },
-        "scopes": {
-          "description": "OAuth scopes requested at authorization time.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "tokenAuthStyle": {
-          "description": "How client credentials are presented to the token endpoint.",
-          "$ref": "#/$defs/TokenAuthStyle",
-          "default": "basic"
-        },
-        "tokenUrl": {
-          "description": "Provider token endpoint used for code exchange and refresh.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "authorizeUrl",
-        "tokenUrl"
       ]
     },
     "Protocol": {
@@ -451,21 +356,6 @@
           }
         }
       }
-    },
-    "TokenAuthStyle": {
-      "description": "Where the OAuth `client_id`/`client_secret` are presented to the token endpoint.",
-      "oneOf": [
-        {
-          "description": "HTTP Basic auth header (RFC 6749 default).",
-          "type": "string",
-          "const": "basic"
-        },
-        {
-          "description": "`client_id`/`client_secret` in the form body.",
-          "type": "string",
-          "const": "body"
-        }
-      ]
     },
     "ToolsCaps": {
       "description": "Tool invocation descriptor for packs relying on host tools.",
