@@ -62,3 +62,30 @@ fn resolve_summary_path_helper_uses_summary_suffix() {
     let sidecar = resolve_summary_path_for_flow(flow_path);
     assert_eq!(sidecar, Path::new("flows/main.ygtc.resolve.summary.json"));
 }
+
+#[test]
+fn flow_resolve_summary_roundtrip_ext() {
+    let doc = FlowResolveSummaryV1 {
+        schema_version: FLOW_RESOLVE_SUMMARY_SCHEMA_VERSION,
+        flow: "main.ygtc".into(),
+        nodes: BTreeMap::from([(
+            "node".to_string(),
+            NodeResolveSummaryV1 {
+                component_id: "greentic.http.component".parse().expect("component id"),
+                source: FlowResolveSummarySourceRefV1::Ext {
+                    r#ref: "ext://greentic.http#component".into(),
+                },
+                digest: "sha256:abc".into(),
+                manifest: None,
+            },
+        )]),
+    };
+
+    let json = serde_json::to_string_pretty(&doc).expect("serialize");
+    let decoded: FlowResolveSummaryV1 = serde_json::from_str(&json).expect("deserialize");
+    assert_eq!(decoded, doc);
+    assert!(
+        json.contains(r#""kind": "ext""#),
+        "missing kind:ext in {json}"
+    );
+}

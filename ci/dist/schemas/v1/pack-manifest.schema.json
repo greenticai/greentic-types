@@ -5,11 +5,6 @@
   "description": "Canonical pack manifest embedding flows, components, dependencies and signatures.",
   "type": "object",
   "properties": {
-    "agents": {
-      "description": "Per-agent config blobs (opaque, self-describing) for Agentic Worker\n(`dw.agent`) flow nodes, keyed by `agent_id`. The runtime deserialises\neach blob into its own agent config type; this crate stays agnostic.",
-      "type": "object",
-      "additionalProperties": true
-    },
     "bootstrap": {
       "description": "Optional bootstrap/install hints for platform-controlled packs.",
       "anyOf": [
@@ -738,17 +733,6 @@
           "description": "Component binding referenced by the node.",
           "$ref": "#/$defs/ComponentRef"
         },
-        "err_map": {
-          "description": "Optional error mapping configuration.",
-          "anyOf": [
-            {
-              "$ref": "#/$defs/OutputMapping"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
         "id": {
           "description": "Node identifier.",
           "$ref": "#/$defs/NodeId"
@@ -936,13 +920,6 @@
           "items": {
             "type": "string"
           }
-        },
-        "provider_id": {
-          "description": "Instance identifier for this provider declaration. Distinct from\n`provider_type`: a single `provider_type` may be instanced multiple\ntimes at the environment level, each instance carrying its own\n`provider_id`. Absent when the declaration is single-instance.",
-          "type": [
-            "string",
-            "null"
-          ]
         },
         "provider_type": {
           "description": "Provider type identifier (string-based to avoid enum coupling).",

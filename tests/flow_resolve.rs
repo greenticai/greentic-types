@@ -85,3 +85,63 @@ fn sidecar_path_helper_uses_resolve_suffix() {
     let sidecar = sidecar_path_for_flow(flow_path);
     assert_eq!(sidecar, Path::new("flows/main.ygtc.resolve.json"));
 }
+
+#[test]
+fn flow_resolve_roundtrip_ext_with_digest() {
+    roundtrip(ComponentSourceRefV1::Ext {
+        r#ref: "ext://greentic.http#component".into(),
+        digest: Some("sha256:abc".into()),
+    });
+}
+
+#[test]
+fn flow_resolve_ext_serializes_kind_and_ref() {
+    let source = ComponentSourceRefV1::Ext {
+        r#ref: "ext://greentic.http#component".into(),
+        digest: Some("sha256:abc".into()),
+    };
+    let doc = FlowResolveV1 {
+        schema_version: FLOW_RESOLVE_SCHEMA_VERSION,
+        flow: "main.ygtc".into(),
+        nodes: BTreeMap::from([(
+            "node".to_string(),
+            NodeResolveV1 {
+                source,
+                mode: Some(ResolveModeV1::Pinned),
+            },
+        )]),
+    };
+    let json = serde_json::to_string_pretty(&doc).expect("serialize");
+    assert!(
+        json.contains(r#""kind": "ext""#),
+        "missing kind:ext in {json}"
+    );
+    assert!(
+        json.contains(r#""ref": "ext://greentic.http#component""#),
+        "missing ref in {json}"
+    );
+    assert!(
+        json.contains(r#""digest": "sha256:abc""#),
+        "missing digest in {json}"
+    );
+}
+
+#[test]
+fn flow_resolve_ext_without_digest_omits_digest_field() {
+    let source = ComponentSourceRefV1::Ext {
+        r#ref: "ext://greentic.http#component".into(),
+        digest: None,
+    };
+    let doc = FlowResolveV1 {
+        schema_version: FLOW_RESOLVE_SCHEMA_VERSION,
+        flow: "main.ygtc".into(),
+        nodes: BTreeMap::from([("node".to_string(), NodeResolveV1 { source, mode: None })]),
+    };
+    let json = serde_json::to_string_pretty(&doc).expect("serialize");
+    assert!(
+        !json.contains("digest"),
+        "digest field should be omitted when None: {json}"
+    );
+    let decoded: FlowResolveV1 = serde_json::from_str(&json).expect("deserialize");
+    assert_eq!(decoded, doc);
+}

@@ -119,6 +119,11 @@ pub enum FlowResolveSummarySourceRefV1 {
         /// Store reference.
         r#ref: String,
     },
+    /// Extension-sourced component reference (`ext://<id>#component`).
+    Ext {
+        /// Extension component reference.
+        r#ref: String,
+    },
 }
 
 #[cfg(feature = "std")]

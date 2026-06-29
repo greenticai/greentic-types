@@ -78,55 +78,8 @@ impl Capabilities {
     }
 }
 
-/// HTTP capability descriptor controlling outbound fetch settings.
-#[non_exhaustive]
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "schemars", derive(JsonSchema))]
-pub struct HttpCaps {
-    /// Optional allow list applied before requests are dispatched.
-    #[cfg_attr(
-        feature = "serde",
-        serde(default, skip_serializing_if = "Option::is_none")
-    )]
-    pub allow_list: Option<AllowList>,
-    /// Maximum request/response body size in bytes (when enforced).
-    #[cfg_attr(
-        feature = "serde",
-        serde(default, skip_serializing_if = "Option::is_none")
-    )]
-    pub max_body_bytes: Option<u64>,
-}
-
-impl HttpCaps {
-    /// Creates an empty descriptor.
-    pub fn new() -> Self {
-        Self::default()
-    }
-}
-
-/// Secret capability descriptor enumerating runtime-provided handles.
-#[non_exhaustive]
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "schemars", derive(JsonSchema))]
-pub struct SecretsCaps {
-    /// Secret identifiers that must be bound before execution.
-    #[cfg_attr(
-        feature = "serde",
-        serde(default, skip_serializing_if = "Vec::is_empty")
-    )]
-    pub required: Vec<SecretRequirement>,
-}
-
-impl SecretsCaps {
-    /// Creates an empty descriptor.
-    pub fn new() -> Self {
-        Self::default()
-    }
-}
-
-/// How a host should collect credentials for an extension before execution.
+/// Authentication capability descriptor declaring *how* an extension's
+/// credentials are obtained.
 ///
 /// Additive sibling of [`SecretsCaps`]: `SecretsCaps` lists *which* secret keys
 /// must be bound, while `AuthCaps` describes *how* they are obtained (entered
@@ -231,6 +184,54 @@ pub enum TokenAuthStyle {
     Basic,
     /// `client_id`/`client_secret` in the form body.
     Body,
+}
+
+/// HTTP capability descriptor controlling outbound fetch settings.
+#[non_exhaustive]
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "schemars", derive(JsonSchema))]
+pub struct HttpCaps {
+    /// Optional allow list applied before requests are dispatched.
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Option::is_none")
+    )]
+    pub allow_list: Option<AllowList>,
+    /// Maximum request/response body size in bytes (when enforced).
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Option::is_none")
+    )]
+    pub max_body_bytes: Option<u64>,
+}
+
+impl HttpCaps {
+    /// Creates an empty descriptor.
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+/// Secret capability descriptor enumerating runtime-provided handles.
+#[non_exhaustive]
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "schemars", derive(JsonSchema))]
+pub struct SecretsCaps {
+    /// Secret identifiers that must be bound before execution.
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Vec::is_empty")
+    )]
+    pub required: Vec<SecretRequirement>,
+}
+
+impl SecretsCaps {
+    /// Creates an empty descriptor.
+    pub fn new() -> Self {
+        Self::default()
+    }
 }
 
 /// Key-value capability descriptor for packs that need durable storage.
