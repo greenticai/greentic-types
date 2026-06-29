@@ -1,0 +1,279 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/repo-skin.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RepoSkin",
+  "description": "Branding and layout configuration for a tenant (`skin.json`).",
+  "type": "object",
+  "properties": {
+    "layout": {
+      "description": "Optional layout flags controlling navigation visibility and hero band.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RepoSkinLayout"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "links": {
+      "description": "Optional tenant links for docs/support/status.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RepoSkinLinks"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "product_name": {
+      "description": "Optional product name to display.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tenant_id": {
+      "description": "Tenant identifier the skin belongs to.",
+      "type": "string"
+    },
+    "tenant_name": {
+      "description": "Optional human-readable tenant name.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "theme": {
+      "description": "Theme configuration (colors, fonts, imagery).",
+      "$ref": "#/$defs/RepoSkinTheme"
+    },
+    "worker_panel": {
+      "description": "Optional worker panel configuration.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RepoWorkerPanel"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "tenant_id",
+    "theme"
+  ],
+  "$defs": {
+    "RepoSkinLayout": {
+      "description": "Layout toggles describing visible console sections.",
+      "type": "object",
+      "properties": {
+        "hero_subtitle": {
+          "description": "Optional hero subtitle.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hero_title": {
+          "description": "Optional hero title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show_admin_config": {
+          "description": "Whether to show the admin/config tab.",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "default": null
+        },
+        "show_audit_compliance": {
+          "description": "Whether to show the audit & compliance tab.",
+          "type": "boolean",
+          "default": false
+        },
+        "show_dashboard": {
+          "description": "Whether to show the dashboard tab.",
+          "type": "boolean",
+          "default": false
+        },
+        "show_hero_band": {
+          "description": "Whether to render the hero band.",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "default": null
+        },
+        "show_packs": {
+          "description": "Whether to show the packs tab.",
+          "type": "boolean",
+          "default": false
+        },
+        "show_pipeline": {
+          "description": "Whether to show the pipeline tab.",
+          "type": "boolean",
+          "default": false
+        },
+        "show_repositories": {
+          "description": "Whether to show the repositories tab.",
+          "type": "boolean",
+          "default": false
+        },
+        "show_trust_access": {
+          "description": "Whether to show the trust & access tab.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "RepoSkinLinks": {
+      "description": "Optional tenant links for navigation.",
+      "type": "object",
+      "properties": {
+        "docs_url": {
+          "description": "Optional documentation URL.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "status_url": {
+          "description": "Optional status page URL.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "support_url": {
+          "description": "Optional support URL.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        }
+      }
+    },
+    "RepoSkinTheme": {
+      "description": "Theme settings for login and console surfaces.",
+      "type": "object",
+      "properties": {
+        "accent_color": {
+          "description": "Accent brand color.",
+          "type": "string"
+        },
+        "background_color": {
+          "description": "Optional background color.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "background_gradient": {
+          "description": "Optional background gradient.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "danger_color": {
+          "description": "Optional danger color override.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "favicon_url": {
+          "description": "Optional favicon URL.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "font_family": {
+          "description": "Optional font family override.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hero_image_url": {
+          "description": "Optional hero image URL.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "logo_url": {
+          "description": "Primary logo URL.",
+          "type": "string"
+        },
+        "primary_color": {
+          "description": "Primary brand color.",
+          "type": "string"
+        },
+        "success_color": {
+          "description": "Optional success color override.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "warning_color": {
+          "description": "Optional warning color override.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "logo_url",
+        "primary_color",
+        "accent_color"
+      ]
+    },
+    "RepoWorkerPanel": {
+      "description": "Worker panel placement and defaults.",
+      "type": "object",
+      "properties": {
+        "default_open": {
+          "description": "Whether the panel should open by default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "enabled": {
+          "description": "Whether the worker panel is enabled.",
+          "type": "boolean"
+        },
+        "position": {
+          "description": "Preferred position (for example `left` or `right`).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "description": "Optional display title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/product-override.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ProductOverride",
+  "description": "Override applied to a product within a storefront.",
+  "type": "object",
+  "properties": {
+    "badges": {
+      "description": "Badges to render on the product card.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "display_name": {
+      "description": "Optional display name override.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "description": "Additional metadata.",
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    },
+    "product_id": {
+      "description": "Product being overridden.",
+      "$ref": "#/$defs/StoreProductId"
+    },
+    "short_description": {
+      "description": "Optional short description override.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "storefront_id": {
+      "description": "Storefront receiving the override.",
+      "$ref": "#/$defs/StoreFrontId"
+    }
+  },
+  "required": [
+    "storefront_id",
+    "product_id"
+  ],
+  "$defs": {
+    "StoreFrontId": {
+      "description": "Identifier referencing a storefront.",
+      "type": "string"
+    },
+    "StoreProductId": {
+      "description": "Identifier referencing a product in the store catalog.",
+      "type": "string"
+    }
+  }
+}

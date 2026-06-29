@@ -1,0 +1,7 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/attestation-ref.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AttestationRef",
+  "description": "Attestation reference within a supply chain.",
+  "type": "string"
+}

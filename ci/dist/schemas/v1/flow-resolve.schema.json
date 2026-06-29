@@ -1,0 +1,191 @@
+{
+  "$id": "greentic.flow.resolve.v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Greentic Flow Resolve v1",
+  "description": "Component source references for flow nodes.",
+  "type": "object",
+  "properties": {
+    "flow": {
+      "description": "Flow file basename (for example `main.ygtc`).",
+      "type": "string"
+    },
+    "nodes": {
+      "description": "Resolve metadata keyed by node name.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/NodeResolveV1"
+      }
+    },
+    "schema_version": {
+      "description": "Schema version (must be 1).",
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "schema_version",
+    "flow",
+    "nodes"
+  ],
+  "$defs": {
+    "ComponentSourceRefV1": {
+      "description": "Component source references for flow resolve sidecars.",
+      "oneOf": [
+        {
+          "description": "Local wasm path relative to the flow file.",
+          "type": "object",
+          "properties": {
+            "digest": {
+              "description": "Optional pinned digest.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "kind": {
+              "type": "string",
+              "const": "local"
+            },
+            "path": {
+              "description": "Relative path to the wasm artifact.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "path"
+          ]
+        },
+        {
+          "description": "OCI component reference.",
+          "type": "object",
+          "properties": {
+            "digest": {
+              "description": "Optional pinned digest.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "kind": {
+              "type": "string",
+              "const": "oci"
+            },
+            "ref": {
+              "description": "OCI reference.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "ref"
+          ]
+        },
+        {
+          "description": "Repository component reference.",
+          "type": "object",
+          "properties": {
+            "digest": {
+              "description": "Optional pinned digest.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "kind": {
+              "type": "string",
+              "const": "repo"
+            },
+            "ref": {
+              "description": "Repository reference.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "ref"
+          ]
+        },
+        {
+          "description": "Store component reference.",
+          "type": "object",
+          "properties": {
+            "digest": {
+              "description": "Optional pinned digest.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "kind": {
+              "type": "string",
+              "const": "store"
+            },
+            "license_hint": {
+              "description": "Optional license hint for store resolution.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "meter": {
+              "description": "Optional meter flag for usage tracking.",
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "ref": {
+              "description": "Store reference.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "ref"
+          ]
+        }
+      ]
+    },
+    "NodeResolveV1": {
+      "description": "Resolve metadata for a flow node.",
+      "type": "object",
+      "properties": {
+        "mode": {
+          "description": "Optional resolve mode hint.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResolveModeV1"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source": {
+          "description": "Component source reference.",
+          "$ref": "#/$defs/ComponentSourceRefV1"
+        }
+      },
+      "required": [
+        "source"
+      ]
+    },
+    "ResolveModeV1": {
+      "description": "Resolve mode hints for sidecars.",
+      "oneOf": [
+        {
+          "description": "Follows moving references.",
+          "type": "string",
+          "const": "tracked"
+        },
+        {
+          "description": "Uses pinned digest only.",
+          "type": "string",
+          "const": "pinned"
+        }
+      ]
+    }
+  }
+}

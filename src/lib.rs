@@ -92,11 +92,13 @@ pub mod worker;
 
 pub mod context;
 pub mod error;
+pub mod node_io;
 pub mod outcome;
 pub mod pack;
 pub mod policy;
 pub mod run;
 pub mod runtime_config;
+pub mod runtime_dispatch;
 #[cfg(all(feature = "schemars", feature = "std"))]
 pub mod schema;
 pub mod schemas;
@@ -113,7 +115,8 @@ pub use bindings::hints::{
     BindingsHints, EnvHints, McpHints, McpServer, NetworkHints, SecretsHints,
 };
 pub use capabilities::{
-    Capabilities, FsCaps, HttpCaps, KvCaps, Limits, NetCaps, SecretsCaps, TelemetrySpec, ToolsCaps,
+    AuthCaps, AuthKind, Capabilities, FsCaps, HttpCaps, KvCaps, Limits, NetCaps, OAuthSpec,
+    SecretsCaps, TelemetrySpec, TokenAuthStyle, ToolsCaps,
 };
 #[cfg(feature = "std")]
 pub use cbor::{CborError, decode_pack_manifest, encode_pack_manifest};
@@ -223,6 +226,10 @@ pub use qa::{
 pub use run::RunResult;
 pub use run::{NodeFailure, NodeStatus, NodeSummary, RunStatus, TranscriptOffset};
 pub use runtime_config::{RuntimeConfig, RuntimePublicBaseUrl, RuntimePublicBaseUrlSource};
+pub use runtime_dispatch::{
+    DispatchError, DispatchMode, RuntimeDispatchRequest, RuntimeDispatchResponse, request_topic,
+    response_topic,
+};
 pub use schema_id::{IoSchemaSource, QaSchemaSource, SchemaId, SchemaSource, schema_id_for_cbor};
 pub use schema_registry::{SCHEMAS, SchemaDef};
 #[deprecated(

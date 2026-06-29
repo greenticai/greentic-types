@@ -1,0 +1,29 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/telemetry-spec.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TelemetrySpec",
+  "description": "Telemetry publishing configuration shared by hosts and packs.",
+  "type": "object",
+  "properties": {
+    "attributes": {
+      "description": "Static key/value attributes added to every span/log record.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    },
+    "emit_node_spans": {
+      "description": "Whether the runtime should emit per-node spans automatically.",
+      "type": "boolean"
+    },
+    "span_prefix": {
+      "description": "Prefix applied to spans emitted by the pack.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "span_prefix",
+    "emit_node_spans"
+  ]
+}

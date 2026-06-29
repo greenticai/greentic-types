@@ -1,0 +1,129 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/tenant-did-document.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TenantDidDocument",
+  "description": "DID document used for tenant discovery (`did.json`).",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "Raw @context, preserved as provided.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DidContext"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "authentication": {
+      "description": "Authentication references (optional).",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "id": {
+      "description": "Document identifier (did:web).",
+      "type": "string"
+    },
+    "service": {
+      "description": "Service endpoints.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DidService"
+      }
+    },
+    "verificationMethod": {
+      "description": "Verification methods (optional).",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "$ref": "#/$defs/VerificationMethod"
+      }
+    }
+  },
+  "required": [
+    "id"
+  ],
+  "$defs": {
+    "DidContext": {
+      "description": "@context representation supporting single string or array.",
+      "anyOf": [
+        {
+          "description": "Single string context.",
+          "type": "string"
+        },
+        {
+          "description": "Array of contexts.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "DidService": {
+      "description": "Service endpoint descriptor within a DID document.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Service identifier.",
+          "type": "string"
+        },
+        "serviceEndpoint": {
+          "description": "Service endpoint URL.",
+          "type": "string"
+        },
+        "type": {
+          "description": "Service type.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "serviceEndpoint"
+      ]
+    },
+    "VerificationMethod": {
+      "description": "Verification method descriptor within a DID document.",
+      "type": "object",
+      "properties": {
+        "controller": {
+          "description": "Controller of the verification method.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Identifier for the verification method.",
+          "type": "string"
+        },
+        "publicKeyJwk": {
+          "description": "Optional JWK."
+        },
+        "publicKeyMultibase": {
+          "description": "Optional multibase key.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "description": "Type of verification method.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "controller"
+      ]
+    }
+  }
+}

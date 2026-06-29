@@ -51,6 +51,13 @@ pub struct Capabilities {
         serde(default, skip_serializing_if = "Option::is_none")
     )]
     pub tools: Option<ToolsCaps>,
+    /// Optional authentication surface describing how the host collects this
+    /// extension's credentials (api-key vs OAuth login).
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Option::is_none")
+    )]
+    pub auth: Option<AuthCaps>,
 }
 
 impl Capabilities {
@@ -67,7 +74,116 @@ impl Capabilities {
             && self.fs.is_none()
             && self.net.is_none()
             && self.tools.is_none()
+            && self.auth.is_none()
     }
+}
+
+/// Authentication capability descriptor declaring *how* an extension's
+/// credentials are obtained.
+///
+/// Additive sibling of [`SecretsCaps`]: `SecretsCaps` lists *which* secret keys
+/// must be bound, while `AuthCaps` describes *how* they are obtained (entered
+/// directly vs. an OAuth login). Absent on `Capabilities` means "no auth".
+#[non_exhaustive]
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "schemars", derive(JsonSchema))]
+pub struct AuthCaps {
+    /// The authentication style the host must drive.
+    #[cfg_attr(feature = "serde", serde(default))]
+    pub kind: AuthKind,
+    /// OAuth authorization-code parameters, present iff `kind == AuthKind::OAuth`.
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Option::is_none")
+    )]
+    pub oauth: Option<OAuthSpec>,
+}
+
+impl AuthCaps {
+    /// Creates an empty descriptor (`kind = None`).
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+/// Authentication style an extension requires.
+#[non_exhaustive]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
+#[cfg_attr(feature = "schemars", derive(JsonSchema))]
+pub enum AuthKind {
+    /// No credential required.
+    #[default]
+    None,
+    /// One or more secret values entered directly (API keys, bot tokens).
+    ApiKey,
+    /// OAuth 2.0 authorization-code login driven by the host.
+    #[cfg_attr(feature = "serde", serde(rename = "oauth"))]
+    OAuth,
+}
+
+/// OAuth 2.0 authorization-code parameters an extension declares so the host can
+/// drive login + token refresh without provider-specific code.
+#[non_exhaustive]
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
+#[cfg_attr(feature = "schemars", derive(JsonSchema))]
+pub struct OAuthSpec {
+    /// Provider authorization endpoint the user is redirected to.
+    pub authorize_url: String,
+    /// Provider token endpoint used for code exchange and refresh.
+    pub token_url: String,
+    /// OAuth scopes requested at authorization time.
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Vec::is_empty")
+    )]
+    pub scopes: Vec<String>,
+    /// Whether PKCE (RFC 7636) is used (recommended; required for public clients).
+    #[cfg_attr(feature = "serde", serde(default))]
+    pub pkce: bool,
+    /// Extra static query params appended to the authorize URL (e.g. Google's
+    /// `access_type=offline` + `prompt=consent` to force a refresh token).
+    /// `BTreeMap` keeps a deterministic order for stable encoding.
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "BTreeMap::is_empty")
+    )]
+    pub extra_auth_params: BTreeMap<String, String>,
+    /// How client credentials are presented to the token endpoint.
+    #[cfg_attr(feature = "serde", serde(default))]
+    pub token_auth_style: TokenAuthStyle,
+}
+
+impl OAuthSpec {
+    /// Creates an OAuth spec from its required endpoints.
+    pub fn new(authorize_url: impl Into<String>, token_url: impl Into<String>) -> Self {
+        Self {
+            authorize_url: authorize_url.into(),
+            token_url: token_url.into(),
+            scopes: Vec::new(),
+            pkce: false,
+            extra_auth_params: BTreeMap::new(),
+            token_auth_style: TokenAuthStyle::Basic,
+        }
+    }
+}
+
+/// Where the OAuth `client_id`/`client_secret` are presented to the token endpoint.
+#[non_exhaustive]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
+#[cfg_attr(feature = "schemars", derive(JsonSchema))]
+pub enum TokenAuthStyle {
+    /// HTTP Basic auth header (RFC 6749 default).
+    #[default]
+    Basic,
+    /// `client_id`/`client_secret` in the form body.
+    Body,
 }
 
 /// HTTP capability descriptor controlling outbound fetch settings.

@@ -1,0 +1,35 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/verify-request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VerifyRequest",
+  "description": "Verification request for a signature.",
+  "type": "object",
+  "properties": {
+    "artifact": {
+      "description": "Subject artifact associated with the signature.",
+      "$ref": "#/$defs/ArtifactRef"
+    },
+    "metadata": {
+      "description": "Provider-specific metadata.",
+      "default": null
+    },
+    "signature": {
+      "description": "Signature reference to verify.",
+      "$ref": "#/$defs/SignatureRef"
+    }
+  },
+  "required": [
+    "signature",
+    "artifact"
+  ],
+  "$defs": {
+    "ArtifactRef": {
+      "description": "Artifact reference within a build or scan result.",
+      "type": "string"
+    },
+    "SignatureRef": {
+      "description": "Reference to a generated signature.",
+      "type": "string"
+    }
+  }
+}

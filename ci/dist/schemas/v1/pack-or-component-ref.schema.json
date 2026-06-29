@@ -1,0 +1,44 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/pack-or-component-ref.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PackOrComponentRef",
+  "description": "Choice between component or pack reference.",
+  "oneOf": [
+    {
+      "description": "Component reference.",
+      "type": "object",
+      "properties": {
+        "component": {
+          "$ref": "#/$defs/ComponentRef"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "component"
+      ]
+    },
+    {
+      "description": "Pack reference.",
+      "type": "object",
+      "properties": {
+        "pack": {
+          "$ref": "#/$defs/PackId"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "pack"
+      ]
+    }
+  ],
+  "$defs": {
+    "ComponentRef": {
+      "description": "Supply-chain component reference (distinct from pack ComponentId).",
+      "type": "string"
+    },
+    "PackId": {
+      "description": "Globally unique pack identifier.",
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/environment-ref.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EnvironmentRef",
+  "description": "Identifier referencing a deployment environment.",
+  "type": "string"
+}

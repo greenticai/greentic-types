@@ -1,0 +1,18 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/connection-kind.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ConnectionKind",
+  "description": "Connection kind for an environment.",
+  "oneOf": [
+    {
+      "description": "Online environment with direct connectivity.",
+      "type": "string",
+      "const": "online"
+    },
+    {
+      "description": "Offline or air-gapped environment.",
+      "type": "string",
+      "const": "offline"
+    }
+  ]
+}

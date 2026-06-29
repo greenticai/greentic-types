@@ -1,0 +1,33 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/subscription-status.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SubscriptionStatus",
+  "description": "Subscription lifecycle status.",
+  "oneOf": [
+    {
+      "description": "Draft subscription (pending approval).",
+      "type": "string",
+      "const": "draft"
+    },
+    {
+      "description": "Active subscription.",
+      "type": "string",
+      "const": "active"
+    },
+    {
+      "description": "Paused subscription.",
+      "type": "string",
+      "const": "paused"
+    },
+    {
+      "description": "Cancelled subscription.",
+      "type": "string",
+      "const": "cancelled"
+    },
+    {
+      "description": "Subscription encountered an error.",
+      "type": "string",
+      "const": "error"
+    }
+  ]
+}

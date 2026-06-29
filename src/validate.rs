@@ -290,6 +290,12 @@ pub fn validate_pack_manifest_core(manifest: &PackManifest) -> Vec<Diagnostic> {
 
     for entry in &manifest.flows {
         for (node_id, node) in entry.flow.nodes.iter() {
+            // Runner builtins (dw.agent[.x], emit.*, session.wait, …) are
+            // engine-handled and resolve to no pack component, so they carry no
+            // component/alias reference to validate.
+            if node.is_builtin() {
+                continue;
+            }
             match &node.component.pack_alias {
                 Some(alias) => {
                     if !dependency_aliases.contains(alias) {
@@ -308,9 +314,6 @@ pub fn validate_pack_manifest_core(manifest: &PackManifest) -> Vec<Diagnostic> {
                 }
                 None => {
                     let component_key = node.component.id.as_str();
-                    if is_runtime_builtin_component(component_key) {
-                        continue;
-                    }
                     if !declared_components.contains(component_key) {
                         diagnostics.push(core_diagnostic(
                             Severity::Error,
@@ -388,10 +391,4 @@ fn core_diagnostic(
         hint,
         data: empty_data(),
     }
-}
-
-fn is_runtime_builtin_component(component_id: &str) -> bool {
-    matches!(component_id, "dw.agent" | "dw.agent_graph")
-        || component_id.starts_with("dw.agent.")
-        || component_id.starts_with("dw.agent_graph.")
 }

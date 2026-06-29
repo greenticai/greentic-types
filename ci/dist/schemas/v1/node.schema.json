@@ -1,0 +1,210 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/node.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Node",
+  "description": "Flow node representation.",
+  "type": "object",
+  "properties": {
+    "component": {
+      "description": "Component binding referenced by the node.",
+      "$ref": "#/$defs/ComponentRef"
+    },
+    "id": {
+      "description": "Node identifier.",
+      "$ref": "#/$defs/NodeId"
+    },
+    "input": {
+      "description": "Component input mapping configuration.",
+      "$ref": "#/$defs/InputMapping"
+    },
+    "output": {
+      "description": "Component output mapping configuration.",
+      "$ref": "#/$defs/OutputMapping"
+    },
+    "routing": {
+      "description": "Routing behaviour after this node.",
+      "$ref": "#/$defs/Routing"
+    },
+    "telemetry": {
+      "description": "Optional telemetry hints for this node.",
+      "$ref": "#/$defs/TelemetryHints",
+      "default": {
+        "attributes": {}
+      }
+    }
+  },
+  "required": [
+    "id",
+    "component",
+    "input",
+    "output",
+    "routing"
+  ],
+  "$defs": {
+    "ComponentId": {
+      "description": "Identifier referencing a component binding in a pack.",
+      "type": "string"
+    },
+    "ComponentRef": {
+      "description": "Component reference within a flow.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Component identifier.",
+          "$ref": "#/$defs/ComponentId"
+        },
+        "operation": {
+          "description": "Optional operation name within the component.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pack_alias": {
+          "description": "Dependency pack alias when referencing external components.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "InputMapping": {
+      "description": "Opaque component input mapping configuration.",
+      "type": "object",
+      "properties": {
+        "mapping": {
+          "description": "Mapping configuration (templates, expressions, etc.).",
+          "default": null
+        }
+      }
+    },
+    "NodeId": {
+      "description": "Identifier referencing a node inside a flow graph.",
+      "type": "string"
+    },
+    "OutputMapping": {
+      "description": "Opaque component output mapping configuration.",
+      "type": "object",
+      "properties": {
+        "mapping": {
+          "description": "Mapping configuration (templates, expressions, etc.).",
+          "default": null
+        }
+      }
+    },
+    "Routing": {
+      "description": "Routing behaviour for a node.",
+      "oneOf": [
+        {
+          "description": "Continue to the specified node.",
+          "type": "object",
+          "properties": {
+            "next": {
+              "type": "object",
+              "properties": {
+                "node_id": {
+                  "description": "Destination node identifier.",
+                  "$ref": "#/$defs/NodeId"
+                }
+              },
+              "required": [
+                "node_id"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "next"
+          ]
+        },
+        {
+          "description": "Branch based on status string -> node id.",
+          "type": "object",
+          "properties": {
+            "branch": {
+              "type": "object",
+              "properties": {
+                "default": {
+                  "description": "Default node when no status matches.",
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/NodeId"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "on_status": {
+                  "description": "Mapping of status value to destination node.",
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/$defs/NodeId"
+                  },
+                  "default": {}
+                }
+              }
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "branch"
+          ]
+        },
+        {
+          "description": "Flow terminates successfully.",
+          "type": "string",
+          "const": "end"
+        },
+        {
+          "description": "Reply to origin (Messaging/Http flows).",
+          "type": "string",
+          "const": "reply"
+        },
+        {
+          "description": "Component- or runtime-specific routing.",
+          "type": "object",
+          "properties": {
+            "custom": true
+          },
+          "additionalProperties": false,
+          "required": [
+            "custom"
+          ]
+        }
+      ]
+    },
+    "TelemetryHints": {
+      "description": "Optional telemetry hints for a node.",
+      "type": "object",
+      "properties": {
+        "attributes": {
+          "description": "Attributes to attach to spans/logs.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {}
+        },
+        "sampling": {
+          "description": "Sampling hint (`high`, `normal`, `low`).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "span_name": {
+          "description": "Optional span name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

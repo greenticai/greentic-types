@@ -1,0 +1,91 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/repo-auth.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RepoAuth",
+  "description": "Login options for a tenant (`auth.json`).",
+  "type": "object",
+  "properties": {
+    "identity_providers": {
+      "description": "Available identity providers.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/IdentityProviderOption"
+      }
+    },
+    "tenant_id": {
+      "description": "Tenant identifier the auth config belongs to.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tenant_id"
+  ],
+  "$defs": {
+    "IdentityProviderOption": {
+      "description": "Identity provider option shown on the login page.",
+      "type": "object",
+      "properties": {
+        "button_style": {
+          "description": "Optional button style.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "description": "Optional description text.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "icon": {
+          "description": "Optional icon identifier.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Provider pack identifier.",
+          "type": "string"
+        },
+        "kind": {
+          "description": "Optional kind hint (for example `identity-provider`).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "description": "Button label.",
+          "type": "string"
+        },
+        "login_url": {
+          "description": "Login URL for the provider.",
+          "type": "string"
+        },
+        "order": {
+          "description": "Optional ordering hint.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int32"
+        },
+        "recommended": {
+          "description": "Whether the provider is recommended.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "login_url"
+      ]
+    }
+  }
+}

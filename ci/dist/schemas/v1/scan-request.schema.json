@@ -1,0 +1,103 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/scan-request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ScanRequest",
+  "description": "Request to execute a scan.",
+  "type": "object",
+  "properties": {
+    "artifact": {
+      "description": "Target artifact (when applicable).",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "commit_ref": {
+      "description": "Optional commit associated with the scan.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CommitRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "component": {
+      "description": "Component being scanned.",
+      "$ref": "#/$defs/ComponentRef"
+    },
+    "kind": {
+      "description": "Scan kind.",
+      "$ref": "#/$defs/ScanKind"
+    },
+    "metadata": {
+      "description": "Provider-specific inputs.",
+      "default": null
+    },
+    "scan_id": {
+      "description": "Identifier for the scan.",
+      "$ref": "#/$defs/ScanRef"
+    }
+  },
+  "required": [
+    "scan_id",
+    "component",
+    "kind"
+  ],
+  "$defs": {
+    "ArtifactRef": {
+      "description": "Artifact reference within a build or scan result.",
+      "type": "string"
+    },
+    "CommitRef": {
+      "description": "Reference to a source control commit.",
+      "type": "string"
+    },
+    "ComponentRef": {
+      "description": "Supply-chain component reference (distinct from pack ComponentId).",
+      "type": "string"
+    },
+    "ScanKind": {
+      "description": "Supported scan kinds.",
+      "oneOf": [
+        {
+          "description": "Source code analysis (SAST).",
+          "type": "string",
+          "const": "source"
+        },
+        {
+          "description": "Dependency or composition analysis.",
+          "type": "string",
+          "const": "dependencies"
+        },
+        {
+          "description": "Binary or container image analysis.",
+          "type": "string",
+          "const": "artifact"
+        },
+        {
+          "description": "Custom or provider-specific scan.",
+          "type": "object",
+          "properties": {
+            "custom": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "custom"
+          ]
+        }
+      ]
+    },
+    "ScanRef": {
+      "description": "Scan reference within a supply chain.",
+      "type": "string"
+    }
+  }
+}

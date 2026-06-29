@@ -1,0 +1,38 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/verify-result.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VerifyResult",
+  "description": "Verification result.",
+  "type": "object",
+  "properties": {
+    "message": {
+      "description": "Optional diagnostic message.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "description": "Provider-specific metadata.",
+      "default": null
+    },
+    "signature": {
+      "description": "Signature reference.",
+      "$ref": "#/$defs/SignatureRef"
+    },
+    "valid": {
+      "description": "Whether the signature is valid.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "signature",
+    "valid"
+  ],
+  "$defs": {
+    "SignatureRef": {
+      "description": "Reference to a generated signature.",
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/provider-decl.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ProviderDecl",
+  "description": "Provider declaration stored in indexes and extension payloads.",
+  "type": "object",
+  "properties": {
+    "capabilities": {
+      "description": "Capabilities advertised by the provider.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "config_schema_ref": {
+      "description": "JSON Schema reference for configuration.",
+      "type": "string"
+    },
+    "docs_ref": {
+      "description": "Optional documentation reference.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ops": {
+      "description": "Operations exposed by the provider.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "provider_type": {
+      "description": "Provider type identifier (string-based to avoid enum coupling).",
+      "type": "string"
+    },
+    "runtime": {
+      "description": "Runtime binding information for the provider.",
+      "$ref": "#/$defs/ProviderRuntimeRef"
+    },
+    "state_schema_ref": {
+      "description": "Optional JSON Schema reference for provider state.",
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "provider_type",
+    "config_schema_ref",
+    "runtime"
+  ],
+  "$defs": {
+    "ProviderRuntimeRef": {
+      "description": "Runtime binding for a provider implementation.",
+      "type": "object",
+      "properties": {
+        "component_ref": {
+          "description": "Component identifier for the provider runtime.",
+          "type": "string"
+        },
+        "export": {
+          "description": "Exported function implementing the provider runtime.",
+          "type": "string"
+        },
+        "world": {
+          "description": "WIT world for the provider runtime.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "component_ref",
+        "export",
+        "world"
+      ]
+    }
+  }
+}

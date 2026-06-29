@@ -1,0 +1,107 @@
+{
+  "$id": "https://greentic-ai.github.io/greentic-types/schemas/v1/build-plan.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BuildPlan",
+  "description": "Plan describing how to execute a build.",
+  "type": "object",
+  "properties": {
+    "branch": {
+      "description": "Optional source branch reference.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BranchRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "build_id": {
+      "description": "Identifier for the build.",
+      "$ref": "#/$defs/BuildRef"
+    },
+    "commit": {
+      "description": "Commit identifier from the source repository.",
+      "type": "string"
+    },
+    "commit_ref": {
+      "description": "Optional structured commit reference.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CommitRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "component": {
+      "description": "Component being built.",
+      "$ref": "#/$defs/ComponentRef"
+    },
+    "entrypoint": {
+      "description": "Entrypoint or build target.",
+      "type": "string"
+    },
+    "env": {
+      "description": "Environment variables",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "language": {
+      "description": "Language or ecosystem descriptor (for example `rust`, `nodejs`).",
+      "type": "string"
+    },
+    "metadata": {
+      "description": "Provider-specific metadata.",
+      "default": null
+    },
+    "outputs": {
+      "description": "Expected outputs (artifact references).",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ArtifactRef"
+      }
+    },
+    "source_repo": {
+      "description": "Source repository reference.",
+      "$ref": "#/$defs/RepoRef"
+    }
+  },
+  "required": [
+    "build_id",
+    "component",
+    "source_repo",
+    "commit",
+    "language",
+    "entrypoint"
+  ],
+  "$defs": {
+    "ArtifactRef": {
+      "description": "Artifact reference within a build or scan result.",
+      "type": "string"
+    },
+    "BranchRef": {
+      "description": "Reference to a source control branch.",
+      "type": "string"
+    },
+    "BuildRef": {
+      "description": "Build reference within a supply chain.",
+      "type": "string"
+    },
+    "CommitRef": {
+      "description": "Reference to a source control commit.",
+      "type": "string"
+    },
+    "ComponentRef": {
+      "description": "Supply-chain component reference (distinct from pack ComponentId).",
+      "type": "string"
+    },
+    "RepoRef": {
+      "description": "Repository reference within a supply chain.",
+      "type": "string"
+    }
+  }
+}
