@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# Pre-commit hook: run rustfmt on staged Rust files + clippy on the workspace.
+# Enable once per clone:
+#   git config core.hooksPath .githooks
+set -euo pipefail
+
+red()   { printf "\033[0;31m%s\033[0m\n" "$*" >&2; }
+green() { printf "\033[0;32m%s\033[0m\n" "$*"; }
+blue()  { printf "\033[0;34m%s\033[0m\n" "$*"; }
+
+# --- 1. rustfmt on staged .rs files -----------------------------------------
+STAGED_RS=$(git diff --cached --name-only --diff-filter=ACMR -- '*.rs' || true)
+if [ -n "${STAGED_RS}" ]; then
+  blue "[pre-commit] rustfmt check on staged Rust files"
+  FMT_FAILED=0
+  while IFS= read -r file; do
+    [ -f "${file}" ] || continue
+    if ! rustfmt --check --edition 2024 "${file}" >/dev/null 2>&1; then
+      red "  ${file} is not formatted (run: cargo fmt)"
+      FMT_FAILED=1
+    fi
+  done <<< "${STAGED_RS}"
+  if [ "${FMT_FAILED}" -eq 1 ]; then
+    red "[pre-commit] rustfmt check failed — run 'cargo fmt --all' and re-stage"
+    exit 1
+  fi
+fi
+
+# --- 2. clippy on the workspace ---------------------------------------------
+if [ -n "${STAGED_RS}" ] || git diff --cached --name-only | grep -qE 'Cargo\.(toml|lock)$'; then
+  blue "[pre-commit] cargo clippy -- -D warnings"
+  if ! cargo clippy --workspace --all-targets -- -D warnings 2>&1 | tail -n 20; then
+    red "[pre-commit] clippy failed — fix warnings before committing"
+    exit 1
+  fi
+  green "[pre-commit] clippy clean"
+fi
+
+# --- 3. cargo-sort on the workspace -----------------------------------------
+# Keeps every Cargo.toml's dependency lists alphabetized. CI does not run
+# this yet — the hook is the canonical gate. Auto-sorts and re-stages so
+# the developer doesn't have to run a second pass by hand.
+if git diff --cached --name-only | grep -qE 'Cargo\.toml$'; then
+  if ! command -v cargo-sort >/dev/null 2>&1; then
+    blue "[pre-commit] cargo-sort not found, installing (one-time)…"
+    cargo install cargo-sort --locked
+  fi
+  blue "[pre-commit] cargo sort --workspace"
+  cargo sort --workspace >/dev/null
+  if ! git diff --quiet -- '*Cargo.toml'; then
+    git add $(git diff --name-only -- '*Cargo.toml')
+    green "[pre-commit] cargo-sort rewrote + re-staged Cargo.toml files"
+  else
+    green "[pre-commit] cargo-sort clean"
+  fi
+fi
+
+# --- 4. pre-release version guard (mirrors org CI "Reject pre-release on main") ---
+# CI hard-fails any Cargo.toml carrying a -dev/-alpha/-beta/-rc version on main.
+# The hook can't know the PR's target branch, so warn (don't fail — these are
+# valid on develop) to catch the "bumped -dev but targeting main" mistake early.
+if find . -name Cargo.toml -not -path './target/*' -print0 2>/dev/null \
+     | xargs -0 grep -lE '^version = "[0-9]+\.[0-9]+\.[0-9]+-(dev|alpha|beta|rc)\.' 2>/dev/null \
+     | grep -q .; then
+  red "[pre-commit] note: a pre-release (-dev/-alpha/-beta/-rc) version is present."
+  red "  CI rejects these on main — only valid if this PR targets develop, not main."
+fi
+
+green "[pre-commit] ok"
