@@ -69,6 +69,8 @@ pub mod component_source;
 pub mod contracts;
 pub mod deployment;
 pub mod distributor;
+#[cfg(feature = "std")]
+pub mod env;
 pub mod envelope;
 pub mod events;
 pub mod events_provider;
