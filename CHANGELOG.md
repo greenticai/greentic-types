@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Added `env` module: shared environment-id resolution + the `dev`→`local` compat alias (A4b). `resolve_env`/`apply_dev_alias`/`DEFAULT_ENV_ID`/`LEGACY_ENV_ID`/`DISABLE_ALIAS_ENV_VAR` give `greentic-setup`, `greentic-start`, and `greentic-deployer` one source of truth for the env segment in `secrets://{env}/…` URIs, so the writer (setup) and readers (runtime/deployer) can no longer drift. std-gated; unit-tested.
 - Renamed v0.6 QA lifecycle mode `upgrade` -> `update` for pack/component schemas; decode remains backward-compatible and accepts `upgrade` as a deprecated alias while canonical output now emits `update`. Added migration guidance in `MIGRATION.md`.
 - Replaced `ChannelMessageEnvelope::user_id` with `from: Option<Actor>` plus `to: Vec<Destination>` so senders/destinations are explicit; new `Actor`/`Destination` models and schema updates cover the change.
 - Added optional `bootstrap` hints to `PackManifest` (install/upgrade flows + installer component),
