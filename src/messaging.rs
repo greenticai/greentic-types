@@ -43,14 +43,27 @@ pub struct Destination {
 pub type MessageMetadata = BTreeMap<String, String>;
 
 /// Generic attachment referenced by a channel message.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
 pub struct Attachment {
     /// MIME type of the attachment (for example `image/png`).
     pub mime_type: String,
-    /// URL pointing at the attachment payload.
-    pub url: String,
+    /// Remote URL for the attachment content (file download, image, etc.).
+    /// Either `url` or `content` (or both) should be set.
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Option::is_none")
+    )]
+    pub url: Option<String>,
+    /// Inline structured content (Adaptive Card JSON, Block Kit blocks, etc.).
+    /// Mutually exclusive with `url` in most cases but both may coexist
+    /// (e.g. a card with a thumbnail URL).
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Option::is_none")
+    )]
+    pub content: Option<serde_json::Value>,
     /// Optional display name for the attachment.
     #[cfg_attr(
         feature = "serde",
@@ -71,7 +84,7 @@ pub struct Attachment {
 /// type directly via struct literals (see greentic-messaging-providers, etc).
 /// Adding a new field is a coordinated breaking change that requires a minor
 /// version bump and synchronized updates across consumer submodules.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
 pub struct ChannelMessageEnvelope {
