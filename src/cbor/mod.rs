@@ -211,6 +211,8 @@ struct EncodedNode {
     err_map: Option<OutputMapping>,
     routing: EncodedRouting,
     telemetry: TelemetryHints,
+    #[serde(default)]
+    conversational: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -411,6 +413,7 @@ fn encode_flow(flow: &Flow, indexes: &SymbolIndexes) -> Result<EncodedFlow, Cbor
                 err_map: node.err_map.clone(),
                 routing: encode_routing(&node.routing, indexes)?,
                 telemetry: node.telemetry.clone(),
+                conversational: node.conversational,
             })
         })
         .collect::<Result<_, CborError>>()?;
@@ -689,6 +692,7 @@ fn decode_flow(
             err_map: encoded.err_map,
             routing,
             telemetry: encoded.telemetry,
+            conversational: encoded.conversational,
         };
         nodes.insert(node_id, node);
     }
