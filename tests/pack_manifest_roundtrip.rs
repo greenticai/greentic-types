@@ -36,6 +36,7 @@ fn sample_flow() -> Flow {
                 default: Some("end".parse().unwrap()),
             },
             telemetry: TelemetryHints::default(),
+            conversational: false,
         },
     );
     nodes.insert(
@@ -56,6 +57,7 @@ fn sample_flow() -> Flow {
             err_map: None,
             routing: Routing::Reply,
             telemetry: TelemetryHints::default(),
+            conversational: false,
         },
     );
     nodes.insert(
@@ -76,6 +78,7 @@ fn sample_flow() -> Flow {
             err_map: None,
             routing: Routing::End,
             telemetry: TelemetryHints::default(),
+            conversational: false,
         },
     );
 
