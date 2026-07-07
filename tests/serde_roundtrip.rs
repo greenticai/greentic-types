@@ -339,6 +339,7 @@ fn node_legacy_shape_roundtrips_without_err_map() {
         err_map: None,
         routing: greentic_types::Routing::End,
         telemetry: TelemetryHints::default(),
+        conversational: false,
     };
 
     let json = serde_json::to_value(&node).expect("serialize");
