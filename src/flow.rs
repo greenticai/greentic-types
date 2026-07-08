@@ -353,6 +353,7 @@ mod builtin_tests {
 }
 
 #[cfg(all(test, feature = "serde"))]
+#[allow(clippy::expect_used, clippy::unwrap_used)]
 mod conversational_tests {
     use super::Node;
 
