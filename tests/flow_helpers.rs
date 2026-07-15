@@ -29,6 +29,7 @@ fn flow_ingress_respects_insertion_order() {
                 node_id: "second".parse().unwrap(),
             },
             telemetry: TelemetryHints::default(),
+            conversational: false,
         },
     );
     nodes.insert(
@@ -45,6 +46,7 @@ fn flow_ingress_respects_insertion_order() {
             err_map: None,
             routing: Routing::End,
             telemetry: TelemetryHints::default(),
+            conversational: false,
         },
     );
 
@@ -81,6 +83,7 @@ fn flow_json_roundtrips_with_routing_variants() {
                 default: Some("end".parse().unwrap()),
             },
             telemetry: TelemetryHints::default(),
+            conversational: false,
         },
     );
     nodes.insert(
@@ -97,6 +100,7 @@ fn flow_json_roundtrips_with_routing_variants() {
             err_map: None,
             routing: Routing::Reply,
             telemetry: TelemetryHints::default(),
+            conversational: false,
         },
     );
     nodes.insert(
@@ -113,6 +117,7 @@ fn flow_json_roundtrips_with_routing_variants() {
             err_map: None,
             routing: Routing::End,
             telemetry: TelemetryHints::default(),
+            conversational: false,
         },
     );
 
