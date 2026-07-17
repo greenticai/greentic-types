@@ -56,6 +56,7 @@ fn flow_with_component(component_id: &str) -> PackFlowEntry {
         flow,
         tags: Vec::new(),
         entrypoints: vec!["default".into()],
+        subscribes_to: vec![],
     }
 }
 

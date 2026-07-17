@@ -146,6 +146,15 @@ pub struct PackFlowEntry {
     /// Additional entrypoint identifiers for discoverability.
     #[cfg_attr(feature = "serde", serde(default))]
     pub entrypoints: Vec<String>,
+    /// Event topics this flow subscribes to (glob patterns, e.g. `orders.*`).
+    /// Matched against an incoming business event's topic by the runtime's
+    /// `select_target_flows`; empty means the flow only runs as the default.
+    #[cfg_attr(
+        feature = "serde",
+        serde(default, skip_serializing_if = "Vec::is_empty")
+    )]
+    #[cfg_attr(feature = "schemars", schemars(default))]
+    pub subscribes_to: Vec<String>,
 }
 
 /// Dependency entry referencing another pack.

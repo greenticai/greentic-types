@@ -150,6 +150,7 @@ fn sample_pack_manifest() -> PackManifest {
             flow,
             tags: vec!["demo".into()],
             entrypoints: vec!["default".into()],
+            subscribes_to: vec![],
         }],
         dependencies: vec![PackDependency {
             alias: "provider.messaging".into(),
@@ -193,6 +194,33 @@ fn pack_manifest_roundtrip_json_and_cbor() {
     let bytes = encode_pack_manifest(&manifest).expect("encode");
     let decoded = decode_pack_manifest(&bytes).expect("decode");
     assert_eq!(decoded, manifest);
+}
+
+#[test]
+fn subscribes_to_survives_canonical_roundtrip() {
+    let mut manifest = sample_pack_manifest();
+    manifest.flows[0].subscribes_to = vec!["orders.*".to_string()];
+
+    let bytes = encode_pack_manifest(&manifest).expect("encode");
+    let decoded = decode_pack_manifest(&bytes).expect("decode");
+
+    assert_eq!(
+        decoded.flows[0].subscribes_to,
+        vec!["orders.*".to_string()],
+        "subscribes_to must survive the canonical CBOR encode->decode; a missed \
+         EncodedFlowEntry thread silently drops it"
+    );
+}
+
+#[test]
+fn manifest_without_subscribes_to_decodes_to_empty() {
+    let manifest = sample_pack_manifest(); // flow[0].subscribes_to defaults to empty
+    let bytes = encode_pack_manifest(&manifest).expect("encode");
+    let decoded = decode_pack_manifest(&bytes).expect("decode");
+    assert!(
+        decoded.flows[0].subscribes_to.is_empty(),
+        "a manifest without the key must decode to an empty vec (backward-compat)"
+    );
 }
 
 fn manifest_with_bootstrap() -> PackManifest {

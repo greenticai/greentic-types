@@ -190,6 +190,8 @@ struct EncodedFlowEntry {
     flow: EncodedFlow,
     tags: Vec<String>,
     entrypoints: Vec<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    subscribes_to: Vec<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -307,6 +309,7 @@ impl TryFrom<&PackManifest> for EncodedPackManifest {
                     flow: encode_flow(&flow_entry.flow, &indexes)?,
                     tags: flow_entry.tags.clone(),
                     entrypoints: flow_entry.entrypoints.clone(),
+                    subscribes_to: flow_entry.subscribes_to.clone(),
                 })
             })
             .collect::<Result<Vec<_>, CborError>>()?;
@@ -579,6 +582,7 @@ impl TryFrom<EncodedPackManifest> for PackManifest {
                     flow: decode_flow(flow_entry.flow, &component_ids, &node_ids)?,
                     tags: flow_entry.tags,
                     entrypoints: flow_entry.entrypoints,
+                    subscribes_to: flow_entry.subscribes_to,
                 })
             })
             .collect::<Result<Vec<_>, CborError>>()?;
