@@ -58,6 +58,24 @@ pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 /// Base URL for all published JSON Schemas.
 pub const SCHEMA_BASE_URL: &str = "https://greentic-ai.github.io/greentic-types/schemas/v1";
 
+/// Tenant assumed when a caller names none.
+///
+/// Every tool that binds, deploys, or resolves tenant-scoped state must agree
+/// on this. They did not: `greentic-deployer` defaulted to `default` while
+/// `greentic-setup` defaulted to `demo`, so a bundle deployed through one and
+/// read through the other landed in two namespaces. That is invisible on a
+/// dev store and a hard activation failure under Vault, whose backend scope
+/// refuses an environment serving deployments for a tenant outside it.
+///
+/// Interfaces that are *about* demonstration (`greentic-operator demo …`) are
+/// not covered by this and legitimately default elsewhere.
+pub const DEFAULT_TENANT: &str = "default";
+
+/// Team assumed when a caller names none. Pairs with [`DEFAULT_TENANT`]:
+/// together they form the `{tenant}/{team}` selector a route binding stamps
+/// and the `secrets://{env}/{tenant}/{team}/…` prefix a secret is written under.
+pub const DEFAULT_TEAM: &str = "default";
+
 pub mod adapters;
 pub mod bindings;
 pub mod capabilities;
@@ -1647,6 +1665,14 @@ mod tests {
     use super::*;
     use core::convert::TryFrom;
     use time::OffsetDateTime;
+
+    #[test]
+    fn default_tenant_and_team_are_valid_identifiers() {
+        // These are stamped straight into route bindings and secret URIs, so
+        // they must survive the same validation an operator-supplied value does.
+        TenantId::try_from(DEFAULT_TENANT).unwrap_or_else(|err| panic!("{err}"));
+        TeamId::try_from(DEFAULT_TEAM).unwrap_or_else(|err| panic!("{err}"));
+    }
 
     fn sample_ctx() -> TenantCtx {
         let env = EnvId::try_from("prod").unwrap_or_else(|err| panic!("{err}"));
