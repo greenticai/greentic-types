@@ -428,9 +428,9 @@ dependencies = [
 
 [[package]]
 name = "granit-parser"
-version = "0.0.1"
+version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e354bf0eb3279a16e8f92fc1ba6ddd4420953fc064140b010844d21874b58113"
+checksum = "65ec0d45986cd51c847c75c5b69a00852c4fc84d0e5e79f041173f73437d0cdf"
 dependencies = [
  "arraydeque",
  "smallvec",
@@ -1407,9 +1407,9 @@ dependencies = [
 
 [[package]]
 name = "serde_yaml_bw"
-version = "2.5.6"
+version = "2.5.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d9559c696727e20fa0f661a1db638c7ae1be73419de8e1aed2642b796096ab53"
+checksum = "659d74d982f3ee009c27f34a1fc84d84828095d58ea210ce31705833188c8e27"
 dependencies = [
  "base64",
  "granit-parser",
