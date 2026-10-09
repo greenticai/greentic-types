@@ -37,6 +37,7 @@ fn flow_with_component(component_id: &str) -> PackFlowEntry {
             err_map: None,
             routing: Routing::End,
             telemetry: TelemetryHints::default(),
+            conversational: false,
         },
     );
 

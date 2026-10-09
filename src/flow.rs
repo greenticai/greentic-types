@@ -117,6 +117,11 @@ pub struct Node {
     /// Optional telemetry hints for this node.
     #[cfg_attr(feature = "serde", serde(default))]
     pub telemetry: TelemetryHints,
+    /// SP3: opt this node into conversational chat-segment behaviour (the
+    /// runner's SP2 park-loop for a `dw.agent` node). Default false = today's
+    /// one-shot node.
+    #[cfg_attr(feature = "serde", serde(default))]
+    pub conversational: bool,
 }
 
 impl Node {
@@ -344,5 +349,32 @@ mod builtin_tests {
         ] {
             assert!(!is_builtin_component_id(id), "{id} must NOT be builtin");
         }
+    }
+}
+
+#[cfg(all(test, feature = "serde"))]
+#[allow(clippy::unwrap_used, clippy::expect_used)]
+mod conversational_tests {
+    use super::Node;
+
+    fn node_json(extra: &str) -> String {
+        format!(
+            r#"{{ "id": "n", "component": {{ "id": "dw.agent" }},
+                 "input": {{ "mapping": null }}, "output": {{ "mapping": null }},
+                 "routing": "end"{extra} }}"#
+        )
+    }
+
+    #[test]
+    fn conversational_defaults_false_when_absent() {
+        let node: Node = serde_json::from_str(&node_json("")).expect("deserialize base node");
+        assert!(!node.conversational);
+    }
+
+    #[test]
+    fn conversational_parses_when_present() {
+        let node: Node =
+            serde_json::from_str(&node_json(r#", "conversational": true"#)).expect("deserialize");
+        assert!(node.conversational);
     }
 }
