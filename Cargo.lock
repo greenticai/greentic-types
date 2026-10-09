@@ -428,9 +428,9 @@ dependencies = [
 
 [[package]]
 name = "greentic-telemetry"
-version = "1.2.0-dev.28923800659"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1682057ab426d79ca7294fa820492c28879232f2365d2b52b74d765c45f2f672"
+checksum = "df1ba1fb6f770357ea702a3f6ecc7220e201046aa3a5435f9da972cbea0ac4a3"
 dependencies = [
  "anyhow",
  "once_cell",
@@ -450,7 +450,7 @@ dependencies = [
 
 [[package]]
 name = "greentic-types"
-version = "1.2.0-dev.0"
+version = "1.1.5"
 dependencies = [
  "anyhow",
  "blake3",
@@ -482,7 +482,7 @@ dependencies = [
 
 [[package]]
 name = "greentic-types-macros"
-version = "1.2.0-dev.0"
+version = "1.1.5"
 dependencies = [
  "proc-macro2",
  "quote",
