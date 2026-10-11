@@ -1,5 +1,25 @@
 # Repository Overview
 
+## Active HOME-03 inspection (2026-10-11)
+
+Baseline `bfd273c55c405c88a28c485e8afb727ab6934d51` uses package version
+1.2.0. `src/deployment.rs` has a generic DeploymentPlan and opaque runner
+capabilities, but no typed host architecture, network mode, device/socket
+mapping or persistent-mount requirements. HOME-03 adds a separate versioned
+HostDeploymentPlan wrapper and validated host requirements while preserving the
+existing DeploymentPlan Rust fields and wire format. Enforcement, native host
+probing and apply/rollback remain deployer responsibilities. The referenced
+`.codex/repo_overview_task.md` is absent; this refresh uses the actual source.
+The draft now implements typed Linux/x86_64/aarch64 requirements, bounded exact
+device/socket/mount mappings, port/network consistency, readiness bounds and
+JSON Schema exports. Six targeted tests pass, including legacy DeploymentPlan
+round-trip compatibility. The full strict owner check passed formatting, Clippy,
+build, tests, schema export, duplicate guards, online schema checks and both
+Rust 1.95 MSRV configurations. Use `GITHUB_REPOSITORY_OWNER=greenticai`, matching
+hosted CI: the legacy organisation schema URLs return 404 when the owner is
+omitted locally. No native host enforcement or Pi qualification is claimed by
+this type-only change.
+
 ## 1. High-Level Purpose
 - Shared Rust crate supplying Greentic’s multi-tenant primitives: tenant/session identity, flow/component/pack manifests, execution envelopes, supply-chain and store models, and telemetry helpers used across the greentic-ng stack (runner, deployer, connectors, packs, state/session services).
 - Provides serde/schemars-friendly types, schema export tooling, and a proc-macro for auto-initialising telemetry, keeping downstream repos aligned on identifiers, manifests, and envelopes.
