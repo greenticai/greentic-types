@@ -1,5 +1,7 @@
 //! Generic deployment planning structures shared between packs, runners, and deployers.
 
+pub mod host;
+
 use alloc::string::String;
 use alloc::vec::Vec;
 

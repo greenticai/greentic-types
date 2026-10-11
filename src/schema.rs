@@ -63,6 +63,16 @@ macro_rules! define_schema_fn {
 }
 
 define_schema_fn!(pack_id, PackId, ids::PACK_ID);
+define_schema_fn!(
+    host_requirements,
+    crate::deployment::host::HostRequirements,
+    ids::HOST_REQUIREMENTS
+);
+define_schema_fn!(
+    host_deployment_plan,
+    crate::deployment::host::HostDeploymentPlan,
+    ids::HOST_DEPLOYMENT_PLAN
+);
 define_schema_fn!(component_id, ComponentId, ids::COMPONENT_ID);
 define_schema_fn!(flow_id, FlowId, ids::FLOW_ID);
 define_schema_fn!(node_id, NodeId, ids::NODE_ID);
@@ -276,6 +286,8 @@ macro_rules! schema_entries_vec {
 
 #[cfg(feature = "schema")]
 schema_entries_vec! {
+    { host_requirements, "host-requirements", ids::HOST_REQUIREMENTS },
+    { host_deployment_plan, "host-deployment-plan", ids::HOST_DEPLOYMENT_PLAN },
     { pack_id, "pack-id", ids::PACK_ID },
     { component_id, "component-id", ids::COMPONENT_ID },
     { flow_id, "flow-id", ids::FLOW_ID },

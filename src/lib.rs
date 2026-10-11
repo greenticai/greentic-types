@@ -700,6 +700,12 @@ pub mod ids {
     /// Run result schema.
     pub const RUN_RESULT: &str =
         "https://greentic-ai.github.io/greentic-types/schemas/v1/run-result.schema.json";
+    /// Versioned host requirements schema.
+    pub const HOST_REQUIREMENTS: &str =
+        "https://greenticai.github.io/greentic-types/schemas/v1/host-requirements.schema.json";
+    /// Typed host deployment envelope schema.
+    pub const HOST_DEPLOYMENT_PLAN: &str =
+        "https://greenticai.github.io/greentic-types/schemas/v1/host-deployment-plan.schema.json";
 }
 
 #[cfg(all(feature = "schema", feature = "std"))]
